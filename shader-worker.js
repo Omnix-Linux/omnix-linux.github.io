@@ -2,7 +2,7 @@
  * No per-frame pixels or messages cross back to the main thread. */
 importScripts("coronal-shader.js", "coronal-webgpu.js", "shader-timing.js");
 
-var canvas, gl, gpu, webgl2, config, layout, active = false, background = false;
+var canvas, gl, gpu, webgl2, config, layout, active = false;
 var shaderProgram, displayProgram, triangle, shaderUniforms, displayUniforms;
 var caches = [], current = 0, hasPrevious = false, dirty = true, lost = false;
 var quality = 1, clock = 0, lastNow = null, shaderDeadline = null, displayDeadline = null;
@@ -113,14 +113,13 @@ function initializeBackend() {
 }
 function rates() {
   return {
-    shader: background ? config.backgroundShaderFps : (layout.mobile ? config.mobileShaderFps : config.heroShaderFps),
-    display: background ? config.backgroundFps : config.heroFps
+    shader: layout.mobile ? config.mobileShaderFps : config.heroShaderFps,
+    display: config.heroFps
   };
 }
 function configure() {
   if ((!gl && !gpu) || lost || !layout) return;
-  var budget = (layout.mobile ? config.mobileMaxPixels : config.desktopMaxPixels)
-    * (background ? config.backgroundPixelBudgetScale : 1);
+  var budget = layout.mobile ? config.mobileMaxPixels : config.desktopMaxPixels;
   var ratio = Math.min(layout.pixelRatio, config.maxPixelRatio,
     Math.sqrt(budget / (layout.width * layout.height)),
     stats.maxSize / Math.max(layout.width, layout.height)) * quality;
@@ -241,7 +240,7 @@ self.onmessage = function (event) {
     if (message.type === "init") {
       if (canvas || message.renderer !== "coronal") throw new Error("Unsupported shader worker initialization");
       canvas = message.canvas; config = message.rendering; layout = message.layout;
-      active = message.active; background = message.background;
+      active = message.active;
       canvas.addEventListener("webglcontextlost", function (event) {
         event.preventDefault(); lost = true; stop(); self.postMessage({ type: "lost" });
       });
@@ -253,11 +252,9 @@ self.onmessage = function (event) {
     } else if (message.type === "resize") {
       layout = message.layout; configure(); schedule();
     } else if (message.type === "state") {
-      var changed = background !== message.background;
       var wasActive = active;
-      background = message.background; active = message.active;
+      active = message.active;
       if (active && !wasActive) { lastReady = -1; displayDeadline = null; }
-      if (changed) configure();
       if (active) schedule(); else stop();
     }
   } catch (error) { fail(error); }

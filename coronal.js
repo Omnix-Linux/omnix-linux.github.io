@@ -51,9 +51,9 @@ afterFirstPaint(async function () {
   // The main thread owns DOM placement only. Rendering and cached textures
   // belong to the worker after the canvas is transferred exactly once.
   var worker = null, failed = false, suspended = false, revision = 0, resizeRaf = 0;
-  var heroPast = false, startupTimer = 0;
+  var startupTimer = 0;
   canvas.dataset.backend = "poster";
-  rendering = Object.assign({ heroShaderFps: 20, mobileShaderFps: 15, backgroundShaderFps: 8 }, rendering);
+  rendering = Object.assign({ heroShaderFps: 20, mobileShaderFps: 15 }, rendering);
   function isActive() { return !document.hidden && !reduce.matches && !suspended; }
   function fallback() {
     failed = true; clearTimeout(startupTimer);
@@ -105,7 +105,7 @@ afterFirstPaint(async function () {
       };
       var offscreen = canvas.transferControlToOffscreen();
       worker.postMessage({ type: "init", canvas: offscreen, renderer: profile.renderer,
-        rendering: rendering, layout: layout, active: isActive(), background: heroPast }, [offscreen]);
+        rendering: rendering, layout: layout, active: isActive() }, [offscreen]);
       startupTimer = setTimeout(fallback, 8000);
     } catch (error) { fallback(); }
   }
@@ -121,7 +121,7 @@ afterFirstPaint(async function () {
     clearTimeout(startupTimer);
     if (worker && isActive() && !root.classList.contains("shader-ready")) startupTimer = setTimeout(fallback, 8000);
     if (reduce.matches) root.classList.remove("shader-ready");
-    if (worker) worker.postMessage({ type: "state", active: isActive(), background: heroPast });
+    if (worker) worker.postMessage({ type: "state", active: isActive() });
     else start();
   }
   document.addEventListener("visibilitychange", state);
@@ -136,7 +136,6 @@ afterFirstPaint(async function () {
     new IntersectionObserver(function (entries) {
       var next = entries[0].intersectionRatio < .35;
       root.classList.toggle("hero-past", next);
-      if (heroPast !== next) { heroPast = next; state(); }
     }, { threshold: [0, .35] }).observe(document.getElementById("top"));
   }
   if (document.fonts) document.fonts.ready.then(resize);
