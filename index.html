@@ -803,14 +803,14 @@ afterFirstPaint(function () {
     if (shaped) sampleWord();
   }
 
-  // Form the logo during the first half-second after load, even if the web font
+  // Start gathering half a second after load, even if the web font
   // is slow. Later font/layout events resample the glyphs without delaying the entrance.
   var shaped = false;
   var navigation = performance.getEntriesByType("navigation")[0];
   var loadedAt = document.readyState === "complete"
     ? (navigation && navigation.loadEventStart || performance.now()) : null;
   window.addEventListener("load", function () { loadedAt = performance.now(); }, { once: true });
-  var MATERIALIZE_MS = 500;
+  var ENTRANCE_DELAY_MS = 500;
 
   // One cycle: formed, scatter, drift with the galaxy, gather, formed again.
   var CYCLE = 12.0;
@@ -829,9 +829,8 @@ afterFirstPaint(function () {
     var rect = word.getBoundingClientRect();
     var heroVisible = rect.bottom > -40 && rect.top < window.innerHeight;
     var elapsed = loadedAt === null ? 0 : Math.max(0, now - loadedAt);
-    var entrance = Math.min(1, elapsed / MATERIALIZE_MS);
     var mix = shaped && heroVisible
-      ? (elapsed < MATERIALIZE_MS ? entrance : mixAt((elapsed - MATERIALIZE_MS) / 1000)) : 0;
+      ? (elapsed < ENTRANCE_DELAY_MS ? 0 : mixAt(8.0 + (elapsed - ENTRANCE_DELAY_MS) / 1000)) : 0;
     uniforms.uTime.value = t;
     uniforms.uMix.value = mix;
     uniforms.uOrigin.value.set(rect.left, rect.top);
