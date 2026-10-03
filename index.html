@@ -731,17 +731,22 @@ afterFirstPaint(function () {
         ctx.fillText(node.data[k], cr.left - rect.left + pad, cr.top - rect.top + pad + ascent);
       }
     }
-    var data = ctx.getImageData(0, 0, w, h).data, pts = [];
-    var step = Math.max(2, Math.round(Math.sqrt((rect.width * rect.height * 0.32) / N)));
+    var data = ctx.getImageData(0, 0, w, h).data;
+    // Sample every other pixel of the glyphs, then spread the particles across all of them at random,
+    // so the whole word is covered however many points the font produces.
+    var step = 2, pts = [];
     for (var y = 0; y < h; y += step) for (var x = 0; x < w; x += step) {
       if (data[(y * w + x) * 4 + 3] > 110) pts.push(x - pad, y - pad);
     }
-    if (!pts.length) return;
     var count = pts.length / 2;
+    if (!count) return;
+    var order = new Uint32Array(count);
+    for (var q = 0; q < count; q++) order[q] = q;
+    for (q = count - 1; q > 0; q--) { var r = (Math.random() * (q + 1)) | 0, tmp = order[q]; order[q] = order[r]; order[r] = tmp; }
     for (var j = 0; j < N; j++) {
-      var q = (j % count) * 2;
-      target[j * 2] = pts[q] + (Math.random() - 0.5) * step;
-      target[j * 2 + 1] = pts[q + 1] + (Math.random() - 0.5) * step;
+      var idx = order[j % count] * 2;
+      target[j * 2] = pts[idx] + (Math.random() - 0.5) * step;
+      target[j * 2 + 1] = pts[idx + 1] + (Math.random() - 0.5) * step;
     }
     geo.attributes.aTarget.needsUpdate = true;
   }
