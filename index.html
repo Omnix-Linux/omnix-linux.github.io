@@ -712,25 +712,29 @@ afterFirstPaint(function () {
   // Sample the wordmark's glyphs, drawn with the same font, size and letter positions as the page.
   function sampleWord() {
     var rect = word.getBoundingClientRect();
-    var w = Math.ceil(rect.width), h = Math.ceil(rect.height);
-    if (w < 4 || h < 4) return;
+    if (rect.width < 4 || rect.height < 4) return;
+    // Pad the canvas so glyphs that overhang the line box are never clipped.
+    var pad = Math.ceil(rect.height * 0.6);
+    var w = Math.ceil(rect.width) + pad * 2, h = Math.ceil(rect.height) + pad * 2;
     var cv = document.createElement("canvas"); cv.width = w; cv.height = h;
     var ctx = cv.getContext("2d");
     var cs = getComputedStyle(word);
     ctx.font = cs.fontWeight + " " + cs.fontSize + " " + cs.fontFamily;
-    ctx.textBaseline = "middle"; ctx.fillStyle = "#fff";
+    ctx.textBaseline = "alphabetic"; ctx.fillStyle = "#fff";
+    // A character's range rect spans the font's ascent and descent, so its baseline sits one ascent below its top.
+    var ascent = ctx.measureText("omnix").fontBoundingBoxAscent;
     var walker = document.createTreeWalker(word, NodeFilter.SHOW_TEXT), node, range = document.createRange();
     while ((node = walker.nextNode())) {
       for (var k = 0; k < node.length; k++) {
         range.setStart(node, k); range.setEnd(node, k + 1);
         var cr = range.getBoundingClientRect();
-        ctx.fillText(node.data[k], cr.left - rect.left, h / 2);
+        ctx.fillText(node.data[k], cr.left - rect.left + pad, cr.top - rect.top + pad + ascent);
       }
     }
     var data = ctx.getImageData(0, 0, w, h).data, pts = [];
-    var step = Math.max(2, Math.round(Math.sqrt((w * h * 0.32) / N)));
+    var step = Math.max(2, Math.round(Math.sqrt((rect.width * rect.height * 0.32) / N)));
     for (var y = 0; y < h; y += step) for (var x = 0; x < w; x += step) {
-      if (data[(y * w + x) * 4 + 3] > 110) pts.push(x, y);
+      if (data[(y * w + x) * 4 + 3] > 110) pts.push(x - pad, y - pad);
     }
     if (!pts.length) return;
     var count = pts.length / 2;
