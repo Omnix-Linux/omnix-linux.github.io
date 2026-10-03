@@ -104,7 +104,7 @@
     --step-5: clamp(3.4rem, 2rem + 7vw, 7.5rem);
     color-scheme: dark;
   }
-  html { scroll-snap-type: y proximity; scroll-behavior: smooth; }
+  html { scroll-behavior: smooth; }
   @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
   body {
     background: var(--void);
@@ -127,7 +127,6 @@
   main { position: relative; z-index: 3; }
 
   section {
-    scroll-snap-align: start;
     display: grid;
     align-items: center;
     padding-inline: max(16px, 6vw);
