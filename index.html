@@ -126,13 +126,14 @@
   main { position: relative; z-index: 3; }
 
   section {
-    min-height: 100svh;
     scroll-snap-align: start;
     display: grid;
     align-items: center;
     padding-inline: max(16px, 6vw);
-    padding-block: 12vh;
+    padding-block: clamp(56px, 9vh, 120px);
   }
+  /* Only the hero fills the screen; the rest size to their content so there are no dead gaps. */
+  section.hero { min-height: 100svh; }
   .split {
     display: grid; gap: clamp(28px, 5vw, 72px);
     grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
