@@ -671,13 +671,14 @@ afterFirstPaint(function () {
 
   var uniforms = {
     uTime: { value: 0 }, uMix: { value: 1 }, uPx: { value: dpr },
+    uDensity: { value: 1 }, uGlowScale: { value: 1 },
     uCenter: { value: new THREE.Vector2() }, uRadius: { value: 300 }, uOrigin: { value: new THREE.Vector2() }
   };
   var mat = new THREE.ShaderMaterial({
     uniforms: uniforms, transparent: true, depthTest: false, depthWrite: false, blending: THREE.AdditiveBlending,
     vertexShader: [
       "attribute vec2 aHome; attribute vec2 aTarget; attribute vec3 aSeed;",
-      "uniform float uTime, uMix, uPx, uRadius; uniform vec2 uCenter, uOrigin;",
+      "uniform float uTime, uMix, uPx, uRadius, uDensity, uGlowScale; uniform vec2 uCenter, uOrigin;",
       "varying float vA; varying vec3 vC;",
       "void main() {",
       "  float r = aHome.x, ang = aHome.y + uTime * 0.07 / (0.3 + r);",
@@ -691,7 +692,7 @@ afterFirstPaint(function () {
       "  vec2 pos = mix(g, t, m) + vec2(-d.y, d.x) * 0.22 * sin(m * 3.14159) * (aSeed.x - 0.5) * 2.;",
       "  gl_Position = projectionMatrix * modelViewMatrix * vec4(pos, 0., 1.);",
       "  gl_PointSize = uPx * mix(0.9 + aSeed.x * 1.9, 1.9 + aSeed.y * 0.7, m);",
-      "  vA = mix(0.25 + 0.55 * aSeed.y, 0.95, m);",
+      "  vA = mix(0.25 + 0.55 * aSeed.y, 0.8 * sqrt(uDensity), m);",
       "  vec3 star = mix(vec3(0.49, 0.73, 0.89), vec3(0.65, 0.55, 0.98), aSeed.x);",
       "  vC = mix(star, mix(vec3(0.62, 0.84, 1.0), vec3(0.78, 0.7, 1.0), clamp(aTarget.x / 900., 0., 1.)), m);",
       "}"
@@ -714,10 +715,10 @@ afterFirstPaint(function () {
     blending: THREE.AdditiveBlending, premultipliedAlpha: true,
     vertexShader: mat.vertexShader.replace(
       "gl_PointSize = uPx * mix(0.9 + aSeed.x * 1.9, 1.9 + aSeed.y * 0.7, m);",
-      "gl_PointSize = uPx * mix(12. + aSeed.x * 8., 34. + aSeed.y * 12., m);"
+      "gl_PointSize = uPx * mix(12. + aSeed.x * 8., (24. + aSeed.y * 8.) * uGlowScale, m);"
     ).replace(
-      "vA = mix(0.25 + 0.55 * aSeed.y, 0.95, m);",
-      "vA = mix(0.012, 0.045, m * m);"
+      "vA = mix(0.25 + 0.55 * aSeed.y, 0.8 * sqrt(uDensity), m);",
+      "vA = mix(0.001, 0.009 * uDensity / (uGlowScale * uGlowScale), m * m);"
     ),
     fragmentShader: [
       "varying float vA; varying vec3 vC;",
@@ -741,6 +742,11 @@ afterFirstPaint(function () {
   function sampleWord() {
     var rect = word.getBoundingClientRect();
     if (rect.width < 4 || rect.height < 4) return;
+    // The same number of stars occupies far less area on a phone. Normalize their
+    // gathered brightness by glyph area so mobile does not blow out to solid white.
+    var wordScale = Math.min(1, rect.height / 176);
+    uniforms.uDensity.value = wordScale * wordScale;
+    uniforms.uGlowScale.value = Math.max(0.4, wordScale);
     // Pad the canvas so glyphs that overhang the line box are never clipped.
     var pad = Math.ceil(rect.height * 0.6);
     var w = Math.ceil(rect.width) + pad * 2, h = Math.ceil(rect.height) + pad * 2;
@@ -750,7 +756,8 @@ afterFirstPaint(function () {
     ctx.font = cs.fontWeight + " " + cs.fontSize + " " + cs.fontFamily;
     ctx.textBaseline = "alphabetic"; ctx.fillStyle = "#fff";
     // A character's range rect spans the font's ascent and descent, so its baseline sits one ascent below its top.
-    var ascent = ctx.measureText("omnix").fontBoundingBoxAscent;
+    var metrics = ctx.measureText("omnix");
+    var ascent = metrics.fontBoundingBoxAscent || metrics.actualBoundingBoxAscent || parseFloat(cs.fontSize) * 0.8;
     var walker = document.createTreeWalker(word, NodeFilter.SHOW_TEXT), node, range = document.createRange();
     while ((node = walker.nextNode())) {
       for (var k = 0; k < node.length; k++) {
@@ -781,6 +788,8 @@ afterFirstPaint(function () {
 
   function resize() {
     var W = window.innerWidth, H = window.innerHeight;
+    dpr = Math.min(window.devicePixelRatio || 1, 2);
+    uniforms.uPx.value = dpr;
     renderer.setPixelRatio(dpr);
     renderer.setSize(W, H, false);
     camera.right = W; camera.bottom = H; camera.updateProjectionMatrix();
@@ -835,7 +844,16 @@ afterFirstPaint(function () {
   function pause() { cancelAnimationFrame(raf); raf = 0; }
   document.addEventListener("visibilitychange", function () { document.hidden ? pause() : play(); });
   window.addEventListener("resize", resize);
-  if (document.fonts && document.fonts.addEventListener) document.fonts.addEventListener("loadingdone", whenFontReady);
+  // Mobile browser chrome and orientation changes can resize the visible viewport.
+  if (window.visualViewport) window.visualViewport.addEventListener("resize", resize);
+  if (document.fonts && document.fonts.addEventListener) document.fonts.addEventListener("loadingdone", function () {
+    // A slow font load may finish after the fallback was shaped, especially on mobile.
+    if (shaped) sampleWord(); else whenFontReady();
+  });
+  if (typeof ResizeObserver !== "undefined") {
+    var wordObserver = new ResizeObserver(function () { if (shaped) sampleWord(); });
+    wordObserver.observe(word);
+  }
   resize(); play(); whenFontReady();
   setTimeout(shape, 4000); // if the web font never arrives, shape the fallback rather than never forming
 });
