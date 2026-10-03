@@ -10,6 +10,8 @@ Cache resolution is capped at 320k desktop / 160k mobile pixels and decreases un
 
 Reduced motion and hidden pages pause worker rendering. Unsupported OffscreenCanvas, worker startup failures, and unavailable worker GPU rendering retain the static poster. GPU device/context loss also shows the poster while the worker rebuilds its rendering state. Resize/font changes are coalesced on the main thread; visibility, motion preferences and page-cache transitions are forwarded as lifecycle messages. The worker uses its own RAF, with a timer fallback where worker RAF is unavailable. Frame deadlines retain their remainder so a 30fps target does not drift toward 20fps on a 60Hz display.
 
+Content sections use paint/layout containment and play their fade/slide entrances once. Panels do not blur the continuously animated background, and text does not animate paint masks or blur filters; those effects caused compositor and paint stalls during mobile scrolling. Scroll dimming remains independent of shader speed.
+
 `coronal-poster.png` is a static render at shader time 6 seconds. It supplies the initial image and the fallback for reduced motion, unavailable GPU rendering, or device/context loss. To refresh it, render the shader at that time with a centered O in a square viewport and export the O against a transparent background. The logo and lettering resize with the layout.
 
 Link previews use Open Graph and Twitter Card metadata in the static HTML head. `social-preview.png` is the public 1200 × 630 preview image; `social-preview.svg` is its editable source. After editing the SVG, render it to an opaque PNG at the same dimensions and update both files.
