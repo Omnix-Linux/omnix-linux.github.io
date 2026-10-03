@@ -803,22 +803,14 @@ afterFirstPaint(function () {
     if (shaped) sampleWord();
   }
 
-  // Shape the word only once its web font is loaded and laid out; until then the stars stay in the galaxy.
-  var shaped = false, cycleStart = 0;
-  function shape() {
-    if (shaped) return;
-    shaped = true;
-    sampleWord();
-    cycleStart = performance.now() - 8000; // enter the cycle at "gather", so the stars stream in to form the word
-  }
-  function whenFontReady() {
-    if (shaped) return;
-    if (!document.fonts || !document.fonts.load) { shape(); return; }
-    document.fonts.load('800 100px "Lexend"').then(function (faces) {
-      // An empty result means the font stylesheet hasn't arrived yet; a later loadingdone retries.
-      if (faces && faces.length) requestAnimationFrame(function () { requestAnimationFrame(shape); });
-    });
-  }
+  // Form the logo during the first half-second after load, even if the web font
+  // is slow. Later font/layout events resample the glyphs without delaying the entrance.
+  var shaped = false;
+  var navigation = performance.getEntriesByType("navigation")[0];
+  var loadedAt = document.readyState === "complete"
+    ? (navigation && navigation.loadEventStart || performance.now()) : null;
+  window.addEventListener("load", function () { loadedAt = performance.now(); }, { once: true });
+  var MATERIALIZE_MS = 500;
 
   // One cycle: formed, scatter, drift with the galaxy, gather, formed again.
   var CYCLE = 12.0;
@@ -836,7 +828,10 @@ afterFirstPaint(function () {
     var t = (now - start) / 1000;
     var rect = word.getBoundingClientRect();
     var heroVisible = rect.bottom > -40 && rect.top < window.innerHeight;
-    var mix = shaped && heroVisible ? mixAt((now - cycleStart) / 1000) : 0;
+    var elapsed = loadedAt === null ? 0 : Math.max(0, now - loadedAt);
+    var entrance = Math.min(1, elapsed / MATERIALIZE_MS);
+    var mix = shaped && heroVisible
+      ? (elapsed < MATERIALIZE_MS ? entrance : mixAt((elapsed - MATERIALIZE_MS) / 1000)) : 0;
     uniforms.uTime.value = t;
     uniforms.uMix.value = mix;
     uniforms.uOrigin.value.set(rect.left, rect.top);
@@ -854,14 +849,16 @@ afterFirstPaint(function () {
   if (window.visualViewport) window.visualViewport.addEventListener("resize", resize);
   if (document.fonts && document.fonts.addEventListener) document.fonts.addEventListener("loadingdone", function () {
     // A slow font load may finish after the fallback was shaped, especially on mobile.
-    if (shaped) sampleWord(); else whenFontReady();
+    if (shaped) sampleWord();
   });
   if (typeof ResizeObserver !== "undefined") {
     var wordObserver = new ResizeObserver(function () { if (shaped) sampleWord(); });
     wordObserver.observe(word);
   }
-  resize(); play(); whenFontReady();
-  setTimeout(shape, 4000); // if the web font never arrives, shape the fallback rather than never forming
+  resize();
+  shaped = true; sampleWord();
+  if (document.fonts) document.fonts.ready.then(sampleWord);
+  play();
 });
 </script>
 </body>
