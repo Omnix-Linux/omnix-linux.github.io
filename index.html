@@ -174,6 +174,9 @@
   .flow { display: grid; gap: 10px; margin-top: 26px; }
   .flow div { display: grid; grid-template-columns: 9ch minmax(0, 1fr); gap: 14px; font-family: var(--font-mono); font-size: var(--step--1); padding: 10px 14px; border: 1px solid var(--line); border-radius: 10px; background: var(--panel); backdrop-filter: blur(10px); }
   .flow b { color: var(--ice); font-weight: 700; }
+  .flow.ported { margin-top: 0; }
+  .flow.ported div { grid-template-columns: 9ch minmax(0, 1fr); line-height: 1.5; }
+  .flow code { color: var(--ink); }
   .flow span { color: var(--muted); }
 
   /* Install steps: a real sequence, so it is numbered */
@@ -213,6 +216,7 @@
 <nav class="rail" aria-label="Sections">
   <a href="#top" aria-label="Omnix"></a>
   <a href="#problem" aria-label="The problem"></a>
+  <a href="#ported" aria-label="What we did"></a>
   <a href="#runs" aria-label="Prebuilt software just runs"></a>
   <a href="#cache" aria-label="Nothing compiles"></a>
   <a href="#flavors" aria-label="Pick your desktop"></a>
@@ -239,24 +243,49 @@
     <div class="split">
       <div>
         <div class="eyebrow">The problem</div>
-        <h2>NixOS can't run most software built for <em>normal Linux</em>.</h2>
-        <p class="lede">Vendor tools, pip wheels, npm packages with native binaries, and AppImages all expect their
-          loader at <code>/lib64</code> and their libraries in <code>/usr/lib</code>. NixOS keeps every package in its own
-          hash-named directory in <code>/nix/store</code> instead, so those paths don't exist and the program stops before
-          its first line runs.</p>
-        <p class="lede">It's a deliberate trade-off, and it's what makes NixOS reproducible. But whole distributions like
-          <strong>Omarchy</strong> can't run on it today.</p>
+        <h2>Omarchy can't run on <em>NixOS</em>.</h2>
+        <p class="lede"><strong>Omarchy</strong> is DHH's opinionated Hyprland desktop, and it's built for Arch. It installs
+          with a script, its 444 commands are bash scripts that start with <code>#!/bin/bash</code>, 36 of them call
+          <code>pacman</code> or <code>yay</code>, and the apps it ships are prebuilt binaries that expect their libraries in
+          <code>/usr/lib</code>.</p>
+        <p class="lede">NixOS has none of that. It keeps every package in its own hash-named directory in
+          <code>/nix/store</code>, so <code>/bin/bash</code> and <code>/usr/lib</code> don't exist, and there's no pacman.
+          Omarchy stops at its first command. Until now you had to choose between Omarchy's desktop and NixOS's
+          reproducible, rollback-safe system.</p>
       </div>
-      <div class="term" role="img" aria-label="Terminal: a downloaded binary refused on stock NixOS">
-        <div class="term-bar"><i></i><i></i><i></i><b>stock NixOS</b></div>
-<pre><span class="p">$</span> <span class="c">./some-vendor-tool</span>
-<span class="bad">Could not start dynamically linked executable: ./some-vendor-tool
-NixOS cannot run dynamically linked executables intended for generic
-linux environments out of the box.</span>
+      <div class="term" role="img" aria-label="Terminal: Omarchy's commands failing on stock NixOS">
+        <div class="term-bar"><i></i><i></i><i></i><b>Omarchy on stock NixOS</b></div>
+<pre><span class="p">$</span> <span class="c">omarchy-theme-set tokyo-night</span>
+<span class="bad">bash: omarchy-theme-set: /bin/bash: bad interpreter:
+No such file or directory</span>
 
-<span class="p">$</span> <span class="c">ls /usr/lib /lib</span>
-ls: cannot access '/usr/lib': No such file or directory
-ls: cannot access '/lib': No such file or directory</pre>
+<span class="p">$</span> <span class="c">sudo pacman -Syu</span>
+<span class="bad">sudo: pacman: command not found</span>
+
+<span class="p">$</span> <span class="c">ls /usr/lib</span>
+ls: cannot access '/usr/lib': No such file or directory</pre>
+      </div>
+    </div>
+  </section>
+
+  <section id="ported">
+    <div class="split">
+      <div>
+        <div class="eyebrow">What we did</div>
+        <h2>We ported Omarchy to NixOS, <em>from its own source</em>.</h2>
+        <p class="lede">First we built <strong>Omnix</strong>, a NixOS base that adds the standard Linux layout:
+          <code>/bin/bash</code>, <code>/usr/lib</code>, and a loader for prebuilt binaries. Then we built
+          <strong>Autarchy</strong>, a flavor that installs Omarchy itself on top, pinned to an Omarchy release.</p>
+        <p class="lede">Hyprland runs Omarchy's own config unmodified. Omarchy's keybindings, themes, and scripts work
+          as written, and the whole desktop rolls back with the rest of the system.</p>
+      </div>
+      <div class="flow ported">
+        <div><b>source</b><span>Omarchy's own repo, pinned: <code>stable</code> is v4.0.4, <code>latest</code> tracks its development branch</span></div>
+        <div><b>scripts</b><span>Omarchy's commands, themes, and defaults installed read-only at <code>$OMARCHY_PATH</code>, where its config looks for them</span></div>
+        <div><b>config</b><span>Each user's <code>~/.config</code> seeded once from Omarchy's templates, the way its installer does it</span></div>
+        <div><b>packages</b><span>131 of Omarchy's 147 base packages mapped to nixpkgs, all downloaded prebuilt</span></div>
+        <div><b>desktop</b><span>Hyprland running Omarchy's Lua config unmodified, tested in a VM on every change</span></div>
+        <div><b>updates</b><span>pacman replaced by <code>nix flake update</code> and a rebuild, with rollback</span></div>
       </div>
     </div>
   </section>
