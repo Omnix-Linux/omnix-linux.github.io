@@ -4,20 +4,23 @@
  */
 afterFirstPaint(function () {
   var canvas = document.getElementById("coronal");
-  var orbit = canvas && canvas.parentElement;
+  var orbit = document.querySelector(".logo-orbit");
+  var root = document.documentElement;
   var reduce = window.matchMedia("(prefers-reduced-motion: reduce)");
   if (!orbit || typeof THREE === "undefined" || reduce.matches) return;
   var renderer;
   try { renderer = new THREE.WebGLRenderer({ canvas: canvas, alpha: true, antialias: false }); }
   catch (e) { return; } // Keep the pre-rendered O when WebGL is unavailable.
-  var uniforms = { uResolution: { value: new THREE.Vector2() }, uTime: { value: 6 } };
+  var uniforms = { uCenter: { value: new THREE.Vector2() }, uDiameter: { value: 600 }, uTime: { value: 6 } };
   var material = new THREE.ShaderMaterial({
     uniforms: uniforms, depthTest: false, depthWrite: false,
     vertexShader: "void main() { gl_Position = vec4(position.xy, 0., 1.); }",
     fragmentShader: [
-      "uniform vec2 uResolution; uniform float uTime;",
+      "uniform vec2 uCenter; uniform float uDiameter, uTime;",
       "void main() {",
-      "  vec3 ray = normalize(vec3(2. * gl_FragCoord.xy - uResolution, -uResolution.y));",
+      "  vec2 uv = 2. * (gl_FragCoord.xy - uCenter) / uDiameter;",
+      "  if (length(uv) > 1.5) { gl_FragColor = vec4(0., 0., 0., 1.); return; }",
+      "  vec3 ray = normalize(vec3(uv, -1.));",
       "  vec3 glow = vec3(0.);",
       "  float z = 2.;",
       "  for (int i = 0; i < 40; i++) {",
@@ -32,24 +35,29 @@ afterFirstPaint(function () {
       "  }",
       // Equivalent to tanh(glow / 30), with a bounded exponent for mobile GPUs.
       "  vec3 color = 1. - 2. / (exp(2. * min(glow / 30., vec3(10.))) + 1.);",
-      "  gl_FragColor = vec4(color, 1.);",
+      "  gl_FragColor = vec4(color * (1. - smoothstep(1.1, 1.5, length(uv))), 1.);",
       "}"
     ].join("\n")
   });
   var scene = new THREE.Scene(), camera = new THREE.Camera();
   var quad = new THREE.Mesh(new THREE.PlaneGeometry(2, 2), material);
   quad.frustumCulled = false; scene.add(quad);
-  // Bound the expensive 40 × 6 raymarch to the O, never the full viewport.
-  var scale = Math.min(window.devicePixelRatio || 1, 1.5) * 0.65;
-  var visible = false, raf = 0, last = 0, slow = 0;
+  // Render a full-page backdrop, skipping pixels beyond the large O.
+  var scale = Math.min(window.devicePixelRatio || 1, 1.5) * 0.45;
+  var visible = true, raf = 0, last = 0, slow = 0;
   function draw() {
     renderer.render(scene, camera);
-    orbit.classList.add("shader-ready");
+    root.classList.add("shader-ready");
   }
   function resize() {
-    var size = Math.max(1, orbit.getBoundingClientRect().width);
-    renderer.setPixelRatio(scale); renderer.setSize(size, size, false);
-    renderer.getDrawingBufferSize(uniforms.uResolution.value);
+    var rect = orbit.getBoundingClientRect();
+    var W = window.innerWidth, H = window.innerHeight;
+    renderer.setPixelRatio(scale); renderer.setSize(W, H, false);
+    var buffer = renderer.getDrawingBufferSize(new THREE.Vector2());
+    // Keep the O anchored to its initial hero position as the page scrolls.
+    var centerY = rect.top + window.scrollY + rect.height / 2;
+    uniforms.uCenter.value.set((rect.left + rect.width / 2) * buffer.x / W, (H - centerY) * buffer.y / H);
+    uniforms.uDiameter.value = rect.width * buffer.x / W;
     draw();
   }
   function frame(now) {
@@ -66,16 +74,19 @@ afterFirstPaint(function () {
   }
   function play() { if (!raf && visible && !document.hidden && !reduce.matches) { last = 0; raf = requestAnimationFrame(frame); } }
   function pause() { cancelAnimationFrame(raf); raf = 0; }
-  canvas.addEventListener("webglcontextlost", function (event) { event.preventDefault(); pause(); orbit.classList.remove("shader-ready"); });
+  canvas.addEventListener("webglcontextlost", function (event) { event.preventDefault(); pause(); root.classList.remove("shader-ready"); });
   canvas.addEventListener("webglcontextrestored", function () { resize(); play(); });
   document.addEventListener("visibilitychange", function () { document.hidden ? pause() : play(); });
   reduce.addEventListener("change", function () {
-    if (reduce.matches) { pause(); orbit.classList.remove("shader-ready"); }
+    if (reduce.matches) { pause(); root.classList.remove("shader-ready"); }
     else { draw(); play(); }
   });
   if ("IntersectionObserver" in window) {
-    new IntersectionObserver(function (entries) { visible = entries[0].isIntersecting; visible ? play() : pause(); }).observe(orbit);
-  } else { visible = true; }
+    new IntersectionObserver(function (entries) {
+      root.classList.toggle("hero-past", entries[0].intersectionRatio < 0.35);
+    }, { threshold: [0, 0.35] }).observe(document.getElementById("top"));
+  }
+  if (document.fonts) document.fonts.ready.then(resize);
   if (typeof ResizeObserver !== "undefined") new ResizeObserver(resize).observe(orbit);
   window.addEventListener("resize", resize);
   resize(); play();

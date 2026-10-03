@@ -108,7 +108,7 @@
 <circle cx="736" cy="361" r="1.16" fill="#7ebae4" opacity="0.11"/>
 <circle cx="675" cy="559" r="0.81" fill="#7ebae4" opacity="0.19"/>
 <image href="coronal-poster.png" x="60" y="40" width="520" height="520"/>
-<text x="545" y="292" font-family="Arial,Helvetica,sans-serif" font-weight="800" font-size="90" letter-spacing="-4" fill="url(#card-text)">mnix</text>
+<text x="545" y="292" font-family="Arial,Helvetica,sans-serif" font-weight="800" font-size="90" letter-spacing="-4" fill="#fff">mnix</text>
 <text x="548" y="351" font-family="Arial,Helvetica,sans-serif" font-size="29" fill="#e8eef8">NixOS reproducibility,</text>
 <text x="548" y="392" font-family="Arial,Helvetica,sans-serif" font-size="29" fill="#e8eef8">with an ordinary <tspan fill="#7ebae4">/usr/bin.</tspan></text>
 <text x="548" y="443" font-family="Arial,Helvetica,sans-serif" font-size="18" fill="#9fb3d1">Autarchy / Hyprland · Atrium / KDE Plasma</text>
