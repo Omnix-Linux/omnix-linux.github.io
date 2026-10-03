@@ -348,11 +348,11 @@ ls: cannot access '/usr/lib': No such file or directory</pre>
       <div>
         <div class="eyebrow">What we're doing</div>
         <h2>We're porting Omarchy to NixOS, <em>from its own source</em>.</h2>
-        <p class="lede">First we built <strong>Omnix</strong>, a NixOS base that adds the standard Linux layout:
-          <code>/bin/bash</code>, <code>/usr/lib</code>, and a loader for prebuilt binaries. Then we built
-          <strong>Autarchy</strong>, a flavor that installs Omarchy itself on top, pinned to an Omarchy release.</p>
-        <p class="lede">Hyprland runs Omarchy's own config unmodified. Omarchy's keybindings, themes, and scripts work
-          as written, and the whole desktop rolls back with the rest of the system.</p>
+        <p class="lede">We're building <strong>Omnix</strong>, a NixOS base designed to provide the standard Linux layout:
+          <code>/bin/bash</code>, <code>/usr/lib</code>, and a loader for prebuilt binaries. On top of that, we're developing
+          <strong>Autarchy</strong>, a flavor designed to install Omarchy itself, pinned to an Omarchy release.</p>
+        <p class="lede">Our goal is to run Omarchy's own Hyprland config unmodified, with its keybindings, themes, and scripts
+          working as written, and the whole desktop rolling back with the rest of the system.</p>
       </div>
       <div class="flow ported">
         <div><b>source</b><span>Omarchy's own repo, pinned: <code>stable</code> is v4.0.4, <code>latest</code> tracks its development branch</span></div>
