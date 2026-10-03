@@ -213,6 +213,21 @@
   .term .ok { color: var(--ok); }
   .term .bad { color: #fca5a5; }
   .term .hl { color: var(--ice); }
+  .fs-comparison { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .fs-column { min-width: 0; padding: 12px; }
+  .fs-column + .fs-column { border-left: 1px solid var(--line); }
+  .fs-column h3 { margin: 0 0 8px; color: var(--ink); font: inherit; font-weight: 700; }
+  .fs-column p { margin: 0 0 8px; color: var(--muted); overflow-wrap: anywhere; }
+  .fs-paths { margin: 0; padding: 0; list-style: none; }
+  .fs-paths li { display: grid; grid-template-columns: 1ch minmax(0, 1fr); gap: 5px; padding-block: 5px; color: var(--muted); }
+  .fs-paths li::before { content: "*"; color: var(--violet); }
+  .fs-paths code { display: block; color: var(--ice); overflow-wrap: anywhere; }
+  .fs-paths .arrow { color: var(--violet); }
+  .fs-join { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); text-align: center; color: var(--violet); border-top: 1px solid var(--line); padding-top: 8px; }
+  .fs-result { margin: 0; padding: 0 12px 14px; text-align: center; color: var(--muted); }
+  .fs-result strong { display: block; color: var(--ink); font-size: 1.15em; }
+  .fs-result code { color: var(--ice); }
+
 
   .menu { padding: 16px 0; }
   .menu .q { padding: 0 20px 10px; color: var(--ink); }
@@ -348,9 +363,35 @@ ls: cannot access '/usr/lib': No such file or directory</pre>
       <div>
         <div class="eyebrow">What we're doing</div>
         <h2>We're porting Omarchy to NixOS, <em>from its own source</em>.</h2>
-        <p class="lede">We're building <strong>Omnix</strong>, a NixOS base designed to provide the standard Linux layout:
-          <code>/bin/bash</code>, <code>/usr/lib</code>, and a loader for prebuilt binaries. On top of that, we're developing
-          <strong>Autarchy</strong>, a flavor designed to install Omarchy itself, pinned to an Omarchy release.</p>
+        <p class="lede">We're building <strong>Omnix</strong>, a NixOS base designed to provide the standard Linux paths that scripts and prebuilt apps expect.</p>
+        <div class="term">
+          <div class="term-bar"><i></i><i></i><i></i><b>Two layouts. One system.</b></div>
+          <div class="fs-comparison">
+            <div class="fs-column">
+              <h3>FHS-compliant layout</h3>
+              <p>Standard Linux paths</p>
+              <ul class="fs-paths" aria-label="FHS paths and their purpose">
+                <li><span><code>/bin/bash</code><span class="arrow">-&gt;</span> runs bash scripts</span></li>
+                <li><span><code>/usr/bin/</code><span class="arrow">-&gt;</span> finds tools and interpreters</span></li>
+                <li><span><code>/lib/, /usr/lib/</code><span class="arrow">-&gt;</span> finds shared libraries</span></li>
+                <li><span><code>/lib64/</code><span class="arrow">-&gt;</span> finds the x86-64 ELF loader</span></li>
+              </ul>
+            </div>
+            <div class="fs-column">
+              <h3>NixOS layout</h3>
+              <p>Packages in <code>/nix/store/</code></p>
+              <ul class="fs-paths" aria-label="Example package paths within the Nix store">
+                <li><span><code>&lt;hash&gt;-bash/bin/bash</code><span class="arrow">-&gt;</span> shell in its own package</span></li>
+                <li><span><code>&lt;hash&gt;-app/bin/</code><span class="arrow">-&gt;</span> programs in their own packages</span></li>
+                <li><span><code>&lt;hash&gt;-library/lib/</code><span class="arrow">-&gt;</span> libraries kept separately</span></li>
+                <li><span><code>&lt;hash&gt;-glibc/lib/</code><span class="arrow">-&gt;</span> package-managed ELF loader</span></li>
+              </ul>
+            </div>
+          </div>
+          <div class="fs-join" aria-hidden="true"><span>\</span><span>/</span></div>
+          <p class="fs-result"><strong>+--&gt; Omnix &lt;--+</strong>We're combining FHS paths with packages managed in <code>/nix/store</code>.</p>
+        </div>
+        <p class="lede">On top of that, we're developing <strong>Autarchy</strong>, a flavor designed to install Omarchy itself, pinned to an Omarchy release.</p>
         <p class="lede">Our goal is to run Omarchy's own Hyprland config unmodified, with its keybindings, themes, and scripts
           working as written, and the whole desktop rolling back with the rest of the system.</p>
       </div>
