@@ -752,7 +752,24 @@ afterFirstPaint(function () {
     renderer.setSize(W, H, false);
     camera.right = W; camera.bottom = H; camera.updateProjectionMatrix();
     uniforms.uRadius.value = Math.min(W, H * 1.6) * 0.46;
+    if (shaped) sampleWord();
+  }
+
+  // Shape the word only once its web font is loaded and laid out; until then the stars stay in the galaxy.
+  var shaped = false, cycleStart = 0;
+  function shape() {
+    if (shaped) return;
+    shaped = true;
     sampleWord();
+    cycleStart = performance.now() - 8000; // enter the cycle at "gather", so the stars stream in to form the word
+  }
+  function whenFontReady() {
+    if (shaped) return;
+    if (!document.fonts || !document.fonts.load) { shape(); return; }
+    document.fonts.load('800 100px "Lexend"').then(function (faces) {
+      // An empty result means the font stylesheet hasn't arrived yet; a later loadingdone retries.
+      if (faces && faces.length) requestAnimationFrame(function () { requestAnimationFrame(shape); });
+    });
   }
 
   // One cycle: formed, scatter, drift with the galaxy, gather, formed again.
@@ -771,7 +788,7 @@ afterFirstPaint(function () {
     var t = (now - start) / 1000;
     var rect = word.getBoundingClientRect();
     var heroVisible = rect.bottom > -40 && rect.top < window.innerHeight;
-    var mix = heroVisible ? mixAt(t) : 0;
+    var mix = shaped && heroVisible ? mixAt((now - cycleStart) / 1000) : 0;
     uniforms.uTime.value = t;
     uniforms.uMix.value = mix;
     uniforms.uOrigin.value.set(rect.left, rect.top);
@@ -785,8 +802,9 @@ afterFirstPaint(function () {
   function pause() { cancelAnimationFrame(raf); raf = 0; }
   document.addEventListener("visibilitychange", function () { document.hidden ? pause() : play(); });
   window.addEventListener("resize", resize);
-  if (document.fonts && document.fonts.addEventListener) document.fonts.addEventListener("loadingdone", sampleWord);
-  resize(); play();
+  if (document.fonts && document.fonts.addEventListener) document.fonts.addEventListener("loadingdone", whenFontReady);
+  resize(); play(); whenFontReady();
+  setTimeout(shape, 4000); // if the web font never arrives, shape the fallback rather than never forming
 });
 </script>
 </body>
