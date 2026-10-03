@@ -8,36 +8,40 @@ afterFirstPaint(async function () {
   var root = document.documentElement;
   var reduce = window.matchMedia("(prefers-reduced-motion: reduce)");
   if (!orbit || !canvas) return;
-  var profile;
+  var registry, profile;
   try {
     var response = await fetch(canvas.dataset.shaderProfile);
     if (!response.ok) return;
-    profile = await response.json();
-    if (profile.version !== 1 || profile.geometry.letter.character !== "O") return;
+    registry = await response.json();
+    if (registry.version !== 2) return;
+    var shaderEnum = canvas.dataset.shader || registry.activeShader;
+    profile = registry.shaders[shaderEnum];
+    if (!profile || profile.geometry.ring.character !== "O") return;
   } catch (e) { return; } // CSS and the poster supply the first-paint/offline fallback.
-  var geometry = profile.geometry, rendering = profile.rendering;
+  var geometry = profile.geometry, rendering = registry.rendering;
   var wordmark = document.querySelector(".wordmark"), suffix = document.querySelector(".wordmark-text");
   function placeLogo() {
     var W = document.documentElement.clientWidth, H = window.innerHeight;
-    var mode = W <= profile.layout.mobile.maxViewportWidth ? profile.layout.mobile : profile.layout.desktop;
+    var mode = W <= registry.layout.mobile.maxViewportWidth ? registry.layout.mobile : registry.layout.desktop;
     var box = wordmark.getBoundingClientRect();
     var size = Math.min(W * mode.sizeViewportWidth, H * mode.sizeViewportHeight);
     var centerX = W * mode.centerXViewport;
     var centerY = box.top + window.scrollY + box.height / 2;
-    var left = centerX - geometry.letter.center.x * size;
-    var top = centerY - geometry.letter.center.y * size;
+    var left = centerX - geometry.ring.center.x * size;
+    var top = centerY - geometry.ring.center.y * size;
     orbit.style.transform = "none";
     orbit.style.left = (left - box.left) + "px";
     orbit.style.top = (top - box.top - window.scrollY) + "px";
     orbit.style.width = orbit.style.height = size + "px";
-    var letterHeight = (geometry.letter.bounds.bottom - geometry.letter.bounds.top) * size;
-    var suffixLeft = left + geometry.letter.bounds.right * size + mode.suffixGapToArtworkSize * size;
+    var anchor = ShaderLayout.ringAnchor(geometry.ring, { left: left, top: top, size: size }, mode.suffixGapToArtworkSize);
+    var letterHeight = anchor.radius * 2;
+    var suffixLeft = anchor.x;
     suffix.style.left = (suffixLeft - box.left) + "px";
-    suffix.style.top = (box.height / 2) + "px";
-    suffix.style.fontSize = Math.max(profile.layout.suffix.minFontSize,
-      Math.min(profile.layout.suffix.maxFontSize, letterHeight * mode.suffixScaleToLetterHeight)) + "px";
-    suffix.style.color = profile.layout.suffix.color;
-    suffix.textContent = profile.layout.suffix.text;
+    suffix.style.top = (anchor.y - box.top - window.scrollY) + "px";
+    suffix.style.fontSize = Math.max(registry.layout.suffix.minFontSize,
+      Math.min(registry.layout.suffix.maxFontSize, letterHeight * mode.suffixScaleToLetterHeight)) + "px";
+    suffix.style.color = registry.layout.suffix.color;
+    suffix.textContent = registry.layout.suffix.text;
     // Keep future profiles/longer suffixes inside a narrow viewport too.
     var suffixWidth = suffix.getBoundingClientRect().width;
     var available = Math.max(1, W - suffixLeft - 16);
@@ -46,7 +50,7 @@ afterFirstPaint(async function () {
   }
   document.querySelector(".logo-orbit img").src = profile.poster;
   placeLogo();
-  if (typeof THREE === "undefined" || reduce.matches) {
+  if (profile.renderer !== "coronal" || typeof THREE === "undefined" || reduce.matches) {
     window.addEventListener("resize", placeLogo);
     if (document.fonts) document.fonts.ready.then(placeLogo);
     return;
@@ -71,7 +75,7 @@ afterFirstPaint(async function () {
       "void main() {",
       "  vec2 pixel = gl_FragCoord.xy / uBufferSize * uSurfaceSize;",
       "  vec2 uv = 2. * (pixel - uCenter) / uDiameter;",
-      "  if (length(uv) > 1.5) { gl_FragColor = vec4(0., 0., 0., 1.); return; }",
+      "  if (length(uv) > 1.5) { gl_FragColor = vec4(0.); return; }",
       "  vec3 ray = normalize(vec3(uv, -1.));",
       "  vec3 glow = vec3(0.);",
       "  float z = 2.;",
@@ -87,7 +91,8 @@ afterFirstPaint(async function () {
       "  }",
       // Equivalent to tanh(glow / 30), with a bounded exponent for mobile GPUs.
       "  vec3 color = 1. - 2. / (exp(2. * min(glow / 30., vec3(10.))) + 1.);",
-      "  gl_FragColor = vec4(color * (1. - smoothstep(1.1, 1.5, length(uv))), 1.);",
+      "  float alpha = 1. - smoothstep(1.1, 1.5, length(uv));",
+      "  gl_FragColor = vec4(color * alpha, alpha);",
       "}"
     ].join("\n")
   });
@@ -116,7 +121,7 @@ afterFirstPaint(async function () {
     canvas.style.inset = "auto";
     canvas.style.left = left + "px"; canvas.style.top = top + "px";
     canvas.style.width = width + "px"; canvas.style.height = height + "px";
-    var budget = (W <= profile.layout.mobile.maxViewportWidth ? rendering.mobileMaxPixels : rendering.desktopMaxPixels)
+    var budget = (W <= registry.layout.mobile.maxViewportWidth ? rendering.mobileMaxPixels : rendering.desktopMaxPixels)
       * (heroPast ? rendering.backgroundPixelBudgetScale : 1);
     var ratio = Math.min(window.devicePixelRatio || 1, rendering.maxPixelRatio, Math.sqrt(budget / (width * height))) * quality;
     renderer.setPixelRatio(ratio); renderer.setSize(width, height, false);
@@ -133,7 +138,8 @@ afterFirstPaint(async function () {
   }
   function frame(now) {
     raf = 0;
-    if (document.hidden || reduce.matches || contextLost) return;
+    if (reduce.matches) { root.classList.remove("shader-ready"); return; }
+    if (document.hidden || contextLost) return;
     var interval = 1000 / (heroPast ? rendering.backgroundFps : rendering.heroFps);
     if (!last || now - last >= interval) {
       if (last && now - last > interval * 1.8) slow++; else slow = Math.max(0, slow - 1);
