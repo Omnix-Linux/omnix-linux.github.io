@@ -265,7 +265,7 @@
   <a href="#problem" aria-label="The problem"></a>
   <a href="#ported" aria-label="What we're doing"></a>
   <a href="#runs" aria-label="Prebuilt software just runs"></a>
-  <a href="#cache" aria-label="Nothing compiles"></a>
+  <a href="#cache" aria-label="Prebuilt packages and local builds"></a>
   <a href="#flavors" aria-label="Pick your desktop"></a>
   <a href="#rollback" aria-label="Every change rolls back"></a>
   <a href="#install" aria-label="Install"></a>
@@ -369,21 +369,21 @@ ls: cannot access '/usr/lib': No such file or directory</pre>
     <div class="split">
       <div>
         <div class="eyebrow"><span class="n">2 of 4</span> Why Omnix</div>
-        <h2>Nothing compiles. <em>Everything downloads.</em></h2>
+        <h2>Prebuilt when available. <em>Compiled when needed.</em></h2>
         <p class="lede">The rule is <strong>add, never relocate</strong>. Omnix never patches or moves a nixpkgs package,
-          so every store path still matches the official binary cache at <code>cache.nixos.org</code>. Installs and
-          upgrades are downloads, not builds.</p>
-        <p class="lede">It needs no infrastructure of its own either: the installer ISO lives on GitHub Releases, and
-          everything else comes straight from the NixOS cache.</p>
+          so Omnix can use the same prebuilt packages as NixOS from <code>cache.nixos.org</code>. Installs and
+          upgrades download those packages when available and compile when necessary.</p>
+        <p class="lede">The installer ISO lives on GitHub Releases. Omnix uses the NixOS binary cache for available prebuilt
+          packages and builds software when a suitable cached package is unavailable.</p>
       </div>
       <div>
         <div class="stat">
-          <div class="big">0<span>.</span></div>
-          <div class="cap">packages built on your machine</div>
+          <div class="big">Nix<span>.</span></div>
+          <div class="cap">prebuilt packages, with local builds when needed</div>
         </div>
         <div class="flow">
           <div><b>nixpkgs</b><span>nixos-unstable, unmodified</span></div>
-          <div><b>cache</b><span>cache.nixos.org serves every store path</span></div>
+          <div><b>cache</b><span>cache.nixos.org supplies available prebuilt packages</span></div>
           <div><b>omnix</b><span>symlinks, text files and a library cache on top</span></div>
         </div>
       </div>
@@ -449,7 +449,7 @@ ls: cannot access '/usr/lib': No such file or directory</pre>
         <li><span class="num">Step 2</span><h3>Pick a filesystem</h3><p>Choose the disk, then a filesystem.</p><div class="chips"><span>ext4</span><span>btrfs</span><span>xfs</span></div></li>
         <li><span class="num">Step 3</span><h3>Encrypt?</h3><p>Turn on LUKS full-disk encryption. Recommended for laptops.</p><div class="chips"><span>yes</span><span>no</span></div></li>
         <li><span class="num">Step 4</span><h3>Choose a flavor</h3><p>Then set your user, password, hostname, and timezone.</p><div class="chips"><span>Autarchy</span><span>Atrium</span><span>Minimal</span></div></li>
-        <li><span class="num">Step 5</span><h3>Sync from the cache</h3><p>Everything downloads prebuilt from cache.nixos.org. NVIDIA GPUs get their driver. Reboot.</p></li>
+        <li><span class="num">Step 5</span><h3>Sync from the cache</h3><p>Available prebuilt packages download from cache.nixos.org; software compiles when necessary. NVIDIA GPUs get their driver. Reboot.</p></li>
       </ol>
     </div>
   </section>
