@@ -18,12 +18,12 @@
 <meta property="og:image:type" content="image/png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
-<meta property="og:image:alt" content="Omnix logo with the tagline NixOS reproducibility, with an ordinary /usr/bin, on a dark starfield.">
+<meta property="og:image:alt" content="A large cyan-violet Coronal ring forming the O beside smaller mnix lettering, with the tagline NixOS reproducibility, with an ordinary /usr/bin.">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Omnix — NixOS with a standard Linux layout">
 <meta name="twitter:description" content="NixOS reproducibility, with an ordinary /usr/bin. Choose Autarchy or Atrium, use prebuilt packages when available, and compile when needed.">
 <meta name="twitter:image" content="https://www.omnix-linux.com/social-preview.png">
-<meta name="twitter:image:alt" content="Omnix logo with the tagline NixOS reproducibility, with an ordinary /usr/bin, on a dark starfield.">
+<meta name="twitter:image:alt" content="A large cyan-violet Coronal ring forming the O beside smaller mnix lettering, with the tagline NixOS reproducibility, with an ordinary /usr/bin.">
 <title>Omnix</title>
 <meta name="color-scheme" content="dark">
 <style>html, body { background: #04050c; color: #e8eef8; }
@@ -91,7 +91,7 @@
 <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700;800&family=Instrument+Sans:wght@400;500;600&family=Lexend:wght@800&display=swap"></noscript>
 <script defer src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <style>
-  /* Layout: one idea per full-height panel over a fixed galaxy; text sits in a left column, evidence on the right. */
+  /* Layout: one idea per full-height panel over a dark starfield; text sits in a left column, evidence on the right. */
   :root {
     --void: #04050c;
     --ink: #e8eef8;
@@ -123,21 +123,17 @@
     -webkit-font-smoothing: antialiased;
   }
 
-  /* The galaxy */
+  /* Subtle static backdrop; the animated shader belongs to the logo. */
   body::before {
     content: ""; position: fixed; inset: 0; z-index: 0; pointer-events: none;
-    background: radial-gradient(ellipse 55% 42% at 50% 50%, #16236a 0%, #0a1033 45%, var(--void) 80%);
+    background: radial-gradient(ellipse 55% 42% at 28% 35%, #10152f 0%, #080b19 45%, var(--void) 80%);
   }
-  #sky {
-    position: fixed; inset: 0; width: 100vw; height: 100vh; display: block; z-index: 0;
-    opacity: 0; transition: opacity 1.2s ease;
-  }
-  #sky.ready, #motes.ready { opacity: 1; }
   .scrim {
     position: fixed; inset: 0; z-index: 1; pointer-events: none;
     background: linear-gradient(90deg, rgba(4, 5, 12, 0.88) 0%, rgba(4, 5, 12, 0.55) 48%, rgba(4, 5, 12, 0.15) 100%);
   }
-  #motes { position: fixed; inset: 0; width: 100vw; height: 100vh; display: block; z-index: 2; pointer-events: none; opacity: 0; transition: opacity .35s ease; }
+  #motes.ready { opacity: 1; }
+  #motes { position: fixed; inset: 0; width: 100vw; height: 100vh; display: block; z-index: 4; pointer-events: none; opacity: 0; transition: opacity .35s ease; }
   main { position: relative; z-index: 3; }
 
   section {
@@ -177,20 +173,22 @@
   /* Hero */
   .hero { align-items: center; justify-items: center; text-align: center; }
   .hero .hero-inner { justify-items: center; }
-  .hero .brand { flex-direction: column; justify-content: center; gap: 10px; }
+  .hero .brand { width: 100%; }
   .hero .cta { justify-content: center; }
   .hero-inner { max-width: 1240px; width: 100%; display: grid; gap: 28px; }
-  .brand { display: flex; align-items: center; gap: clamp(14px, 2.5vw, 28px); flex-wrap: wrap; }
-  .brand svg { width: clamp(64px, 8vw, 104px); height: auto; flex: none; filter: drop-shadow(0 0 30px rgba(139, 92, 246, 0.35)); }
-  .wordmark {
-    font-family: "Lexend", "Arial Black", system-ui, sans-serif; font-weight: 800; font-size: clamp(3.8rem, 1.6rem + 10vw, 11rem);
-    letter-spacing: -0.035em; line-height: 1; margin: 0;
+  .wordmark { display: flex; align-items: center; justify-content: center; width: 100%; margin: 0; gap: 0; font-family: "Lexend", "Arial Black", system-ui, sans-serif; font-weight: 800; line-height: 1; }
+  .logo-orbit { position: relative; flex: 0 0 auto; width: clamp(240px, 43vw, 560px); aspect-ratio: 1; display: block; margin-left: -8%; }
+  .logo-orbit canvas, .logo-orbit img { position: absolute; inset: 0; width: 100%; height: 100%; display: block; mask-image: radial-gradient(circle, #000 48%, transparent 72%); -webkit-mask-image: radial-gradient(circle, #000 48%, transparent 72%); }
+  .logo-orbit canvas { opacity: 0; transition: opacity .8s ease; }
+  .logo-orbit.shader-ready canvas { opacity: 1; }
+  .logo-orbit.shader-ready img { opacity: 0; }
+  .wordmark-text { position: relative; z-index: 1; flex: 0 0 auto; font-size: clamp(3rem, 7.5vw, 6.7rem); letter-spacing: -.045em; margin-left: -8%; background: linear-gradient(90deg, #7edeea, #91a8ef 55%, #c084fc); -webkit-background-clip: text; background-clip: text; color: transparent; }
+  .particles-on .wordmark-text { color: transparent; background: none; -webkit-text-fill-color: transparent; }
+  @media (max-width: 640px) {
+    .hero-inner { gap: 24px; }
+    .logo-orbit { width: 70vw; margin-left: -13%; }
+    .wordmark-text { font-size: clamp(2rem, 8.8vw, 3.5rem); margin-left: -16%; }
   }
-  /* With the particle layer running, the particles are the letters; the glyphs themselves are not drawn. */
-  .particles-on .wordmark, .particles-on .wordmark span {
-    color: transparent; background: none; -webkit-text-fill-color: transparent;
-  }
-  .wordmark span { background: linear-gradient(90deg, var(--ice), var(--nix) 50%, var(--violet)); -webkit-background-clip: text; background-clip: text; color: transparent; }
   .tagline { font-family: var(--font-display); font-weight: 500; font-size: var(--step-1); margin: 0; max-width: 32ch; text-wrap: balance; }
   .tagline code { color: var(--ice); }
   .cta { display: flex; gap: 12px; flex-wrap: wrap; }
@@ -279,7 +277,7 @@
   .foot a:hover { color: var(--ice); }
 
   /* Section rail */
-  .rail { position: fixed; right: max(12px, 2vw); top: 50%; transform: translateY(-50%); z-index: 4; display: grid; gap: 14px; }
+  .rail { position: fixed; right: max(12px, 2vw); top: 50%; transform: translateY(-50%); z-index: 5; display: grid; gap: 14px; }
   .rail a { width: 9px; height: 9px; border-radius: 50%; background: rgba(156, 173, 200, 0.35); display: block; transition: background .25s, transform .25s; }
   .rail a.on { background: var(--ice); transform: scale(1.5); }
   @media (max-width: 640px) { .rail { display: none; } }
@@ -288,7 +286,6 @@
 </style>
 </head>
 <body>
-<canvas id="sky" aria-hidden="true"></canvas>
 <div class="scrim"></div>
 <canvas id="motes" aria-hidden="true"></canvas>
 
@@ -307,7 +304,13 @@
   <section class="hero" id="top">
     <div class="hero-inner">
       <div class="brand">
-        <h1 class="wordmark">om<span>nix</span></h1>
+        <h1 class="wordmark" aria-label="Omnix">
+          <span class="logo-orbit" aria-hidden="true">
+            <img src="coronal-poster.png" width="560" height="560" alt="" fetchpriority="high">
+            <canvas id="coronal" aria-hidden="true"></canvas>
+          </span>
+          <span class="wordmark-text" aria-hidden="true">mnix</span>
+        </h1>
       </div>
       <p class="tagline">NixOS reproducibility, with an ordinary <code>/usr/bin</code>.</p>
       <div class="cta">
@@ -513,8 +516,8 @@ ls: cannot access '/usr/lib': No such file or directory</pre>
     </div>
     <div>
       <h4>Background</h4>
-      <p>“<a href="https://fragcoord.xyz/s/g9r37vkv">Galaxy</a>” by <a href="https://fragcoord.xyz/u/Crazy">@Crazy</a>, after an
-        <a href="https://fragcoord.xyz/s/p2jobbec">original</a> by <a href="https://fragcoord.xyz/u/Xor">@Xor</a>. Ported to three.js.</p>
+      <p>The animated O uses “<a href="https://fragcoord.xyz/s/3otcb9tt">Coronal</a>” by <a href="https://fragcoord.xyz/u/Xor">@Xor</a>,
+        derived from <a href="https://fragcoord.xyz/s/3zoe0vgo">3D Fire</a>. Ported to three.js.</p>
     </div>
   </div>
 </footer>
@@ -716,89 +719,17 @@ afterFirstPaint(function () {
     document.querySelectorAll("main section").forEach(function (s) { io.observe(s); });
   }
 
-  // Galaxy background: "Galaxy" by @Crazy (fragcoord.xyz/s/g9r37vkv), after @Xor (fragcoord.xyz/s/p2jobbec).
-  var canvas = document.getElementById("sky");
-  if (typeof THREE === "undefined") { document.documentElement.classList.add("no-gl"); return; }
-  var renderer;
-  try { renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: false, powerPreference: "high-performance" }); }
-  catch (e) { document.documentElement.classList.add("no-gl"); return; }
-  if (!renderer.capabilities.isWebGL2) { document.documentElement.classList.add("no-gl"); return; }
-
-  var uniforms = {
-    u_resolution: { value: new THREE.Vector2() },
-    u_time: { value: 0 },
-    u_time_delta: { value: 0.016 }
-  };
-  var material = new THREE.ShaderMaterial({
-    glslVersion: THREE.GLSL3,
-    uniforms: uniforms,
-    depthTest: false,
-    depthWrite: false,
-    vertexShader: "void main() { gl_Position = vec4(position.xy, 0.0, 1.0); }",
-    fragmentShader: [
-      "uniform vec2 u_resolution;",
-      "uniform float u_time;",
-      "uniform float u_time_delta;",
-      "out highp vec4 fragColor;",
-      "void main() {",
-      "  fragColor = vec4(0.355, 0.3623, 0.635, 0.84);",
-      "  float i = 0.0, z = 0.0, d = 0.0;",
-      "  for (; i++ < 2e1; fragColor += (cos(d / .3 + vec4(3.2, 22.8, 7.0, 19.0)) + 1.) / d * z) {",
-      "    vec3 p = z * normalize(gl_FragCoord.rgb * 2. - vec3(u_resolution, 0.69).xyy),",
-      "         a = cos(vec3(4, 2, 0) + u_time - d * 5.68);",
-      "    p.z += 5.; a = p * dot(a, p) + u_time_delta;",
-      "    for (d = 1.; d++ < 13.185;) a += cos(a * d + u_time).yzx / d;",
-      "    z += d = 0.21 * abs(length(p) - 3.) + .04 * abs(a.y);",
-      "  }",
-      "  fragColor = tan(fragColor / 8258.25);",
-      "  fragColor.a = 1.0;",
-      "}"
-    ].join("\n")
-  });
-  var scene = new THREE.Scene();
-  var camera = new THREE.Camera();
-  var quad = new THREE.Mesh(new THREE.PlaneGeometry(2, 2), material);
-  quad.frustumCulled = false;
-  scene.add(quad);
-
-  // The shader is heavy (20 x 12 steps per pixel), so render below native
-  // resolution and step down further if frames run slow.
-  var scale = Math.min(window.devicePixelRatio || 1, 1.5) * 0.6;
-  function resize() {
-    renderer.setPixelRatio(scale);
-    renderer.setSize(window.innerWidth, window.innerHeight, false);
-    renderer.getDrawingBufferSize(uniforms.u_resolution.value);
-  }
-  resize();
-  window.addEventListener("resize", resize);
-
-  var reduce = window.matchMedia("(prefers-reduced-motion: reduce)");
-  var start = performance.now(), last = start, slow = 0, raf = 0;
-  function frame(now) {
-    var dt = (now - last) / 1000; last = now;
-    uniforms.u_time.value = (now - start) / 1000 + 8.0;
-    uniforms.u_time_delta.value = Math.min(dt, 0.1);
-    renderer.render(scene, camera);
-    if (!canvas.classList.contains("ready")) canvas.classList.add("ready");
-    if (dt > 0.034 && scale > 0.3) { if (++slow > 20) { scale = Math.max(0.3, scale * 0.8); resize(); slow = 0; } }
-    else slow = Math.max(0, slow - 1);
-    raf = requestAnimationFrame(frame);
-  }
-  function play() { if (!raf && !document.hidden && !reduce.matches) raf = requestAnimationFrame(frame); }
-  function pause() { cancelAnimationFrame(raf); raf = 0; }
-  document.addEventListener("visibilitychange", function () { document.hidden ? pause() : (last = performance.now(), play()); });
-  if (reduce.matches) {
-    uniforms.u_time.value = 12.0; renderer.render(scene, camera); canvas.classList.add("ready");
-  } else { play(); }
-  reduce.addEventListener && reduce.addEventListener("change", function () { reduce.matches ? pause() : play(); });
 });
 </script>
+<script src="coronal.js" defer></script>
+
 <script>
 afterFirstPaint(function () {
-  // Stars that orbit with the galaxy, gather into the "omnix" wordmark, hold, and scatter again.
+  // Stars that orbit with the galaxy, gather into the "mnix" lettering, hold, and scatter again.
   var canvas = document.getElementById("motes");
-  var word = document.querySelector(".wordmark");
+  var word = document.querySelector(".wordmark-text");
   var root = document.documentElement;
+  var reduce = window.matchMedia("(prefers-reduced-motion: reduce)");
   // Without particles, fall back to the filled wordmark.
   function fallback() { root.classList.remove("particles-on"); }
   if (typeof THREE === "undefined" || !word || !root.classList.contains("particles-on")) { fallback(); return; }
@@ -846,7 +777,7 @@ afterFirstPaint(function () {
       "  vec2 pos = mix(g, t, m) + vec2(-d.y, d.x) * 0.22 * sin(m * 3.14159) * (aSeed.x - 0.5) * 2.;",
       "  gl_Position = projectionMatrix * modelViewMatrix * vec4(pos, 0., 1.);",
       "  gl_PointSize = uPx * mix(0.9 + aSeed.x * 1.9, 1.9 + aSeed.y * 0.7, m);",
-      "  vA = mix(0.25 + 0.55 * aSeed.y, 0.8 * sqrt(uDensity), m);",
+      "  vA = mix(0.25 + 0.55 * aSeed.y, 0.8 * max(0.35, sqrt(uDensity)), m);",
       // Independent 5–10 second shimmers; a few stars vary more, and none exceed their base brightness.
       "  float phase = aSeed.z * 6.28318;",
       "  float shimmer = 0.5 + 0.5 * sin(uTime * mix(0.63, 1.26, aSeed.x) + phase);",
@@ -877,7 +808,7 @@ afterFirstPaint(function () {
       "gl_PointSize = uPx * mix(0.9 + aSeed.x * 1.9, 1.9 + aSeed.y * 0.7, m);",
       "gl_PointSize = uPx * mix(12. + aSeed.x * 8., (24. + aSeed.y * 8.) * uGlowScale, m);"
     ).replace(
-      "vA = mix(0.25 + 0.55 * aSeed.y, 0.8 * sqrt(uDensity), m);",
+      "vA = mix(0.25 + 0.55 * aSeed.y, 0.8 * max(0.35, sqrt(uDensity)), m);",
       "vA = mix(0.001, 0.009 * uDensity / (uGlowScale * uGlowScale), m * m);"
     ),
     fragmentShader: [
@@ -916,7 +847,7 @@ afterFirstPaint(function () {
     ctx.font = cs.fontWeight + " " + cs.fontSize + " " + cs.fontFamily;
     ctx.textBaseline = "alphabetic"; ctx.fillStyle = "#fff";
     // A character's range rect spans the font's ascent and descent, so its baseline sits one ascent below its top.
-    var metrics = ctx.measureText("omnix");
+    var metrics = ctx.measureText("mnix");
     var ascent = metrics.fontBoundingBoxAscent || metrics.actualBoundingBoxAscent || parseFloat(cs.fontSize) * 0.8;
     var walker = document.createTreeWalker(word, NodeFilter.SHOW_TEXT), node, range = document.createRange();
     while ((node = walker.nextNode())) {
@@ -966,7 +897,7 @@ afterFirstPaint(function () {
   window.addEventListener("load", function () { loadedAt = performance.now(); }, { once: true });
   var ENTRANCE_DELAY_MS = 500;
 
-  // One cycle: formed, scatter, drift with the galaxy, gather, formed again.
+  // One cycle: formed, scatter, drift, gather, formed again.
   var CYCLE = 12.0;
   function mixAt(t) {
     var x = t % CYCLE;
@@ -981,7 +912,9 @@ afterFirstPaint(function () {
   function frame(now) {
     var t = (now - start) / 1000;
     var rect = word.getBoundingClientRect();
-    var heroVisible = rect.bottom > -40 && rect.top < window.innerHeight;
+    var hero = word.closest(".hero").getBoundingClientRect();
+    var heroVisible = hero.bottom > 0 && hero.top < window.innerHeight;
+    canvas.style.clipPath = "inset(" + Math.max(0, hero.top) + "px 0 " + Math.max(0, window.innerHeight - hero.bottom) + "px 0)";
     var elapsed = loadedAt === null ? 0 : Math.max(0, now - loadedAt);
     var mix = shaped && heroVisible
       ? (elapsed < ENTRANCE_DELAY_MS ? 0 : mixAt(8.0 + (elapsed - ENTRANCE_DELAY_MS) / 1000)) : 0;
@@ -994,9 +927,13 @@ afterFirstPaint(function () {
     if (!canvas.classList.contains("ready")) canvas.classList.add("ready");
     raf = requestAnimationFrame(frame);
   }
-  function play() { if (!raf && !document.hidden) raf = requestAnimationFrame(frame); }
+  function play() { if (!raf && !document.hidden && !reduce.matches) raf = requestAnimationFrame(frame); }
   function pause() { cancelAnimationFrame(raf); raf = 0; }
   document.addEventListener("visibilitychange", function () { document.hidden ? pause() : play(); });
+  reduce.addEventListener("change", function () {
+    if (reduce.matches) { pause(); fallback(); canvas.classList.remove("ready"); }
+    else { root.classList.add("particles-on"); play(); }
+  });
   window.addEventListener("resize", resize);
   // Mobile browser chrome and orientation changes can resize the visible viewport.
   if (window.visualViewport) window.visualViewport.addEventListener("resize", resize);
