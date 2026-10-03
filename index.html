@@ -1,0 +1,685 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+<meta property="og:title" content="Omnix">
+<meta property="og:description" content="NixOS reproducibility, with an ordinary /usr/bin. Prebuilt Linux software just runs.">
+<meta property="og:url" content="https://www.omnix-linux.com/">
+<style>*,*::before,*::after{box-sizing:border-box}body{margin:0}img,svg{max-width:100%}[hidden]{display:none!important}</style>
+<title>Omnix</title>
+<meta name="description" content="Omnix: NixOS with the standard Linux layout. Prebuilt software just runs.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700;800&family=Instrument+Sans:wght@400;500;600&display=swap">
+<style>
+  /* Layout: one idea per full-height panel over a fixed galaxy; text sits in a left column, evidence on the right. */
+  :root {
+    --void: #04050c;
+    --ink: #e8eef8;
+    --muted: #9cadc8;
+    --ice: #7ebae4;
+    --nix: #5277c3;
+    --violet: #a78bfa;
+    --panel: rgba(8, 11, 24, 0.62);
+    --line: rgba(126, 186, 228, 0.18);
+    --ok: #86efac;
+    --font-display: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+    --font-body: "Instrument Sans", "Segoe UI", system-ui, -apple-system, sans-serif;
+    --font-mono: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+    --step--1: clamp(0.82rem, 0.78rem + 0.15vw, 0.9rem);
+    --step-0: clamp(1rem, 0.95rem + 0.25vw, 1.125rem);
+    --step-1: clamp(1.25rem, 1.1rem + 0.6vw, 1.5rem);
+    --step-3: clamp(2rem, 1.4rem + 2.6vw, 3.4rem);
+    --step-5: clamp(3.4rem, 2rem + 7vw, 7.5rem);
+    color-scheme: dark;
+  }
+  html { scroll-snap-type: y proximity; scroll-behavior: smooth; }
+  @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+  body {
+    background: var(--void);
+    color: var(--ink);
+    font-family: var(--font-body);
+    font-size: var(--step-0);
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* The galaxy */
+  #sky {
+    position: fixed; inset: 0; width: 100vw; height: 100vh; display: block; z-index: 0;
+    background: radial-gradient(ellipse 60% 45% at 62% 48%, #1b2a7a 0%, #0a1033 45%, var(--void) 80%);
+  }
+  .scrim {
+    position: fixed; inset: 0; z-index: 1; pointer-events: none;
+    background: linear-gradient(90deg, rgba(4, 5, 12, 0.88) 0%, rgba(4, 5, 12, 0.55) 48%, rgba(4, 5, 12, 0.15) 100%);
+  }
+  #motes { position: fixed; inset: 0; width: 100vw; height: 100vh; display: block; z-index: 2; pointer-events: none; }
+  main { position: relative; z-index: 3; }
+
+  section {
+    min-height: 100svh;
+    scroll-snap-align: start;
+    display: grid;
+    align-items: center;
+    padding-inline: max(16px, 6vw);
+    padding-block: 12vh;
+  }
+  .split {
+    display: grid; gap: clamp(28px, 5vw, 72px);
+    grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
+    align-items: center; max-width: 1240px; width: 100%;
+  }
+  .split > * { min-width: 0; }
+  @media (max-width: 860px) { .split { grid-template-columns: minmax(0, 1fr); } }
+
+  .eyebrow {
+    font-family: var(--font-mono); font-size: var(--step--1); letter-spacing: 0.14em;
+    text-transform: uppercase; color: var(--ice);
+    display: flex; align-items: center; gap: 12px;
+  }
+  .eyebrow .n { color: var(--violet); }
+  h2 {
+    font-family: var(--font-display); font-weight: 800; font-size: var(--step-3);
+    line-height: 1.08; letter-spacing: -0.03em; margin: 18px 0 20px; text-wrap: balance;
+  }
+  h2 em { font-style: normal; background: linear-gradient(90deg, var(--ice), var(--nix) 55%, var(--violet)); -webkit-background-clip: text; background-clip: text; color: transparent; }
+  .lede { color: var(--muted); max-width: 56ch; margin: 0; }
+  .lede + .lede { margin-top: 14px; }
+  .lede strong { color: var(--ink); font-weight: 600; }
+  code, .mono { font-family: var(--font-mono); font-size: 0.92em; }
+  .lede code { color: var(--ink); background: rgba(126, 186, 228, 0.1); padding: 1px 6px; border-radius: 4px; }
+
+  /* Hero */
+  .hero { align-items: center; justify-items: center; text-align: center; }
+  .hero .hero-inner { justify-items: center; }
+  .hero .brand { flex-direction: column; justify-content: center; gap: 10px; }
+  .hero .cta { justify-content: center; }
+  .hero-inner { max-width: 1240px; width: 100%; display: grid; gap: 28px; }
+  .brand { display: flex; align-items: center; gap: clamp(14px, 2.5vw, 28px); flex-wrap: wrap; }
+  .brand svg { width: clamp(64px, 8vw, 104px); height: auto; flex: none; filter: drop-shadow(0 0 30px rgba(139, 92, 246, 0.35)); }
+  .wordmark {
+    font-family: var(--font-display); font-weight: 800; font-size: clamp(4rem, 2rem + 10vw, 11rem);
+    letter-spacing: -0.05em; line-height: 0.9; margin: 0;
+  }
+  /* With the particle layer running, the particles are the letters; the glyphs only carry an electric outline. */
+  .particles-on .wordmark, .particles-on .wordmark span {
+    color: transparent; background: none; -webkit-text-fill-color: transparent;
+    -webkit-text-stroke: 1.4px rgba(244, 250, 255, var(--outline, 1));
+  }
+  .particles-on .wordmark {
+    filter: drop-shadow(0 0 3px rgba(224, 242, 254, var(--outline, 1)))
+            drop-shadow(0 0 14px rgba(125, 211, 252, calc(var(--outline, 1) * 0.8)))
+            drop-shadow(0 0 32px rgba(139, 92, 246, calc(var(--outline, 1) * 0.5)));
+  }
+  .wordmark span { background: linear-gradient(90deg, var(--ice), var(--nix) 50%, var(--violet)); -webkit-background-clip: text; background-clip: text; color: transparent; }
+  .tagline { font-family: var(--font-display); font-weight: 500; font-size: var(--step-1); margin: 0; max-width: 32ch; text-wrap: balance; }
+  .tagline code { color: var(--ice); }
+  .cta { display: flex; gap: 12px; flex-wrap: wrap; }
+  .btn {
+    font-family: var(--font-mono); font-size: var(--step--1); font-weight: 700; letter-spacing: 0.04em;
+    text-decoration: none; padding: 13px 20px; border-radius: 999px; border: 1px solid var(--line);
+    color: var(--ink); background: rgba(8, 11, 24, 0.5); backdrop-filter: blur(8px);
+    transition: border-color .2s, transform .2s;
+  }
+  .btn.primary { background: linear-gradient(90deg, var(--nix), #7357e8); border-color: transparent; }
+  .btn:hover { border-color: var(--ice); transform: translateY(-1px); }
+  .btn:focus-visible, .rail a:focus-visible { outline: 2px solid var(--ice); outline-offset: 3px; }
+  .scrollhint { font-family: var(--font-mono); font-size: var(--step--1); color: var(--muted); }
+
+  /* Evidence panels */
+  .term {
+    background: var(--panel); border: 1px solid var(--line); border-radius: 14px;
+    backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
+    font-family: var(--font-mono); font-size: clamp(0.74rem, 0.7rem + 0.2vw, 0.86rem); line-height: 1.7;
+    overflow: hidden;
+  }
+  .term-bar { display: flex; gap: 7px; padding: 12px 16px; border-bottom: 1px solid var(--line); align-items: center; }
+  .term-bar i { width: 10px; height: 10px; border-radius: 50%; background: rgba(156, 173, 200, 0.3); }
+  .term-bar b { margin-left: 8px; font-weight: 500; color: var(--muted); font-size: 0.92em; }
+  .term pre { margin: 0; padding: 18px 20px; overflow-x: auto; white-space: pre; color: var(--muted); }
+  .term .c { color: var(--ink); }
+  .term .p { color: var(--violet); }
+  .term .ok { color: var(--ok); }
+  .term .bad { color: #fca5a5; }
+  .term .hl { color: var(--ice); }
+
+  .menu { padding: 16px 0; }
+  .menu .q { padding: 0 20px 10px; color: var(--ink); }
+  .opt { display: grid; grid-template-columns: 18px minmax(0, 1fr); gap: 8px; padding: 8px 20px; color: var(--muted); }
+  .opt.sel { background: rgba(82, 119, 195, 0.18); color: var(--ink); }
+  .opt .k { color: var(--violet); }
+  .opt small { display: block; color: var(--muted); font-size: 0.9em; }
+
+  .stat { display: grid; gap: 6px; }
+  .stat .big { font-family: var(--font-display); font-weight: 800; font-size: clamp(4.5rem, 3rem + 7vw, 9rem); line-height: 0.9; letter-spacing: -0.06em; }
+  .stat .big span { color: var(--ice); }
+  .stat .cap { font-family: var(--font-mono); font-size: var(--step--1); color: var(--muted); letter-spacing: 0.06em; text-transform: uppercase; }
+  .flow { display: grid; gap: 10px; margin-top: 26px; }
+  .flow div { display: grid; grid-template-columns: 9ch minmax(0, 1fr); gap: 14px; font-family: var(--font-mono); font-size: var(--step--1); padding: 10px 14px; border: 1px solid var(--line); border-radius: 10px; background: var(--panel); backdrop-filter: blur(10px); }
+  .flow b { color: var(--ice); font-weight: 700; }
+  .flow span { color: var(--muted); }
+
+  /* Install steps: a real sequence, so it is numbered */
+  .steps { list-style: none; padding: 0; margin: 34px 0 0; display: grid; gap: 12px; grid-template-columns: repeat(5, minmax(0, 1fr)); max-width: 1240px; }
+  @media (max-width: 1000px) { .steps { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  @media (max-width: 520px) { .steps { grid-template-columns: minmax(0, 1fr); } }
+  .steps li { background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 18px; backdrop-filter: blur(12px); display: grid; gap: 8px; align-content: start; }
+  .steps .num { font-family: var(--font-mono); color: var(--violet); font-size: var(--step--1); }
+  .steps h3 { margin: 0; font-family: var(--font-display); font-size: 1.02rem; font-weight: 700; letter-spacing: -0.01em; }
+  .steps p { margin: 0; color: var(--muted); font-size: 0.92rem; line-height: 1.5; }
+  .chips { display: flex; flex-wrap: wrap; gap: 6px; }
+  .chips span { font-family: var(--font-mono); font-size: 0.74rem; padding: 3px 8px; border-radius: 999px; border: 1px solid var(--line); color: var(--ink); }
+  .wide { max-width: 1240px; width: 100%; }
+
+  footer { position: relative; z-index: 3; padding-inline: max(16px, 6vw); padding-block: 48px 64px; border-top: 1px solid var(--line); background: rgba(4, 5, 12, 0.82); }
+  .foot { max-width: 1240px; display: grid; gap: 28px; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); }
+  .foot h4 { margin: 0 0 10px; font-family: var(--font-mono); font-size: var(--step--1); letter-spacing: 0.12em; text-transform: uppercase; color: var(--ice); font-weight: 500; }
+  .foot p, .foot li { margin: 0; color: var(--muted); font-size: 0.92rem; }
+  .foot ul { list-style: none; padding: 0; margin: 0; display: grid; gap: 6px; }
+  .foot a { color: var(--ink); text-decoration-color: var(--nix); text-underline-offset: 3px; }
+  .foot a:hover { color: var(--ice); }
+
+  /* Section rail */
+  .rail { position: fixed; right: max(12px, 2vw); top: 50%; transform: translateY(-50%); z-index: 4; display: grid; gap: 14px; }
+  .rail a { width: 9px; height: 9px; border-radius: 50%; background: rgba(156, 173, 200, 0.35); display: block; transition: background .25s, transform .25s; }
+  .rail a.on { background: var(--ice); transform: scale(1.5); }
+  @media (max-width: 640px) { .rail { display: none; } }
+
+  .no-gl .scrim { background: linear-gradient(90deg, rgba(4, 5, 12, 0.7), rgba(4, 5, 12, 0.2)); }
+</style>
+</head>
+<body>
+<canvas id="sky" aria-hidden="true"></canvas>
+<div class="scrim"></div>
+<canvas id="motes" aria-hidden="true"></canvas>
+
+<nav class="rail" aria-label="Sections">
+  <a href="#top" aria-label="Omnix"></a>
+  <a href="#problem" aria-label="The problem"></a>
+  <a href="#runs" aria-label="Prebuilt software just runs"></a>
+  <a href="#cache" aria-label="Nothing compiles"></a>
+  <a href="#flavors" aria-label="Pick your desktop"></a>
+  <a href="#rollback" aria-label="Every change rolls back"></a>
+  <a href="#install" aria-label="Install"></a>
+</nav>
+
+<main>
+  <section class="hero" id="top">
+    <div class="hero-inner">
+      <div class="brand">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" role="img" aria-label="Omnix logo">
+  <defs>
+    <radialGradient id="bh-glow" cx="100" cy="100" r="98" gradientUnits="userSpaceOnUse">
+      <stop offset="0.30" stop-color="#8B5CF6" stop-opacity="0.4"/>
+      <stop offset="0.55" stop-color="#5277C3" stop-opacity="0.1"/>
+      <stop offset="1" stop-color="#5277C3" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="bh-disk" x1="8" y1="0" x2="192" y2="0" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#7EBAE4" stop-opacity="0.2"/>
+      <stop offset="0.22" stop-color="#E0F2FE"/>
+      <stop offset="0.42" stop-color="#7EBAE4"/>
+      <stop offset="0.7" stop-color="#5277C3"/>
+      <stop offset="0.9" stop-color="#8B5CF6"/>
+      <stop offset="1" stop-color="#8B5CF6" stop-opacity="0.2"/>
+    </linearGradient>
+    <linearGradient id="bh-lens" x1="0" y1="46" x2="0" y2="145" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#F0F9FF"/>
+      <stop offset="0.3" stop-color="#7EBAE4"/>
+      <stop offset="0.75" stop-color="#8B5CF6"/>
+      <stop offset="1" stop-color="#5277C3"/>
+    </linearGradient>
+    <linearGradient id="bh-ring" x1="60" y1="60" x2="140" y2="140" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#FFFFFF"/>
+      <stop offset="0.5" stop-color="#BAE6FD"/>
+      <stop offset="1" stop-color="#A78BFA"/>
+    </linearGradient>
+    <filter id="bh-blur" x="-20%" y="-20%" width="140%" height="140%"><feGaussianBlur stdDeviation="3"/></filter>
+    <filter id="bh-soft" x="-20%" y="-20%" width="140%" height="140%"><feGaussianBlur stdDeviation="1.2"/></filter>
+    <clipPath id="bh-front"><rect x="0" y="100" width="200" height="100"/></clipPath>
+  </defs>
+  <circle cx="100" cy="100" r="96" fill="url(#bh-glow)"/>
+  <g transform="rotate(-12 100 100)">
+    <!-- far side of the disk, bent by gravity into a halo: thick over the top, thin underneath -->
+    <path d="M48 95a52 49 0 1 0 104 0a52 49 0 1 0 -104 0Z M64 100a36 36 0 1 1 72 0a36 36 0 1 1 -72 0Z" fill="url(#bh-lens)" fill-rule="evenodd" opacity="0.55" filter="url(#bh-blur)"/>
+    <path d="M51 96a49 46 0 1 0 98 0a49 46 0 1 0 -98 0Z M64 100a36 36 0 1 1 72 0a36 36 0 1 1 -72 0Z" fill="url(#bh-lens)" fill-rule="evenodd"/>
+    
+    <g>
+      <ellipse cx="100" cy="100" rx="78" ry="13" fill="none" stroke="url(#bh-disk)" stroke-width="16" opacity="0.6" filter="url(#bh-blur)"/>
+      <ellipse cx="100" cy="100" rx="94" ry="15" fill="none" stroke="url(#bh-disk)" stroke-width="2" opacity="0.5"/>
+      <ellipse cx="100" cy="100" rx="82" ry="13" fill="none" stroke="url(#bh-disk)" stroke-width="7" opacity="0.85"/>
+      <ellipse cx="100" cy="100" rx="66" ry="10.5" fill="none" stroke="url(#bh-disk)" stroke-width="7"/>
+      <ellipse cx="100" cy="100" rx="56" ry="9" fill="none" stroke="#F0F9FF" stroke-width="2" opacity="0.8"/>
+    </g>
+    <!-- event horizon wrapped in a razor-thin photon ring -->
+    <circle cx="100" cy="100" r="36.5" fill="#020308" stroke="url(#bh-ring)" stroke-width="2"/>
+    <!-- near side of the disk crosses in front of the horizon -->
+    
+    <g clip-path="url(#bh-front)">
+      <ellipse cx="100" cy="100" rx="78" ry="13" fill="none" stroke="url(#bh-disk)" stroke-width="16" opacity="0.6" filter="url(#bh-blur)"/>
+      <ellipse cx="100" cy="100" rx="94" ry="15" fill="none" stroke="url(#bh-disk)" stroke-width="2" opacity="0.5"/>
+      <ellipse cx="100" cy="100" rx="82" ry="13" fill="none" stroke="url(#bh-disk)" stroke-width="7" opacity="0.85"/>
+      <ellipse cx="100" cy="100" rx="66" ry="10.5" fill="none" stroke="url(#bh-disk)" stroke-width="7"/>
+      <ellipse cx="100" cy="100" rx="56" ry="9" fill="none" stroke="#F0F9FF" stroke-width="2" opacity="0.8"/>
+    </g>
+  </g>
+</svg>
+        <h1 class="wordmark">om<span>nix</span></h1>
+      </div>
+      <p class="tagline">NixOS reproducibility, with an ordinary <code>/usr/bin</code>.</p>
+      <div class="cta">
+        <a class="btn primary" href="https://github.com/Omnix-Linux/Omnix/releases">Download the installer</a>
+        <a class="btn" href="https://github.com/Omnix-Linux">View on GitHub</a>
+      </div>
+      <div class="scrollhint">Scroll ↓</div>
+    </div>
+  </section>
+
+  <section id="problem">
+    <div class="split">
+      <div>
+        <div class="eyebrow">The problem</div>
+        <h2>NixOS can't run most software built for <em>normal Linux</em>.</h2>
+        <p class="lede">Vendor tools, pip wheels, npm packages with native binaries, and AppImages all expect their
+          loader at <code>/lib64</code> and their libraries in <code>/usr/lib</code>. NixOS keeps every package in its own
+          hash-named directory in <code>/nix/store</code> instead, so those paths don't exist and the program stops before
+          its first line runs.</p>
+        <p class="lede">It's a deliberate trade-off, and it's what makes NixOS reproducible. But whole distributions like
+          <strong>Omarchy</strong> can't run on it today.</p>
+      </div>
+      <div class="term" role="img" aria-label="Terminal: a downloaded binary refused on stock NixOS">
+        <div class="term-bar"><i></i><i></i><i></i><b>stock NixOS</b></div>
+<pre><span class="p">$</span> <span class="c">./some-vendor-tool</span>
+<span class="bad">Could not start dynamically linked executable: ./some-vendor-tool
+NixOS cannot run dynamically linked executables intended for generic
+linux environments out of the box.</span>
+
+<span class="p">$</span> <span class="c">ls /usr/lib /lib</span>
+ls: cannot access '/usr/lib': No such file or directory
+ls: cannot access '/lib': No such file or directory</pre>
+      </div>
+    </div>
+  </section>
+
+  <section id="runs">
+    <div class="split">
+      <div>
+        <div class="eyebrow"><span class="n">1 of 4</span> Why Omnix</div>
+        <h2>Prebuilt software <em>just runs</em>.</h2>
+        <p class="lede">Omnix adds the standard Linux layout on top of NixOS: a loader at <code>/lib64</code>, a declared
+          set of common libraries in <code>/usr/lib</code>, a fresh <code>ld.so.cache</code>, and a <code>/bin</code> that
+          resolves <code>#!/bin/bash</code>. Manylinux wheels, rustup, vendor SDKs, Electron apps, and Playwright browsers
+          start without patching or wrappers.</p>
+      </div>
+      <div class="term" role="img" aria-label="Terminal: the same binary running on Omnix">
+        <div class="term-bar"><i></i><i></i><i></i><b>omnix</b></div>
+<pre><span class="p">$</span> <span class="c">./some-vendor-tool --version</span>
+<span class="ok">some-vendor-tool 4.2.0</span>
+
+<span class="p">$</span> <span class="c">readlink /lib64/ld-linux-x86-64.so.2</span>
+<span class="hl">/nix/store/…-nix-ld/libexec/nix-ld</span>
+
+<span class="p">$</span> <span class="c">python3 -c 'import ctypes.util as u; print(u.find_library("z"))'</span>
+<span class="ok">libz.so.1</span>
+
+<span class="p">$</span> <span class="c">head -1 ./install.sh &amp;&amp; ./install.sh</span>
+#!/bin/bash
+<span class="ok">installed.</span></pre>
+      </div>
+    </div>
+  </section>
+
+  <section id="cache">
+    <div class="split">
+      <div>
+        <div class="eyebrow"><span class="n">2 of 4</span> Why Omnix</div>
+        <h2>Nothing compiles. <em>Everything downloads.</em></h2>
+        <p class="lede">The rule is <strong>add, never relocate</strong>. Omnix never patches or moves a nixpkgs package,
+          so every store path still matches the official binary cache at <code>cache.nixos.org</code>. Installs and
+          upgrades are downloads, not builds.</p>
+        <p class="lede">It needs no infrastructure of its own either: the installer ISO lives on GitHub Releases, and
+          everything else comes straight from the NixOS cache.</p>
+      </div>
+      <div>
+        <div class="stat">
+          <div class="big">0<span>.</span></div>
+          <div class="cap">packages built on your machine</div>
+        </div>
+        <div class="flow">
+          <div><b>nixpkgs</b><span>nixos-unstable, unmodified</span></div>
+          <div><b>cache</b><span>cache.nixos.org serves every store path</span></div>
+          <div><b>omnix</b><span>symlinks, text files and a library cache on top</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="flavors">
+    <div class="split">
+      <div>
+        <div class="eyebrow"><span class="n">3 of 4</span> Why Omnix</div>
+        <h2>Pick your desktop at <em>install time</em>.</h2>
+        <p class="lede">The base stays small. Everything opinionated lives in a <strong>flavor</strong>, a complete
+          system in its own repository. <strong>Autarchy</strong> ports Omarchy's keyboard-driven Hyprland desktop.
+          <strong>Atrium</strong> is a polished, mouse-first KDE Plasma desktop with independent virtual desktops on
+          every monitor.</p>
+        <p class="lede">The installer reads the flavor list live, so new styles show up without a new ISO.</p>
+      </div>
+      <div class="term" role="img" aria-label="The Omnix installer's flavor menu">
+        <div class="term-bar"><i></i><i></i><i></i><b>omnix-install</b></div>
+        <div class="menu mono">
+          <div class="q">What kind of system do you want?</div>
+          <div class="opt sel"><span class="k">▸</span><div>Autarchy (stable)<small>Omarchy-style Hyprland, pinned to an Omarchy release</small></div></div>
+          <div class="opt"><span></span><div>Autarchy (latest)<small>Omarchy-style Hyprland, tracking Omarchy main</small></div></div>
+          <div class="opt"><span></span><div>Atrium<small>KDE Plasma: polished windows, mouse-first</small></div></div>
+          <div class="opt"><span></span><div>Minimal<small>The Omnix base alone</small></div></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="rollback">
+    <div class="split">
+      <div>
+        <div class="eyebrow"><span class="n">4 of 4</span> Why Omnix</div>
+        <h2>Every change <em>rolls back</em>.</h2>
+        <p class="lede">Your system is a flake that <strong>you</strong> own in <code>/etc/nixos</code>, and your flavor is
+          one input in it. Switch from Atrium to Autarchy by changing that input and rebuilding.</p>
+        <p class="lede">The FHS layer is generated from your configuration and versioned with it, so rolling back a
+          generation rolls back the library layout too. The previous system is always one entry away in the boot
+          menu.</p>
+      </div>
+      <div class="term" role="img" aria-label="Boot menu listing system generations">
+        <div class="term-bar"><i></i><i></i><i></i><b>boot menu</b></div>
+<pre><span class="c">Omnix</span>
+<span class="hl">▸ Generation 14   Autarchy (stable)   2026-10-03</span>
+  Generation 13   Atrium              2026-09-28
+  Generation 12   Atrium              2026-09-21
+  Generation 11   Minimal             2026-09-20
+
+<span class="p">$</span> <span class="c">sudo nixos-rebuild switch --rollback</span>
+<span class="ok">switched to generation 13 (Atrium)</span></pre>
+      </div>
+    </div>
+  </section>
+
+  <section id="install">
+    <div class="wide">
+      <div class="eyebrow">Install</div>
+      <h2>Five choices and <em>one download</em>.</h2>
+      <p class="lede">The installer is a text menu. Nothing touches your disk until you confirm.</p>
+      <ol class="steps">
+        <li><span class="num">Step 1</span><h3>Boot the ISO</h3><p>Write it to a USB stick and run <code>sudo omnix-install</code>. Wired networks connect on their own; Wi-Fi opens <code>nmtui</code>.</p></li>
+        <li><span class="num">Step 2</span><h3>Pick a filesystem</h3><p>Choose the disk, then a filesystem.</p><div class="chips"><span>ext4</span><span>btrfs</span><span>xfs</span></div></li>
+        <li><span class="num">Step 3</span><h3>Encrypt?</h3><p>Turn on LUKS full-disk encryption. Recommended for laptops.</p><div class="chips"><span>yes</span><span>no</span></div></li>
+        <li><span class="num">Step 4</span><h3>Choose a flavor</h3><p>Then set your user, password, hostname, and timezone.</p><div class="chips"><span>Autarchy</span><span>Atrium</span><span>Minimal</span></div></li>
+        <li><span class="num">Step 5</span><h3>Sync from the cache</h3><p>Everything downloads prebuilt from cache.nixos.org. NVIDIA GPUs get their driver. Reboot.</p></li>
+      </ol>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="foot">
+    <div>
+      <h4>Omnix</h4>
+      <p>NixOS reproducibility with a standard filesystem layout. Independent, and not affiliated with or endorsed by the NixOS Foundation.</p>
+    </div>
+    <div>
+      <h4>Repositories</h4>
+      <ul>
+        <li><a href="https://github.com/Omnix-Linux/Omnix">Omnix</a>: the base and installer</li>
+        <li><a href="https://github.com/Omnix-Linux/Autarchy">Autarchy</a>: Omarchy, ported</li>
+        <li><a href="https://github.com/Omnix-Linux/Atrium">Atrium</a>: KDE Plasma</li>
+      </ul>
+    </div>
+    <div>
+      <h4>Background</h4>
+      <p>“<a href="https://fragcoord.xyz/s/g9r37vkv">Galaxy</a>” by <a href="https://fragcoord.xyz/u/Crazy">@Crazy</a>, after an
+        <a href="https://fragcoord.xyz/s/p2jobbec">original</a> by <a href="https://fragcoord.xyz/u/Xor">@Xor</a>. Ported to three.js.</p>
+    </div>
+  </div>
+</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+(function () {
+  // Section rail: highlight the panel in view.
+  var links = Array.prototype.slice.call(document.querySelectorAll(".rail a"));
+  if ("IntersectionObserver" in window) {
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) {
+        if (!e.isIntersecting) return;
+        links.forEach(function (a) { a.classList.toggle("on", a.getAttribute("href") === "#" + e.target.id); });
+      });
+    }, { threshold: 0.55 });
+    document.querySelectorAll("main section").forEach(function (s) { io.observe(s); });
+  }
+
+  // Galaxy background: "Galaxy" by @Crazy (fragcoord.xyz/s/g9r37vkv), after @Xor (fragcoord.xyz/s/p2jobbec).
+  var canvas = document.getElementById("sky");
+  if (typeof THREE === "undefined") { document.documentElement.classList.add("no-gl"); return; }
+  var renderer;
+  try { renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: false, powerPreference: "high-performance" }); }
+  catch (e) { document.documentElement.classList.add("no-gl"); return; }
+  if (!renderer.capabilities.isWebGL2) { document.documentElement.classList.add("no-gl"); return; }
+
+  var uniforms = {
+    u_resolution: { value: new THREE.Vector2() },
+    u_time: { value: 0 },
+    u_time_delta: { value: 0.016 }
+  };
+  var material = new THREE.ShaderMaterial({
+    glslVersion: THREE.GLSL3,
+    uniforms: uniforms,
+    depthTest: false,
+    depthWrite: false,
+    vertexShader: "void main() { gl_Position = vec4(position.xy, 0.0, 1.0); }",
+    fragmentShader: [
+      "uniform vec2 u_resolution;",
+      "uniform float u_time;",
+      "uniform float u_time_delta;",
+      "out highp vec4 fragColor;",
+      "void main() {",
+      "  fragColor = vec4(0.355, 0.3623, 0.635, 0.84);",
+      "  float i = 0.0, z = 0.0, d = 0.0;",
+      "  for (; i++ < 2e1; fragColor += (cos(d / .3 + vec4(3.2, 22.8, 7.0, 19.0)) + 1.) / d * z) {",
+      "    vec3 p = z * normalize(gl_FragCoord.rgb * 2. - vec3(u_resolution, 0.69).xyy),",
+      "         a = cos(vec3(4, 2, 0) + u_time - d * 5.68);",
+      "    p.z += 5.; a = p * dot(a, p) + u_time_delta;",
+      "    for (d = 1.; d++ < 13.185;) a += cos(a * d + u_time).yzx / d;",
+      "    z += d = 0.21 * abs(length(p) - 3.) + .04 * abs(a.y);",
+      "  }",
+      "  fragColor = tan(fragColor / 8258.25);",
+      "  fragColor.a = 1.0;",
+      "}"
+    ].join("\n")
+  });
+  var scene = new THREE.Scene();
+  var camera = new THREE.Camera();
+  var quad = new THREE.Mesh(new THREE.PlaneGeometry(2, 2), material);
+  quad.frustumCulled = false;
+  scene.add(quad);
+
+  // The shader is heavy (20 x 12 steps per pixel), so render below native
+  // resolution and step down further if frames run slow.
+  var scale = Math.min(window.devicePixelRatio || 1, 1.5) * 0.6;
+  function resize() {
+    renderer.setPixelRatio(scale);
+    renderer.setSize(window.innerWidth, window.innerHeight, false);
+    renderer.getDrawingBufferSize(uniforms.u_resolution.value);
+  }
+  resize();
+  window.addEventListener("resize", resize);
+
+  var reduce = window.matchMedia("(prefers-reduced-motion: reduce)");
+  var start = performance.now(), last = start, slow = 0, raf = 0;
+  function frame(now) {
+    var dt = (now - last) / 1000; last = now;
+    uniforms.u_time.value = (now - start) / 1000 + 8.0;
+    uniforms.u_time_delta.value = Math.min(dt, 0.1);
+    renderer.render(scene, camera);
+    if (dt > 0.034 && scale > 0.3) { if (++slow > 20) { scale = Math.max(0.3, scale * 0.8); resize(); slow = 0; } }
+    else slow = Math.max(0, slow - 1);
+    raf = requestAnimationFrame(frame);
+  }
+  function play() { if (!raf && !document.hidden && !reduce.matches) raf = requestAnimationFrame(frame); }
+  function pause() { cancelAnimationFrame(raf); raf = 0; }
+  document.addEventListener("visibilitychange", function () { document.hidden ? pause() : (last = performance.now(), play()); });
+  if (reduce.matches) {
+    uniforms.u_time.value = 12.0; renderer.render(scene, camera);
+  } else { play(); }
+  reduce.addEventListener && reduce.addEventListener("change", function () { reduce.matches ? pause() : play(); });
+})();
+</script>
+<script>
+(function () {
+  // Stars that orbit with the galaxy, gather into the "omnix" wordmark, hold, and scatter again.
+  var canvas = document.getElementById("motes");
+  var word = document.querySelector(".wordmark");
+  var root = document.documentElement;
+  if (typeof THREE === "undefined" || !word) return;
+  if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+  var renderer;
+  try { renderer = new THREE.WebGLRenderer({ canvas: canvas, alpha: true, antialias: false }); }
+  catch (e) { return; }
+  renderer.setClearColor(0x000000, 0);
+
+  var N = 7000;
+  var dpr = Math.min(window.devicePixelRatio || 1, 2);
+  var geo = new THREE.BufferGeometry();
+  var home = new Float32Array(N * 2), target = new Float32Array(N * 2), seed = new Float32Array(N * 3);
+  for (var i = 0; i < N; i++) {
+    var r = Math.pow(Math.random(), 0.7);
+    var arm = (Math.random() < 0.5 ? 0 : Math.PI);
+    home[i * 2] = r;
+    home[i * 2 + 1] = arm + r * 4.2 + (Math.random() - 0.5) * (0.9 - r * 0.5);
+    seed[i * 3] = Math.random(); seed[i * 3 + 1] = Math.random(); seed[i * 3 + 2] = Math.random();
+  }
+  geo.setAttribute("position", new THREE.BufferAttribute(new Float32Array(N * 3), 3));
+  geo.setAttribute("aHome", new THREE.BufferAttribute(home, 2));
+  geo.setAttribute("aTarget", new THREE.BufferAttribute(target, 2));
+  geo.setAttribute("aSeed", new THREE.BufferAttribute(seed, 3));
+
+  var uniforms = {
+    uTime: { value: 0 }, uMix: { value: 1 }, uPx: { value: dpr },
+    uCenter: { value: new THREE.Vector2() }, uRadius: { value: 300 }, uOrigin: { value: new THREE.Vector2() }
+  };
+  var mat = new THREE.ShaderMaterial({
+    uniforms: uniforms, transparent: true, depthTest: false, depthWrite: false, blending: THREE.AdditiveBlending,
+    vertexShader: [
+      "attribute vec2 aHome; attribute vec2 aTarget; attribute vec3 aSeed;",
+      "uniform float uTime, uMix, uPx, uRadius; uniform vec2 uCenter, uOrigin;",
+      "varying float vA; varying vec3 vC;",
+      "void main() {",
+      "  float r = aHome.x, ang = aHome.y + uTime * 0.07 / (0.3 + r);",
+      "  vec2 g = vec2(cos(ang), sin(ang) * 0.45) * (0.08 + r) * uRadius;",
+      "  float c = cos(-0.38), s = sin(-0.38);",
+      "  g = vec2(c * g.x - s * g.y, s * g.x + c * g.y) + uCenter;",
+      "  vec2 t = uOrigin + aTarget + vec2(sin(uTime * 2.1 + aSeed.x * 40.), cos(uTime * 1.7 + aSeed.y * 40.)) * 0.7;",
+      "  float m = clamp(uMix * 1.45 - aSeed.z * 0.45, 0., 1.);",
+      "  m = m * m * (3. - 2. * m);",
+      "  vec2 d = t - g;",
+      "  vec2 pos = mix(g, t, m) + vec2(-d.y, d.x) * 0.22 * sin(m * 3.14159) * (aSeed.x - 0.5) * 2.;",
+      "  gl_Position = projectionMatrix * modelViewMatrix * vec4(pos, 0., 1.);",
+      "  gl_PointSize = uPx * mix(0.9 + aSeed.x * 1.9, 1.9 + aSeed.y * 0.7, m);",
+      "  vA = mix(0.25 + 0.55 * aSeed.y, 0.95, m);",
+      "  vec3 star = mix(vec3(0.49, 0.73, 0.89), vec3(0.65, 0.55, 0.98), aSeed.x);",
+      "  vC = mix(star, mix(vec3(0.62, 0.84, 1.0), vec3(0.78, 0.7, 1.0), clamp(aTarget.x / 900., 0., 1.)), m);",
+      "}"
+    ].join("\n"),
+    fragmentShader: [
+      "varying float vA; varying vec3 vC;",
+      "void main() {",
+      "  float d = length(gl_PointCoord - 0.5);",
+      "  float a = smoothstep(0.5, 0.0, d) * vA;",
+      "  gl_FragColor = vec4(vC * a, a);",
+      "}"
+    ].join("\n")
+  });
+  var points = new THREE.Points(geo, mat);
+  points.frustumCulled = false;
+  var scene = new THREE.Scene(); scene.add(points);
+  var camera = new THREE.OrthographicCamera(0, 1, 0, 1, -1, 1);
+
+  // Sample the wordmark's glyphs, drawn with the same font, size and letter positions as the page.
+  function sampleWord() {
+    var rect = word.getBoundingClientRect();
+    var w = Math.ceil(rect.width), h = Math.ceil(rect.height);
+    if (w < 4 || h < 4) return;
+    var cv = document.createElement("canvas"); cv.width = w; cv.height = h;
+    var ctx = cv.getContext("2d");
+    var cs = getComputedStyle(word);
+    ctx.font = cs.fontWeight + " " + cs.fontSize + " " + cs.fontFamily;
+    ctx.textBaseline = "middle"; ctx.fillStyle = "#fff";
+    var walker = document.createTreeWalker(word, NodeFilter.SHOW_TEXT), node, range = document.createRange();
+    while ((node = walker.nextNode())) {
+      for (var k = 0; k < node.length; k++) {
+        range.setStart(node, k); range.setEnd(node, k + 1);
+        var cr = range.getBoundingClientRect();
+        ctx.fillText(node.data[k], cr.left - rect.left, h / 2);
+      }
+    }
+    var data = ctx.getImageData(0, 0, w, h).data, pts = [];
+    var step = Math.max(2, Math.round(Math.sqrt((w * h * 0.32) / N)));
+    for (var y = 0; y < h; y += step) for (var x = 0; x < w; x += step) {
+      if (data[(y * w + x) * 4 + 3] > 110) pts.push(x, y);
+    }
+    if (!pts.length) return;
+    var count = pts.length / 2;
+    for (var j = 0; j < N; j++) {
+      var q = (j % count) * 2;
+      target[j * 2] = pts[q] + (Math.random() - 0.5) * step;
+      target[j * 2 + 1] = pts[q + 1] + (Math.random() - 0.5) * step;
+    }
+    geo.attributes.aTarget.needsUpdate = true;
+  }
+
+  function resize() {
+    var W = window.innerWidth, H = window.innerHeight;
+    renderer.setPixelRatio(dpr);
+    renderer.setSize(W, H, false);
+    camera.right = W; camera.bottom = H; camera.updateProjectionMatrix();
+    uniforms.uRadius.value = Math.min(W, H * 1.6) * 0.46;
+    sampleWord();
+  }
+
+  // One cycle: formed, scatter, drift with the galaxy, gather, formed again.
+  var CYCLE = 12.0;
+  function mixAt(t) {
+    var x = t % CYCLE;
+    if (x < 2.8) return 1;
+    if (x < 5.2) return 1 - (x - 2.8) / 2.4;
+    if (x < 8.0) return 0;
+    if (x < 10.6) return (x - 8.0) / 2.6;
+    return 1;
+  }
+
+  var start = performance.now(), raf = 0;
+  function frame(now) {
+    var t = (now - start) / 1000;
+    var rect = word.getBoundingClientRect();
+    var heroVisible = rect.bottom > -40 && rect.top < window.innerHeight;
+    var mix = heroVisible ? mixAt(t) : 0;
+    uniforms.uTime.value = t;
+    uniforms.uMix.value = mix;
+    uniforms.uOrigin.value.set(rect.left, rect.top);
+    // The spiral turns around the word while the hero is on screen, then around the viewport.
+    uniforms.uCenter.value.set(window.innerWidth * 0.5, Math.max(rect.top + rect.height * 0.5, window.innerHeight * 0.5));
+    var o = Math.max(0, (mix - 0.55) / 0.45);
+    root.style.setProperty("--outline", (o * o * (3 - 2 * o)).toFixed(3));
+    renderer.render(scene, camera);
+    raf = requestAnimationFrame(frame);
+  }
+  function play() { if (!raf && !document.hidden) raf = requestAnimationFrame(frame); }
+  function pause() { cancelAnimationFrame(raf); raf = 0; }
+  document.addEventListener("visibilitychange", function () { document.hidden ? pause() : play(); });
+  window.addEventListener("resize", resize);
+  (document.fonts && document.fonts.ready ? document.fonts.ready : Promise.resolve()).then(function () {
+    resize(); root.classList.add("particles-on"); play();
+  });
+})();
+</script>
+</body>
+</html>
