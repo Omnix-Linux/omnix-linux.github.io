@@ -310,7 +310,8 @@
 <nav class="rail" aria-label="Sections">
   <a href="#top" aria-label="Omnix"></a>
   <a href="#problem" aria-label="The problem"></a>
-  <a href="#ported" aria-label="What we're doing"></a>
+  <a href="#ported" aria-label="The Omnix foundation"></a>
+  <a href="#autarchy" aria-label="Autarchy: Omarchy ported to Omnix"></a>
   <a href="#runs" aria-label="Prebuilt software just runs"></a>
   <a href="#cache" aria-label="Prebuilt packages and local builds"></a>
   <a href="#flavors" aria-label="Pick your desktop"></a>
@@ -370,9 +371,11 @@ ls: cannot access '/usr/lib': No such file or directory</pre>
   <section id="ported">
     <div class="split">
       <div>
-        <div class="eyebrow">What we're doing</div>
-        <h2>We're porting Omarchy to NixOS, <em>from its own source</em>.</h2>
+        <div class="eyebrow">The Omnix foundation</div>
+        <h2>We're building Omnix <em>with a standard Linux layout.</em></h2>
         <p class="lede">We're building <strong>Omnix</strong>, a NixOS base designed to provide the standard Linux paths that scripts and prebuilt apps expect.</p>
+        <p class="lede">That foundation brings familiar paths together with Nix-managed packages, reproducible configuration, and system rollbacks.</p>
+      </div>
         <div class="term">
           <div class="term-bar"><i></i><i></i><i></i><b>Two layouts. One system.</b></div>
           <div class="fs-comparison">
@@ -410,9 +413,16 @@ ls: cannot access '/usr/lib': No such file or directory</pre>
             <p>Packages stay in <code>/nix/store</code>. We're adding the paths scripts and prebuilt binaries expect, while keeping Nix's reproducibility and rollbacks.</p>
           </div>
         </div>
-        <p class="lede">On top of that, we're developing <strong>Autarchy</strong>, a flavor designed to install Omarchy itself, pinned to an Omarchy release.</p>
-        <p class="lede">Our goal is to run Omarchy's own Hyprland config unmodified, with its keybindings, themes, and scripts
-          working as written, and the whole desktop rolling back with the rest of the system.</p>
+    </div>
+  </section>
+
+  <section id="autarchy">
+    <div class="split">
+      <div>
+        <div class="eyebrow">Autarchy</div>
+        <h2>Omarchy, <em>ported to Omnix.</em></h2>
+        <p class="lede">We're developing <strong>Autarchy</strong>, a port of Omarchy to Omnix. We're bringing over Omarchy's own Hyprland configuration, keybindings, themes, and scripts to preserve its desktop experience.</p>
+        <p class="lede">We're keeping the port in sync with upstream: <code>stable</code> pins an Omarchy release, while <code>latest</code> tracks its development branch. Our goal is reproducible upgrades and rollbacks for the desktop and the rest of the system together.</p>
       </div>
       <div class="flow ported">
         <div><b>source</b><span>Omarchy's own repo, pinned: <code>stable</code> is v4.0.4, <code>latest</code> tracks its development branch</span></div>
