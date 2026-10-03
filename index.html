@@ -9,6 +9,16 @@
 <meta property="og:url" content="https://www.omnix-linux.com/">
 <style>*,*::before,*::after{box-sizing:border-box}body{margin:0}img,svg{max-width:100%}[hidden]{display:none!important}</style>
 <title>Omnix</title>
+<script>
+  // Decide before first paint whether the particles will draw the wordmark, so the filled text never flashes.
+  (function () {
+    try {
+      if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+      if (!document.createElement("canvas").getContext("webgl")) return;
+      document.documentElement.classList.add("particles-on");
+    } catch (e) {}
+  })();
+</script>
 <meta name="description" content="Omnix: NixOS with the standard Linux layout. Prebuilt software just runs.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -483,11 +493,12 @@ ls: cannot access '/lib': No such file or directory</pre>
   var canvas = document.getElementById("motes");
   var word = document.querySelector(".wordmark");
   var root = document.documentElement;
-  if (typeof THREE === "undefined" || !word) return;
-  if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+  // Without particles, fall back to the filled wordmark.
+  function fallback() { root.classList.remove("particles-on"); }
+  if (typeof THREE === "undefined" || !word || !root.classList.contains("particles-on")) { fallback(); return; }
   var renderer;
   try { renderer = new THREE.WebGLRenderer({ canvas: canvas, alpha: true, antialias: false }); }
-  catch (e) { return; }
+  catch (e) { fallback(); return; }
   renderer.setClearColor(0x000000, 0);
 
   var N = 7000;
@@ -621,7 +632,7 @@ ls: cannot access '/lib': No such file or directory</pre>
   document.addEventListener("visibilitychange", function () { document.hidden ? pause() : play(); });
   window.addEventListener("resize", resize);
   (document.fonts && document.fonts.ready ? document.fonts.ready : Promise.resolve()).then(function () {
-    resize(); root.classList.add("particles-on"); play();
+    resize(); play();
   });
 })();
 </script>
