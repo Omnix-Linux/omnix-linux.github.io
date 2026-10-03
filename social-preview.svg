@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630" role="img" aria-labelledby="title desc">
 <title id="title">Omnix</title>
-<desc id="desc">NixOS reproducibility, with an ordinary /usr/bin.</desc>
+<desc id="desc">A NixOS-based distribution for Omarchy and friends.</desc>
 <defs>
   <radialGradient id="card-glow"><stop stop-color="#5277c3" stop-opacity=".22"/><stop offset="1" stop-color="#04050c" stop-opacity="0"/></radialGradient>
   <linearGradient id="card-text"><stop stop-color="#7ebae4"/><stop offset="1" stop-color="#a78bfa"/></linearGradient>
@@ -109,8 +109,8 @@
 <circle cx="675" cy="559" r="0.81" fill="#7ebae4" opacity="0.19"/>
 <image href="coronal-poster.png" x="60" y="40" width="520" height="520"/>
 <text x="545" y="292" font-family="Arial,Helvetica,sans-serif" font-weight="800" font-size="90" letter-spacing="-4" fill="#fff">mnix</text>
-<text x="548" y="351" font-family="Arial,Helvetica,sans-serif" font-size="29" fill="#e8eef8">NixOS reproducibility,</text>
-<text x="548" y="392" font-family="Arial,Helvetica,sans-serif" font-size="29" fill="#e8eef8">with an ordinary <tspan fill="#7ebae4">/usr/bin.</tspan></text>
+<text x="548" y="351" font-family="Arial,Helvetica,sans-serif" font-size="29" fill="#e8eef8">A NixOS-based distribution</text>
+<text x="548" y="392" font-family="Arial,Helvetica,sans-serif" font-size="29" fill="#e8eef8">for <tspan fill="#7ebae4">Omarchy and friends.</tspan></text>
 <text x="548" y="443" font-family="Arial,Helvetica,sans-serif" font-size="18" fill="#9fb3d1">Autarchy / Hyprland · Atrium / KDE Plasma</text>
 <path d="M80 535H1120" stroke="#5277c3" stroke-opacity=".3"/>
 <text x="80" y="577" font-family="Arial,Helvetica,sans-serif" font-size="21" fill="#9fb3d1">www.omnix-linux.com</text>

@@ -1,0 +1,46 @@
+{
+  "version": 1,
+  "id": "coronal",
+  "title": "Coronal",
+  "source": "https://fragcoord.xyz/s/3otcb9tt",
+  "poster": "coronal-poster.png",
+  "coordinates": "Normalized square artwork, with (0, 0) at the top left and (1, 1) at the bottom right.",
+  "geometry": {
+    "referenceSize": { "width": 560, "height": 560 },
+    "shaderOrigin": { "x": 0.5, "y": 0.5 },
+    "letter": {
+      "character": "O",
+      "center": { "x": 0.5, "y": 0.5 },
+      "bounds": { "left": 0.19, "top": 0.19, "right": 0.81, "bottom": 0.81 },
+      "boundsDescription": "Conservative bounds of the main circular O and its bright rim. Animated plumes are excluded."
+    },
+    "effectBounds": { "left": -0.25, "top": -0.25, "right": 1.25, "bottom": 1.25 }
+  },
+  "layout": {
+    "desktop": {
+      "centerXViewport": 0.38,
+      "sizeViewportWidth": 0.8,
+      "sizeViewportHeight": 1.1,
+      "suffixScaleToLetterHeight": 0.2,
+      "suffixGapToArtworkSize": 0.035
+    },
+    "mobile": {
+      "maxViewportWidth": 640,
+      "centerXViewport": 0.37,
+      "sizeViewportWidth": 1,
+      "sizeViewportHeight": 1.1,
+      "suffixScaleToLetterHeight": 0.15,
+      "suffixGapToArtworkSize": 0.01
+    },
+    "suffix": { "text": "mnix", "color": "#ffffff", "minFontSize": 32, "maxFontSize": 140 }
+  },
+  "rendering": {
+    "desktopMaxPixels": 320000,
+    "mobileMaxPixels": 160000,
+    "maxPixelRatio": 1.25,
+    "heroFps": 30,
+    "backgroundFps": 15,
+    "backgroundPixelBudgetScale": 0.5,
+    "minQuality": 0.45
+  }
+}

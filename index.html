@@ -10,20 +10,20 @@
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Omnix">
 <meta property="og:locale" content="en_US">
-<meta property="og:title" content="Omnix — NixOS with a standard Linux layout">
-<meta property="og:description" content="NixOS reproducibility, with an ordinary /usr/bin. Choose Autarchy or Atrium, use prebuilt packages when available, and compile when needed.">
+<meta property="og:title" content="Omnix — A NixOS-based distribution for Omarchy and friends">
+<meta property="og:description" content="A NixOS-based distribution for Omarchy and friends. Choose Autarchy or Atrium, use prebuilt packages when available, and compile when needed.">
 <meta property="og:url" content="https://www.omnix-linux.com/">
 <meta property="og:image" content="https://www.omnix-linux.com/social-preview.png">
 <meta property="og:image:secure_url" content="https://www.omnix-linux.com/social-preview.png">
 <meta property="og:image:type" content="image/png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
-<meta property="og:image:alt" content="A large cyan-violet Coronal ring forming the O beside smaller mnix lettering, with the tagline NixOS reproducibility, with an ordinary /usr/bin.">
+<meta property="og:image:alt" content="A large cyan-violet Coronal ring forming the O beside smaller mnix lettering, with the tagline A NixOS-based distribution for Omarchy and friends.">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="Omnix — NixOS with a standard Linux layout">
-<meta name="twitter:description" content="NixOS reproducibility, with an ordinary /usr/bin. Choose Autarchy or Atrium, use prebuilt packages when available, and compile when needed.">
+<meta name="twitter:title" content="Omnix — A NixOS-based distribution for Omarchy and friends">
+<meta name="twitter:description" content="A NixOS-based distribution for Omarchy and friends. Choose Autarchy or Atrium, use prebuilt packages when available, and compile when needed.">
 <meta name="twitter:image" content="https://www.omnix-linux.com/social-preview.png">
-<meta name="twitter:image:alt" content="A large cyan-violet Coronal ring forming the O beside smaller mnix lettering, with the tagline NixOS reproducibility, with an ordinary /usr/bin.">
+<meta name="twitter:image:alt" content="A large cyan-violet Coronal ring forming the O beside smaller mnix lettering, with the tagline A NixOS-based distribution for Omarchy and friends.">
 <title>Omnix</title>
 <meta name="color-scheme" content="dark">
 <style>html, body { background: #04050c; color: #e8eef8; }
@@ -81,12 +81,13 @@
     } catch (e) {}
   })();
 </script>
-<meta name="description" content="Omnix: NixOS with the standard Linux layout. Prebuilt software just runs.">
+<meta name="description" content="Omnix: a NixOS-based distribution for Omarchy and friends. Choose an Omarchy-style Hyprland desktop with Autarchy or KDE Plasma with Atrium.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700;800&family=Instrument+Sans:wght@400;500;600&family=Lexend:wght@800&display=swap">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700;800&family=Instrument+Sans:wght@400;500;600&family=Lexend:wght@800&display=swap" media="print" onload="this.media='all'">
 <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700;800&family=Instrument+Sans:wght@400;500;600&family=Lexend:wght@800&display=swap"></noscript>
+<link rel="preload" href="shader-profile.json" as="fetch" crossorigin>
 <script defer src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <style>
   /* Layout: one idea per full-height panel over a dark starfield; text sits in a left column, evidence on the right. */
@@ -176,18 +177,17 @@
   #coronal { position: fixed; inset: 0; width: 100vw; height: 100vh; z-index: 0; pointer-events: none; opacity: 0; transition: opacity .8s ease; }
   .shader-ready #coronal { opacity: 1; }
   .shader-ready.hero-past #coronal { opacity: .24; }
-  .logo-orbit { position: absolute; left: 0; top: 50%; transform: translate(-10%, -50%); width: min(80vw, 110svh); aspect-ratio: 1; display: block; pointer-events: none; }
+  .logo-orbit { position: absolute; left: calc(38vw - (100vw - min(88vw, 1240px)) / 2); top: 50%; transform: translate(-50%, -50%); width: min(80vw, 110svh); aspect-ratio: 1; display: block; pointer-events: none; }
   .logo-orbit img { width: 100%; height: 100%; display: block; }
   .shader-ready .logo-orbit img { opacity: 0; }
-  .wordmark-text { position: absolute; z-index: 1; left: 58%; top: 50%; transform: translateY(-50%); font-size: clamp(3.5rem, 10vw, 8.75rem); letter-spacing: -.045em; color: #fff; }
+  .wordmark-text { position: absolute; z-index: 1; left: calc(38vw + min(28vw, 38.5svh) - (100vw - min(88vw, 1240px)) / 2); top: 50%; transform: translateY(-50%); font-size: clamp(3.5rem, 10vw, 8.75rem); letter-spacing: -.045em; color: #fff; }
   @media (max-width: 640px) {
     .hero-inner { gap: 24px; }
     .wordmark { height: 44svh; }
-    .logo-orbit { width: 100vw; left: -10%; }
-    .wordmark-text { left: 63%; font-size: clamp(2rem, 9vw, 3.5rem); }
+    .logo-orbit { width: 100vw; left: calc(37vw - max(16px, 6vw)); }
+    .wordmark-text { left: calc(65vw - max(16px, 6vw)); font-size: clamp(2rem, 9vw, 3.5rem); }
   }
   .tagline { font-family: var(--font-display); font-weight: 500; font-size: var(--step-1); margin: 0; max-width: 32ch; text-wrap: balance; }
-  .tagline code { color: var(--ice); }
   .cta { display: flex; gap: 12px; flex-wrap: wrap; }
   .btn {
     font-family: var(--font-mono); font-size: var(--step--1); font-weight: 700; letter-spacing: 0.04em;
@@ -283,7 +283,7 @@
 </style>
 </head>
 <body>
-<canvas id="coronal" aria-hidden="true"></canvas>
+<canvas id="coronal" data-shader-profile="shader-profile.json" aria-hidden="true"></canvas>
 <div class="scrim"></div>
 
 <nav class="rail" aria-label="Sections">
@@ -308,7 +308,7 @@
           <span class="wordmark-text" aria-hidden="true">mnix</span>
         </h1>
       </div>
-      <p class="tagline">NixOS reproducibility, with an ordinary <code>/usr/bin</code>.</p>
+      <p class="tagline">A NixOS-based distribution for Omarchy and friends.</p>
       <div class="cta">
         <a class="btn primary" href="https://github.com/Omnix-Linux/Omnix/releases">Download the installer</a>
         <a class="btn" href="https://github.com/Omnix-Linux">View on GitHub</a>
@@ -500,7 +500,7 @@ ls: cannot access '/usr/lib': No such file or directory</pre>
   <div class="foot">
     <div>
       <h4>Omnix</h4>
-      <p>NixOS reproducibility with a standard filesystem layout. Independent, and not affiliated with or endorsed by the NixOS Foundation.</p>
+      <p>A NixOS-based distribution for Omarchy and friends. Independent, and not affiliated with or endorsed by the NixOS Foundation.</p>
     </div>
     <div>
       <h4>Repositories</h4>
