@@ -707,7 +707,34 @@ afterFirstPaint(function () {
   });
   var points = new THREE.Points(geo, mat);
   points.frustumCulled = false;
-  var scene = new THREE.Scene(); scene.add(points);
+  // Soft additive halos overlap into bloom where stars cluster. Share the star geometry
+  // and motion so the glow follows both the spiral and the wordmark without a full-screen blur.
+  var glowMat = new THREE.ShaderMaterial({
+    uniforms: uniforms, transparent: true, depthTest: false, depthWrite: false,
+    blending: THREE.AdditiveBlending, premultipliedAlpha: true,
+    vertexShader: mat.vertexShader.replace(
+      "gl_PointSize = uPx * mix(0.9 + aSeed.x * 1.9, 1.9 + aSeed.y * 0.7, m);",
+      "gl_PointSize = uPx * mix(12. + aSeed.x * 8., 34. + aSeed.y * 12., m);"
+    ).replace(
+      "vA = mix(0.25 + 0.55 * aSeed.y, 0.95, m);",
+      "vA = mix(0.012, 0.045, m * m);"
+    ),
+    fragmentShader: [
+      "varying float vA; varying vec3 vC;",
+      "void main() {",
+      "  vec2 p = (gl_PointCoord - 0.5) * 2.;",
+      "  float r2 = dot(p, p);",
+      "  float halo = exp(-4.5 * r2) * (1. - smoothstep(0.65, 1., r2));",
+      "  float a = halo * vA;",
+      "  gl_FragColor = vec4(vC * a, a);",
+      "}"
+    ].join("\n")
+  });
+  var glow = new THREE.Points(geo, glowMat);
+  glow.frustumCulled = false;
+  glow.renderOrder = 0;
+  points.renderOrder = 1;
+  var scene = new THREE.Scene(); scene.add(glow); scene.add(points);
   var camera = new THREE.OrthographicCamera(0, 1, 0, 1, -1, 1);
 
   // Sample the wordmark's glyphs, drawn with the same font, size and letter positions as the page.
