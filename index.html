@@ -226,16 +226,27 @@
   .flow code { color: var(--ink); }
   .flow span { color: var(--muted); }
 
-  /* Install steps: a real sequence, so it is numbered */
-  .steps { list-style: none; padding: 0; margin: 34px 0 0; display: grid; gap: 12px; grid-template-columns: repeat(5, minmax(0, 1fr)); max-width: 1240px; }
-  @media (max-width: 1000px) { .steps { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
-  @media (max-width: 520px) { .steps { grid-template-columns: minmax(0, 1fr); } }
-  .steps li { background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 18px; backdrop-filter: blur(12px); display: grid; gap: 8px; align-content: start; }
-  .steps .num { font-family: var(--font-mono); color: var(--violet); font-size: var(--step--1); }
-  .steps h3 { margin: 0; font-family: var(--font-display); font-size: 1.02rem; font-weight: 700; letter-spacing: -0.01em; }
-  .steps p { margin: 0; color: var(--muted); font-size: 0.92rem; line-height: 1.5; }
-  .chips { display: flex; flex-wrap: wrap; gap: 6px; }
-  .chips span { font-family: var(--font-mono); font-size: 0.74rem; padding: 3px 8px; border-radius: 999px; border: 1px solid var(--line); color: var(--ink); }
+  /* Installer demo */
+  .install-demo { margin-top: 30px; }
+  .demo-controls { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-bottom: 12px; }
+  .demo-controls button { cursor: pointer; font: inherit; font-family: var(--font-mono); font-size: .8rem; color: var(--muted); background: var(--panel); border: 1px solid var(--line); border-radius: 8px; padding: 9px 13px; }
+  .demo-controls button[aria-pressed="true"] { color: var(--ice); border-color: var(--nix); background: rgba(82,119,195,.16); }
+  .demo-controls button:focus-visible { outline: 2px solid var(--ice); outline-offset: 3px; }
+  .demo-controls .demo-pause { margin-left: auto; }
+  .demo-screen { padding: clamp(16px, 3vw, 32px); min-height: 340px; overflow-wrap: anywhere; }
+  .demo-screen h3 { font: inherit; font-weight: 700; color: var(--ice); margin: 0 0 18px; }
+  .demo-screen p { margin: 0 0 12px; }
+  .demo-options { display: grid; gap: 6px; }
+  .demo-option { padding: 8px 12px; border-radius: 5px; color: var(--muted); }
+  .demo-option.selected { color: var(--ink); background: rgba(82,119,195,.18); box-shadow: inset 2px 0 var(--ice); }
+  .demo-option small { display: block; margin-left: 2ch; color: var(--muted); }
+  .demo-field { color: var(--ink); border-bottom: 1px solid var(--line); padding: 6px 0; }
+  .demo-cursor { color: var(--ice); }
+  .demo-progress { height: 5px; background: var(--line); border-radius: 4px; margin: 18px 0; overflow: hidden; }
+  .demo-progress span { display: block; height: 100%; background: linear-gradient(90deg, var(--ice), var(--violet)); }
+  .demo-status { display: flex; justify-content: space-between; gap: 16px; padding: 12px 16px; border-top: 1px solid var(--line); color: var(--muted); font-size: .75rem; }
+  .demo-caption { margin: 12px 0 0; color: var(--muted); font-size: .8rem; }
+  @media (max-width: 520px) { .demo-screen { min-height: 380px; } .demo-status { flex-wrap: wrap; gap: 4px; } }
   .wide { max-width: 1240px; width: 100%; }
 
   footer { position: relative; z-index: 3; padding-inline: max(16px, 6vw); padding-block: 48px 64px; border-top: 1px solid var(--line); background: rgba(4, 5, 12, 0.82); }
@@ -442,15 +453,26 @@ ls: cannot access '/usr/lib': No such file or directory</pre>
   <section id="install">
     <div class="wide">
       <div class="eyebrow">Install</div>
-      <h2>Five choices and <em>one download</em>.</h2>
+      <h2>Your next desktop. <em>From the terminal.</em></h2>
       <p class="lede">The installer is a text menu. Nothing touches your disk until you confirm.</p>
-      <ol class="steps">
-        <li><span class="num">Step 1</span><h3>Boot the ISO</h3><p>Write it to a USB stick and run <code>sudo omnix-install</code>. Wired networks connect on their own; Wi-Fi opens <code>nmtui</code>.</p></li>
-        <li><span class="num">Step 2</span><h3>Pick a filesystem</h3><p>Choose the disk, then a filesystem.</p><div class="chips"><span>ext4</span><span>btrfs</span><span>xfs</span></div></li>
-        <li><span class="num">Step 3</span><h3>Encrypt?</h3><p>Turn on LUKS full-disk encryption. Recommended for laptops.</p><div class="chips"><span>yes</span><span>no</span></div></li>
-        <li><span class="num">Step 4</span><h3>Choose a flavor</h3><p>Then set your user, password, hostname, and timezone.</p><div class="chips"><span>Autarchy</span><span>Atrium</span><span>Minimal</span></div></li>
-        <li><span class="num">Step 5</span><h3>Sync from the cache</h3><p>Available prebuilt packages download from cache.nixos.org; software compiles when necessary. NVIDIA GPUs get their driver. Reboot.</p></li>
-      </ol>
+      <div class="install-demo" id="install-demo" role="region" aria-label="Looping Omnix installer demonstration">
+        <div class="demo-controls" aria-label="Choose a desktop to preview">
+          <button type="button" data-demo-flavor="Autarchy" aria-pressed="true">Autarchy</button>
+          <button type="button" data-demo-flavor="Atrium" aria-pressed="false">Atrium</button>
+          <button type="button" class="demo-pause" aria-label="Pause installer demo">Pause</button>
+        </div>
+        <div class="term">
+          <div class="term-bar"><i></i><i></i><i></i><b>omnix-install · demo</b></div>
+          <div class="demo-screen" aria-live="off">
+            <h3>Omnix installer</h3>
+            <p><span class="p">$</span> <span class="c">sudo omnix-install</span></p>
+            <p>Boot the ISO, then run the installer.</p>
+          </div>
+          <div class="demo-status"><span class="demo-stage">Boot the installer</span><span class="demo-keys">↑ ↓ choose · Enter confirm</span></div>
+        </div>
+        <p class="demo-caption">A simulated install, sped up for this preview. Each loop tries the other desktop. Select a flavor to preview it, or pause to look around.</p>
+        <noscript><p class="lede">Run <code>sudo omnix-install</code>, choose a disk, filesystem, encryption and flavor, enter your account details, then confirm to install.</p></noscript>
+      </div>
     </div>
   </section>
 </main>
@@ -547,6 +569,104 @@ ls: cannot access '/usr/lib': No such file or directory</pre>
     function go() { requestAnimationFrame(function () { setTimeout(fn, 0); }); }
     document.readyState === "loading" ? document.addEventListener("DOMContentLoaded", go) : go();
   }
+</script>
+<script>
+afterFirstPaint(function () {
+  var demo = document.getElementById("install-demo");
+  if (!demo) return;
+  var screen = demo.querySelector(".demo-screen"), stage = demo.querySelector(".demo-stage");
+  var keys = demo.querySelector(".demo-keys"), pauseButton = demo.querySelector(".demo-pause");
+  var flavorButtons = demo.querySelectorAll("[data-demo-flavor]");
+  var reduce = window.matchMedia("(prefers-reduced-motion: reduce)");
+  var paused = reduce.matches, visible = false, flavor = "Autarchy", elapsed = 0, last = performance.now();
+  var duration = 30000;
+  function choices(title, items, selected) {
+    return '<h3>' + title + '</h3><div class="demo-options">' + items.map(function (item, i) {
+      return '<div class="demo-option' + (i === selected ? ' selected' : '') + '">' + (i === selected ? '▸ ' : '&nbsp; ') + item + '</div>';
+    }).join('') + '</div>';
+  }
+  function render() {
+    var t = elapsed / 1000, html, label, hint = "↑ ↓ choose · Enter confirm";
+    flavorButtons.forEach(function (button) { button.setAttribute("aria-pressed", String(button.dataset.demoFlavor === flavor)); });
+    if (t < 2) {
+      label = "Boot the installer";
+      var command = "sudo omnix-install".slice(0, Math.floor(t * 14));
+      html = '<h3>Omnix installer</h3><p><span class="p">$</span> <span class="c">' + command + '</span><span class="demo-cursor">▌</span></p><p>Starting from the live ISO.</p>';
+      hint = "Typing the installer command";
+    } else if (t < 4) {
+      label = "Connect to the network";
+      html = '<h3>Omnix installer</h3><p class="ok">✓ Wired connection online</p><p>Checking cache.nixos.org…</p>';
+      hint = "Wi-Fi? The installer opens nmtui.";
+    } else if (t < 6) {
+      label = "Choose a disk";
+      html = choices('Install to which disk? (it will be ERASED)', ['/dev/nvme0n1 · 512 GB', '/dev/sda · 1 TB'], t < 5 ? 1 : 0);
+    } else if (t < 8) {
+      label = "Choose a filesystem";
+      html = choices('Filesystem', ['ext4', 'btrfs', 'xfs'], t < 6.8 ? 0 : 1);
+    } else if (t < 10) {
+      label = "Choose encryption";
+      html = choices('Encrypt the disk (LUKS)?', ['Yes', 'No'], t < 9 ? 1 : 0);
+    } else if (t < 15) {
+      label = "Choose your desktop";
+      var selected = t < 11 ? 3 : t < 12 ? 2 : t < 13 ? 1 : flavor === "Autarchy" ? 0 : 2;
+      html = choices('What kind of system do you want?', [
+        'Autarchy (stable)<small>Omarchy-style Hyprland · pinned release</small>',
+        'Autarchy (latest)<small>Omarchy-style Hyprland · latest</small>',
+        'Atrium<small>KDE Plasma · mouse-first desktop</small>',
+        'Minimal<small>The Omnix base alone</small>'
+      ], selected);
+      hint = t >= 13 ? "Enter → " + flavor + (flavor === "Autarchy" ? " (stable)" : "") : "↓ ↑ exploring the desktops";
+    } else if (t < 19) {
+      label = "Set up your account";
+      var user = "alex".slice(0, Math.floor((t - 15) * 4));
+      html = '<h3>Your account</h3><div class="demo-field">Username: ' + user + (t < 16 ? '<span class="demo-cursor">▌</span>' : '') + '</div>' +
+        '<div class="demo-field">Password: ' + (t >= 16 ? '••••••••' : '') + '</div>' +
+        '<div class="demo-field">Again: ' + (t >= 16.5 ? '••••••••' : '') + '</div>' +
+        '<div class="demo-field">Hostname: ' + (t >= 17 ? 'omnix' : '') + '</div>' +
+        '<div class="demo-field">Timezone: ' + (t >= 17.5 ? 'America/Los_Angeles' : '') + '</div>';
+      hint = "Type an answer · Enter continue";
+    } else if (t < 22) {
+      label = "Confirm the installation";
+      html = choices('Erase /dev/nvme0n1 and install Omnix?', ['Install ' + flavor + (flavor === "Autarchy" ? ' (stable)' : '') + ' · btrfs · encrypted', 'Cancel'], t < 20.5 ? 1 : 0);
+      hint = "Nothing touches the disk until confirmation.";
+    } else if (t < 27) {
+      label = "Install " + flavor;
+      var progress = Math.min(100, Math.floor((t - 22) / 5 * 100));
+      html = '<h3>Installing ' + flavor + '</h3><p class="ok">✓ Partition, format and mount</p>' +
+        '<p>Writing your machine flake to /etc/nixos</p><div class="demo-progress"><span style="width:' + progress + '%"></span></div>' +
+        '<p>Downloading available packages from cache.nixos.org</p><p>' + (t > 24.5 ? 'Building local configuration and anything not cached…' : 'Resolving the selected desktop…') + '</p>';
+      hint = "Preview progress · actual install time varies";
+    } else {
+      label = flavor + " is ready";
+      html = '<h3 class="ok">✓ Omnix is installed.</h3><p class="c">Reboot when ready.</p><p>Your desktop: <span class="hl">' + flavor + (flavor === "Autarchy" ? ' · Hyprland' : ' · KDE Plasma') + '</span></p><p>Your system configuration is yours in /etc/nixos.</p>';
+      hint = "Next preview: " + (flavor === "Autarchy" ? "Atrium" : "Autarchy");
+    }
+    if (screen.innerHTML !== html) screen.innerHTML = html;
+    stage.textContent = label; keys.textContent = hint;
+  }
+  function updatePause() {
+    pauseButton.textContent = paused ? "Play" : "Pause";
+    pauseButton.setAttribute("aria-label", (paused ? "Play" : "Pause") + " installer demo");
+  }
+  pauseButton.addEventListener("click", function () { paused = !paused; last = performance.now(); updatePause(); });
+  flavorButtons.forEach(function (button) {
+    button.addEventListener("click", function () { flavor = button.dataset.demoFlavor; elapsed = 13000; last = performance.now(); render(); });
+  });
+  reduce.addEventListener("change", function () { paused = reduce.matches; last = performance.now(); updatePause(); });
+  if ("IntersectionObserver" in window) {
+    var observer = new IntersectionObserver(function (entries) { visible = entries[0].isIntersecting; last = performance.now(); }, { threshold: 0.15 });
+    observer.observe(demo);
+  } else visible = true;
+  if (paused) elapsed = 13000;
+  updatePause(); render();
+  setInterval(function () {
+    var now = performance.now(), dt = Math.min(now - last, 500); last = now;
+    if (paused || !visible || document.hidden) return;
+    elapsed += dt;
+    if (elapsed >= duration) { elapsed %= duration; flavor = flavor === "Autarchy" ? "Atrium" : "Autarchy"; }
+    render();
+  }, 100);
+});
 </script>
 <script>
 afterFirstPaint(function () {
