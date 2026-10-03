@@ -3,12 +3,15 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="dark">
+<style>html,body{background:#04050c;color:#e8eef8}*,*::before,*::after{box-sizing:border-box}body{margin:0}img,svg{max-width:100%}[hidden]{display:none!important}</style>
 <link rel="icon" type="image/svg+xml" href="favicon.svg">
 <meta property="og:title" content="Omnix">
 <meta property="og:description" content="NixOS reproducibility, with an ordinary /usr/bin. Prebuilt Linux software just runs.">
 <meta property="og:url" content="https://www.omnix-linux.com/">
-<style>*,*::before,*::after{box-sizing:border-box}body{margin:0}img,svg{max-width:100%}[hidden]{display:none!important}</style>
 <title>Omnix</title>
+<meta name="color-scheme" content="dark">
+<style>html, body { background: #04050c; color: #e8eef8; }</style>
 <script>
   // Decide before first paint whether the particles will draw the wordmark, so the filled text never flashes.
   (function () {
@@ -22,7 +25,10 @@
 <meta name="description" content="Omnix: NixOS with the standard Linux layout. Prebuilt software just runs.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700;800&family=Instrument+Sans:wght@400;500;600&display=swap">
+<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700;800&family=Instrument+Sans:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700;800&family=Instrument+Sans:wght@400;500;600&display=swap" media="print" onload="this.media='all'">
+<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700;800&family=Instrument+Sans:wght@400;500;600&display=swap"></noscript>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <style>
   /* Layout: one idea per full-height panel over a fixed galaxy; text sits in a left column, evidence on the right. */
   :root {
@@ -57,15 +63,20 @@
   }
 
   /* The galaxy */
+  body::before {
+    content: ""; position: fixed; inset: 0; z-index: 0; pointer-events: none;
+    background: radial-gradient(ellipse 55% 42% at 50% 50%, #16236a 0%, #0a1033 45%, var(--void) 80%);
+  }
   #sky {
     position: fixed; inset: 0; width: 100vw; height: 100vh; display: block; z-index: 0;
-    background: radial-gradient(ellipse 60% 45% at 62% 48%, #1b2a7a 0%, #0a1033 45%, var(--void) 80%);
+    opacity: 0; transition: opacity 1.2s ease;
   }
+  #sky.ready, #motes.ready { opacity: 1; }
   .scrim {
     position: fixed; inset: 0; z-index: 1; pointer-events: none;
     background: linear-gradient(90deg, rgba(4, 5, 12, 0.88) 0%, rgba(4, 5, 12, 0.55) 48%, rgba(4, 5, 12, 0.15) 100%);
   }
-  #motes { position: fixed; inset: 0; width: 100vw; height: 100vh; display: block; z-index: 2; pointer-events: none; }
+  #motes { position: fixed; inset: 0; width: 100vw; height: 100vh; display: block; z-index: 2; pointer-events: none; opacity: 0; transition: opacity .9s ease; }
   main { position: relative; z-index: 3; }
 
   section {
@@ -396,9 +407,15 @@ ls: cannot access '/lib': No such file or directory</pre>
   </div>
 </footer>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script>
-(function () {
+  // Let the page paint before compiling shaders; deferred scripts (three.js) have run by DOMContentLoaded.
+  function afterFirstPaint(fn) {
+    function go() { requestAnimationFrame(function () { setTimeout(fn, 0); }); }
+    document.readyState === "loading" ? document.addEventListener("DOMContentLoaded", go) : go();
+  }
+</script>
+<script>
+afterFirstPaint(function () {
   // Section rail: highlight the panel in view.
   var links = Array.prototype.slice.call(document.querySelectorAll(".rail a"));
   if ("IntersectionObserver" in window) {
@@ -474,6 +491,7 @@ ls: cannot access '/lib': No such file or directory</pre>
     uniforms.u_time.value = (now - start) / 1000 + 8.0;
     uniforms.u_time_delta.value = Math.min(dt, 0.1);
     renderer.render(scene, camera);
+    if (!canvas.classList.contains("ready")) canvas.classList.add("ready");
     if (dt > 0.034 && scale > 0.3) { if (++slow > 20) { scale = Math.max(0.3, scale * 0.8); resize(); slow = 0; } }
     else slow = Math.max(0, slow - 1);
     raf = requestAnimationFrame(frame);
@@ -482,13 +500,13 @@ ls: cannot access '/lib': No such file or directory</pre>
   function pause() { cancelAnimationFrame(raf); raf = 0; }
   document.addEventListener("visibilitychange", function () { document.hidden ? pause() : (last = performance.now(), play()); });
   if (reduce.matches) {
-    uniforms.u_time.value = 12.0; renderer.render(scene, camera);
+    uniforms.u_time.value = 12.0; renderer.render(scene, camera); canvas.classList.add("ready");
   } else { play(); }
   reduce.addEventListener && reduce.addEventListener("change", function () { reduce.matches ? pause() : play(); });
-})();
+});
 </script>
 <script>
-(function () {
+afterFirstPaint(function () {
   // Stars that orbit with the galaxy, gather into the "omnix" wordmark, hold, and scatter again.
   var canvas = document.getElementById("motes");
   var word = document.querySelector(".wordmark");
@@ -625,16 +643,16 @@ ls: cannot access '/lib': No such file or directory</pre>
     var o = Math.max(0, (mix - 0.55) / 0.45);
     root.style.setProperty("--outline", (o * o * (3 - 2 * o)).toFixed(3));
     renderer.render(scene, camera);
+    if (!canvas.classList.contains("ready")) canvas.classList.add("ready");
     raf = requestAnimationFrame(frame);
   }
   function play() { if (!raf && !document.hidden) raf = requestAnimationFrame(frame); }
   function pause() { cancelAnimationFrame(raf); raf = 0; }
   document.addEventListener("visibilitychange", function () { document.hidden ? pause() : play(); });
   window.addEventListener("resize", resize);
-  (document.fonts && document.fonts.ready ? document.fonts.ready : Promise.resolve()).then(function () {
-    resize(); play();
-  });
-})();
+  if (document.fonts && document.fonts.addEventListener) document.fonts.addEventListener("loadingdone", sampleWord);
+  resize(); play();
+});
 </script>
 </body>
 </html>
