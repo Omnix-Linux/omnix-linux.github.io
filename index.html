@@ -76,7 +76,7 @@
     position: fixed; inset: 0; z-index: 1; pointer-events: none;
     background: linear-gradient(90deg, rgba(4, 5, 12, 0.88) 0%, rgba(4, 5, 12, 0.55) 48%, rgba(4, 5, 12, 0.15) 100%);
   }
-  #motes { position: fixed; inset: 0; width: 100vw; height: 100vh; display: block; z-index: 2; pointer-events: none; opacity: 0; transition: opacity .9s ease; }
+  #motes { position: fixed; inset: 0; width: 100vw; height: 100vh; display: block; z-index: 2; pointer-events: none; opacity: 0; transition: opacity .35s ease; }
   main { position: relative; z-index: 3; }
 
   section {
@@ -124,15 +124,9 @@
     font-family: var(--font-display); font-weight: 800; font-size: clamp(4rem, 2rem + 10vw, 11rem);
     letter-spacing: -0.05em; line-height: 0.9; margin: 0;
   }
-  /* With the particle layer running, the particles are the letters; the glyphs only carry an electric outline. */
+  /* With the particle layer running, the particles are the letters; the glyphs themselves are not drawn. */
   .particles-on .wordmark, .particles-on .wordmark span {
     color: transparent; background: none; -webkit-text-fill-color: transparent;
-    -webkit-text-stroke: 1.4px rgba(244, 250, 255, var(--outline, 1));
-  }
-  .particles-on .wordmark {
-    filter: drop-shadow(0 0 3px rgba(224, 242, 254, var(--outline, 1)))
-            drop-shadow(0 0 14px rgba(125, 211, 252, calc(var(--outline, 1) * 0.8)))
-            drop-shadow(0 0 32px rgba(139, 92, 246, calc(var(--outline, 1) * 0.5)));
   }
   .wordmark span { background: linear-gradient(90deg, var(--ice), var(--nix) 50%, var(--violet)); -webkit-background-clip: text; background-clip: text; color: transparent; }
   .tagline { font-family: var(--font-display); font-weight: 500; font-size: var(--step-1); margin: 0; max-width: 32ch; text-wrap: balance; }
@@ -640,8 +634,6 @@ afterFirstPaint(function () {
     uniforms.uOrigin.value.set(rect.left, rect.top);
     // The spiral turns around the word while the hero is on screen, then around the viewport.
     uniforms.uCenter.value.set(window.innerWidth * 0.5, Math.max(rect.top + rect.height * 0.5, window.innerHeight * 0.5));
-    var o = Math.max(0, (mix - 0.55) / 0.45);
-    root.style.setProperty("--outline", (o * o * (3 - 2 * o)).toFixed(3));
     renderer.render(scene, camera);
     if (!canvas.classList.contains("ready")) canvas.classList.add("ready");
     raf = requestAnimationFrame(frame);
