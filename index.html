@@ -248,20 +248,26 @@
   .demo-controls button[aria-pressed="true"] { color: var(--ice); border-color: var(--nix); background: rgba(82,119,195,.16); }
   .demo-controls button:focus-visible { outline: 2px solid var(--ice); outline-offset: 3px; }
   .demo-controls .demo-pause { margin-left: auto; }
-  .demo-screen { padding: clamp(16px, 3vw, 32px); min-height: 340px; overflow-wrap: anywhere; }
-  .demo-screen h3 { font: inherit; font-weight: 700; color: var(--ice); margin: 0 0 18px; }
+  .demo-console { background: #080b12; border-radius: 4px; backdrop-filter: none; -webkit-backdrop-filter: none; }
+  .demo-console .term-bar { justify-content: space-between; color: var(--muted); }
+  .demo-console .term-bar b { margin: 0; }
+  .demo-screen { padding: clamp(16px, 3vw, 32px); min-height: 360px; overflow-wrap: anywhere; color: #c7d1df; }
+  .demo-screen h3 { display: table; font: inherit; font-weight: 700; color: var(--ink); margin: 0 0 22px; padding: 2px 2ch; border: 1px solid var(--muted); border-radius: 5px; }
   .demo-screen p { margin: 0 0 12px; }
-  .demo-options { display: grid; gap: 6px; }
-  .demo-option { padding: 8px 12px; border-radius: 5px; color: var(--muted); }
-  .demo-option.selected { color: var(--ink); background: rgba(82,119,195,.18); box-shadow: inset 2px 0 var(--ice); }
+  .demo-prompt { color: var(--ink); margin-bottom: 10px; }
+  .demo-options { display: grid; gap: 3px; }
+  .demo-option { padding: 3px 0; color: var(--muted); }
+  .demo-option.selected { color: #d8b4fe; }
   .demo-option small { display: block; margin-left: 2ch; color: var(--muted); }
-  .demo-field { color: var(--ink); border-bottom: 1px solid var(--line); padding: 6px 0; }
+  .demo-confirm { display: flex; gap: 2ch; margin-top: 16px; }
+  .demo-confirm span { padding: 2px 2ch; color: var(--muted); }
+  .demo-confirm .selected { background: #b48be4; color: #080b12; }
+  .demo-field { color: var(--ink); }
   .demo-cursor { color: var(--ice); }
-  .demo-progress { height: 5px; background: var(--line); border-radius: 4px; margin: 18px 0; overflow: hidden; }
-  .demo-progress span { display: block; height: 100%; background: linear-gradient(90deg, var(--ice), var(--violet)); }
+  .demo-output { font: inherit; white-space: pre-wrap; overflow-wrap: anywhere; line-height: 1.65; color: var(--muted); }
   .demo-status { display: flex; justify-content: space-between; gap: 16px; padding: 12px 16px; border-top: 1px solid var(--line); color: var(--muted); font-size: .75rem; }
   .demo-caption { margin: 12px 0 0; color: var(--muted); font-size: .8rem; }
-  @media (max-width: 520px) { .demo-screen { min-height: 380px; } .demo-status { flex-wrap: wrap; gap: 4px; } }
+  @media (max-width: 520px) { .demo-screen { min-height: 500px; } .demo-status { flex-wrap: wrap; gap: 4px; } }
   .wide { max-width: 1240px; width: 100%; }
 
   footer { position: relative; z-index: 3; padding-inline: max(16px, 6vw); padding-block: 48px 64px; border-top: 1px solid var(--line); background: rgba(4, 5, 12, 0.82); }
@@ -469,23 +475,22 @@ ls: cannot access '/usr/lib': No such file or directory</pre>
     <div class="wide">
       <div class="eyebrow">Install</div>
       <h2>Your next desktop. <em>From the terminal.</em></h2>
-      <p class="lede">The installer is a text menu. Nothing touches your disk until you confirm.</p>
+      <p class="lede">Boot the ISO into a console and run <code>sudo omnix-install</code>. The entire install stays in the terminal; your desktop starts after reboot. Nothing touches your disk until you confirm.</p>
       <div class="install-demo" id="install-demo" role="region" aria-label="Looping Omnix installer demonstration">
         <div class="demo-controls" aria-label="Choose a desktop to preview">
           <button type="button" data-demo-flavor="Autarchy" aria-pressed="true">Autarchy</button>
           <button type="button" data-demo-flavor="Atrium" aria-pressed="false">Atrium</button>
           <button type="button" class="demo-pause" aria-label="Pause installer demo">Pause</button>
         </div>
-        <div class="term">
-          <div class="term-bar"><i></i><i></i><i></i><b>omnix-install · demo</b></div>
+        <div class="term demo-console">
+          <div class="term-bar"><b>Omnix live ISO · tty1</b><span>console preview</span></div>
           <div class="demo-screen" aria-live="off">
-            <h3>Omnix installer</h3>
-            <p><span class="p">$</span> <span class="c">sudo omnix-install</span></p>
-            <p>Boot the ISO, then run the installer.</p>
+            <p>Welcome to the Omnix installer. Run: sudo omnix-install</p>
+            <p><span class="ok">[nixos@nixos:~]$</span> <span class="demo-cursor">▌</span></p>
           </div>
           <div class="demo-status"><span class="demo-stage">Boot the installer</span><span class="demo-keys">↑ ↓ choose · Enter confirm</span></div>
         </div>
-        <p class="demo-caption">A simulated install, sped up for this preview. Each loop tries the other desktop. Select a flavor to preview it, or pause to look around.</p>
+        <p class="demo-caption">Simulated from the boot ISO: terminal menus, individual prompts, then console output. Timing and log lines are illustrative. This preview uses a wired connection, btrfs and LUKS; Wi-Fi setup opens nmtui. Each loop tries the other desktop.</p>
         <noscript><p class="lede">Run <code>sudo omnix-install</code>, choose a disk, filesystem, encryption and flavor, enter your account details, then confirm to install.</p></noscript>
       </div>
     </div>
@@ -562,10 +567,6 @@ ls: cannot access '/usr/lib': No such file or directory</pre>
     sec.querySelectorAll(".term pre").forEach(function (p) { set(p, inner); });
     sec.querySelectorAll(".menu .q, .opt").forEach(function (o, k) { set(o, inner + k * 80); });
     sec.querySelectorAll(".flow > div").forEach(function (f, k) { set(f, panelStart + 200 + k * 75); });
-    sec.querySelectorAll(".steps li").forEach(function (li, k) {
-      set(li, t + k * 85);
-      li.querySelectorAll(".chips span").forEach(function (c, j) { set(c, t + k * 85 + 380 + j * 60); });
-    });
   });
 
   var io = new IntersectionObserver(function (entries) {
@@ -594,67 +595,85 @@ afterFirstPaint(function () {
   var flavorButtons = demo.querySelectorAll("[data-demo-flavor]");
   var reduce = window.matchMedia("(prefers-reduced-motion: reduce)");
   var paused = reduce.matches, visible = false, flavor = "Autarchy", elapsed = 0, last = performance.now();
-  var duration = 30000;
-  function choices(title, items, selected) {
-    return '<h3>' + title + '</h3><div class="demo-options">' + items.map(function (item, i) {
+  var duration = 42000, FLAVOR_PREVIEW_MS = 15000;
+  var title = '<h3>Omnix installer</h3>';
+  function choices(prompt, items, selected) {
+    return title + '<div class="demo-prompt">' + prompt + '</div><div class="demo-options">' + items.map(function (item, i) {
       return '<div class="demo-option' + (i === selected ? ' selected' : '') + '">' + (i === selected ? '▸ ' : '&nbsp; ') + item + '</div>';
     }).join('') + '</div>';
   }
+  function confirm(prompt, yes) {
+    return title + '<div class="demo-prompt">' + prompt + '</div><div class="demo-confirm"><span class="' + (yes ? 'selected' : '') + '">Yes</span><span class="' + (!yes ? 'selected' : '') + '">No</span></div>';
+  }
+  function input(prompt, value, seconds, masked) {
+    var text = value.slice(0, Math.max(0, Math.floor(seconds * (masked ? 9 : 16))));
+    return title + '<div class="demo-prompt">' + prompt + '</div><div class="demo-field">' + text + '<span class="demo-cursor">▌</span></div>';
+  }
   function render() {
     var t = elapsed / 1000, html, label, hint = "↑ ↓ choose · Enter confirm";
+    var flavorId = flavor === "Autarchy" ? "autarchy-stable" : "atrium";
     flavorButtons.forEach(function (button) { button.setAttribute("aria-pressed", String(button.dataset.demoFlavor === flavor)); });
-    if (t < 2) {
-      label = "Boot the installer";
-      var command = "sudo omnix-install".slice(0, Math.floor(t * 14));
-      html = '<h3>Omnix installer</h3><p><span class="p">$</span> <span class="c">' + command + '</span><span class="demo-cursor">▌</span></p><p>Starting from the live ISO.</p>';
-      hint = "Typing the installer command";
-    } else if (t < 4) {
-      label = "Connect to the network";
-      html = '<h3>Omnix installer</h3><p class="ok">✓ Wired connection online</p><p>Checking cache.nixos.org…</p>';
-      hint = "Wi-Fi? The installer opens nmtui.";
-    } else if (t < 6) {
+    if (t < 4) {
+      label = t < 2 ? "Boot ISO → live console" : "Run the installer";
+      var command = "sudo omnix-install".slice(0, Math.max(0, Math.floor((t - 2) * 14)));
+      html = '<p>Welcome to the Omnix installer. Run: sudo omnix-install</p><p><span class="ok">[nixos@nixos:~]$</span> <span class="c">' + command + '</span><span class="demo-cursor">▌</span></p>';
+      hint = "Live ISO shell · no desktop required";
+    } else if (t < 5) {
+      label = "Check network access"; html = title;
+      hint = "Wired connection · cache check runs silently";
+    } else if (t < 7) {
       label = "Choose a disk";
-      html = choices('Install to which disk? (it will be ERASED)', ['/dev/nvme0n1 · 512 GB', '/dev/sda · 1 TB'], t < 5 ? 1 : 0);
-    } else if (t < 8) {
+      html = choices('Install to which disk? (it will be ERASED)', ['/dev/nvme0n1 512G NVMe SSD', '/dev/sda 1T SATA SSD'], t < 5.7 ? 0 : t < 6.2 ? 1 : 0);
+    } else if (t < 9) {
       label = "Choose a filesystem";
-      html = choices('Filesystem', ['ext4', 'btrfs', 'xfs'], t < 6.8 ? 0 : 1);
-    } else if (t < 10) {
+      html = choices('Filesystem', ['ext4', 'btrfs', 'xfs'], t < 7.8 ? 0 : 1);
+    } else if (t < 11) {
       label = "Choose encryption";
-      html = choices('Encrypt the disk (LUKS)?', ['Yes', 'No'], t < 9 ? 1 : 0);
-    } else if (t < 15) {
+      html = confirm('Encrypt the disk (LUKS)?', t >= 10);
+      hint = "← → choose · Enter confirm";
+    } else if (t < 17) {
       label = "Choose your desktop";
-      var selected = t < 11 ? 3 : t < 12 ? 2 : t < 13 ? 1 : flavor === "Autarchy" ? 0 : 2;
+      // Match the live registry order; each loop browses before settling on its flavor.
+      var selected = t < 12 ? 0 : t < 13 ? 1 : t < 14 ? 2 : t < 15 ? 3 : flavor === "Autarchy" ? 1 : 0;
       html = choices('What kind of system do you want?', [
-        'Autarchy (stable)<small>Omarchy-style Hyprland · pinned release</small>',
-        'Autarchy (latest)<small>Omarchy-style Hyprland · latest</small>',
-        'Atrium<small>KDE Plasma · mouse-first desktop</small>',
-        'Minimal<small>The Omnix base alone</small>'
+        'Atrium<small>KDE Plasma desktop: polished windows, mouse-first</small>',
+        'Autarchy (stable)<small>Omarchy-style keyboard-driven Hyprland, pinned to an Omarchy release</small>',
+        'Autarchy (latest)<small>Omarchy-style keyboard-driven Hyprland, tracking Omarchy main</small>',
+        'Minimal<small>The Omnix base alone: console, FHS layer, nothing else</small>'
       ], selected);
-      hint = t >= 13 ? "Enter → " + flavor + (flavor === "Autarchy" ? " (stable)" : "") : "↓ ↑ exploring the desktops";
-    } else if (t < 19) {
+      hint = t >= 15 ? "Enter → " + flavor + (flavor === "Autarchy" ? " (stable)" : "") : "↑ ↓ browse flavors";
+    } else if (t < 24) {
       label = "Set up your account";
-      var user = "alex".slice(0, Math.floor((t - 15) * 4));
-      html = '<h3>Your account</h3><div class="demo-field">Username: ' + user + (t < 16 ? '<span class="demo-cursor">▌</span>' : '') + '</div>' +
-        '<div class="demo-field">Password: ' + (t >= 16 ? '••••••••' : '') + '</div>' +
-        '<div class="demo-field">Again: ' + (t >= 16.5 ? '••••••••' : '') + '</div>' +
-        '<div class="demo-field">Hostname: ' + (t >= 17 ? 'omnix' : '') + '</div>' +
-        '<div class="demo-field">Timezone: ' + (t >= 17.5 ? 'America/Los_Angeles' : '') + '</div>';
-      hint = "Type an answer · Enter continue";
-    } else if (t < 22) {
-      label = "Confirm the installation";
-      html = choices('Erase /dev/nvme0n1 and install Omnix?', ['Install ' + flavor + (flavor === "Autarchy" ? ' (stable)' : '') + ' · btrfs · encrypted', 'Cancel'], t < 20.5 ? 1 : 0);
-      hint = "Nothing touches the disk until confirmation.";
+      if (t < 18.4) html = input('Username', 'alex', t - 17, false);
+      else if (t < 19.8) html = input('Password for alex', '••••••••', t - 18.4, true);
+      else if (t < 21.2) html = input('Again', '••••••••', t - 19.8, true);
+      else if (t < 22.6) html = input('Hostname', 'omnix', 1, false);
+      else html = input('Timezone', 'America/Los_Angeles', 2, false);
+      hint = "One prompt at a time · Enter continue";
     } else if (t < 27) {
+      label = "Confirm the installation";
+      html = confirm('Erase /dev/nvme0n1 and install Omnix (' + flavorId + ', btrfs, encrypted)?', t >= 25.5);
+      hint = "← → choose · Enter confirm · disk will be erased";
+    } else if (t < 30) {
+      label = "Set the disk encryption passphrase";
+      html = '<div class="demo-output">Partitioning /dev/nvme0n1…<br>Creating the EFI and encrypted root partitions…</div>' +
+        '<div class="demo-prompt">Enter passphrase for /dev/nvme0n1p2:</div><div class="demo-field">' + '<span class="demo-cursor">▌</span></div>';
+      hint = "LUKS passphrase · input is hidden · Enter continue";
+    } else if (t < 36) {
       label = "Install " + flavor;
-      var progress = Math.min(100, Math.floor((t - 22) / 5 * 100));
-      html = '<h3>Installing ' + flavor + '</h3><p class="ok">✓ Partition, format and mount</p>' +
-        '<p>Writing your machine flake to /etc/nixos</p><div class="demo-progress"><span style="width:' + progress + '%"></span></div>' +
-        '<p>Downloading available packages from cache.nixos.org</p><p>' + (t > 24.5 ? 'Building local configuration and anything not cached…' : 'Resolving the selected desktop…') + '</p>';
-      hint = "Preview progress · actual install time varies";
+      var lines = ['Formatting and mounting btrfs…', 'Generating hardware configuration…'];
+      if (t >= 31) lines.push('Writing /mnt/etc/nixos/flake.nix and local.nix…');
+      if (t >= 32) lines.push('Locking nixpkgs to the ISO revision…');
+      if (t >= 33) lines.push('Installing the system with nixos-install…', 'copying paths from https://cache.nixos.org…');
+      if (t >= 34) lines.push('building local configuration and uncached derivations…');
+      if (t >= 35) lines.push('installing the boot loader…', 'setting the password for alex…');
+      html = '<div class="demo-output">' + lines.join('<br>') + '</div>';
+      hint = "Console output · time varies with hardware and downloads";
     } else {
-      label = flavor + " is ready";
-      html = '<h3 class="ok">✓ Omnix is installed.</h3><p class="c">Reboot when ready.</p><p>Your desktop: <span class="hl">' + flavor + (flavor === "Autarchy" ? ' · Hyprland' : ' · KDE Plasma') + '</span></p><p>Your system configuration is yours in /etc/nixos.</p>';
-      hint = "Next preview: " + (flavor === "Autarchy" ? "Atrium" : "Autarchy");
+      label = t < 39 ? flavor + " installed" : "Reboot into " + flavor;
+      var reboot = 'sudo reboot'.slice(0, Math.max(0, Math.floor((t - 39) * 10)));
+      html = '<p class="ok">Omnix is installed. Reboot when ready.</p><p><span class="ok">[nixos@nixos:~]$</span> <span class="c">' + reboot + '</span><span class="demo-cursor">▌</span></p>';
+      hint = "After reboot: " + flavor + (flavor === "Autarchy" ? " / Hyprland" : " / KDE Plasma");
     }
     if (screen.innerHTML !== html) screen.innerHTML = html;
     stage.textContent = label; keys.textContent = hint;
@@ -665,14 +684,14 @@ afterFirstPaint(function () {
   }
   pauseButton.addEventListener("click", function () { paused = !paused; last = performance.now(); updatePause(); });
   flavorButtons.forEach(function (button) {
-    button.addEventListener("click", function () { flavor = button.dataset.demoFlavor; elapsed = 13000; last = performance.now(); render(); });
+    button.addEventListener("click", function () { flavor = button.dataset.demoFlavor; elapsed = FLAVOR_PREVIEW_MS; last = performance.now(); render(); });
   });
   reduce.addEventListener("change", function () { paused = reduce.matches; last = performance.now(); updatePause(); });
   if ("IntersectionObserver" in window) {
     var observer = new IntersectionObserver(function (entries) { visible = entries[0].isIntersecting; last = performance.now(); }, { threshold: 0.15 });
     observer.observe(demo);
   } else visible = true;
-  if (paused) elapsed = 13000;
+  if (paused) elapsed = FLAVOR_PREVIEW_MS;
   updatePause(); render();
   setInterval(function () {
     var now = performance.now(), dt = Math.min(now - last, 500); last = now;
