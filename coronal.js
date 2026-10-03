@@ -1,7 +1,5 @@
-/* Coronal by @Xor: https://fragcoord.xyz/s/3otcb9tt
- * Derived from 3D Fire: https://fragcoord.xyz/s/3zoe0vgo
- * Expanded from the source's Golf syntax into GLSL. No audio input is needed.
- */
+/* DOM placement and OffscreenCanvas lifecycle for the shader-backed O.
+ * Shader source and GPU resources live in shader-worker.js. */
 afterFirstPaint(async function () {
   var canvas = document.getElementById("coronal");
   var orbit = document.querySelector(".logo-orbit");
@@ -50,67 +48,21 @@ afterFirstPaint(async function () {
   }
   document.querySelector(".logo-orbit img").src = profile.poster;
   placeLogo();
-  if (profile.renderer !== "coronal" || typeof THREE === "undefined" || reduce.matches) {
-    window.addEventListener("resize", placeLogo);
-    if (document.fonts) document.fonts.ready.then(placeLogo);
-    return;
+  // The main thread owns DOM placement only. Rendering and cached textures
+  // belong to the worker after the canvas is transferred exactly once.
+  var worker = null, failed = false, suspended = false, revision = 0, resizeRaf = 0;
+  var heroPast = false, startupTimer = 0;
+  canvas.dataset.backend = "poster";
+  rendering = Object.assign({ heroShaderFps: 20, mobileShaderFps: 15, backgroundShaderFps: 8 }, rendering);
+  function isActive() { return !document.hidden && !reduce.matches && !suspended; }
+  function fallback() {
+    failed = true; clearTimeout(startupTimer);
+    if (worker) { worker.terminate(); worker = null; }
+    root.classList.remove("shader-ready"); canvas.dataset.backend = "poster";
   }
-  var renderer;
-  try { renderer = new THREE.WebGLRenderer({ canvas: canvas, alpha: true, antialias: false }); }
-  catch (e) {
-    window.addEventListener("resize", placeLogo);
-    if (document.fonts) document.fonts.ready.then(placeLogo);
-    return; // Keep the pre-rendered O when WebGL is unavailable.
-  }
-  var uniforms = {
-    uCenter: { value: new THREE.Vector2() }, uDiameter: { value: 600 },
-    uSurfaceSize: { value: new THREE.Vector2() }, uBufferSize: { value: new THREE.Vector2() },
-    uTime: { value: 6 }
-  };
-  var material = new THREE.ShaderMaterial({
-    uniforms: uniforms, depthTest: false, depthWrite: false,
-    vertexShader: "void main() { gl_Position = vec4(position.xy, 0., 1.); }",
-    fragmentShader: [
-      "uniform vec2 uCenter, uSurfaceSize, uBufferSize; uniform float uDiameter, uTime;",
-      "void main() {",
-      "  vec2 pixel = gl_FragCoord.xy / uBufferSize * uSurfaceSize;",
-      "  vec2 uv = 2. * (pixel - uCenter) / uDiameter;",
-      "  if (length(uv) > 1.5) { gl_FragColor = vec4(0.); return; }",
-      "  vec3 ray = normalize(vec3(uv, -1.));",
-      "  vec3 glow = vec3(0.);",
-      "  float z = 2.;",
-      "  for (int i = 0; i < 40; i++) {",
-      "    vec3 p = z * ray, original = p;",
-      "    float frequency = 2.;",
-      "    for (int j = 0; j < 6; j++) {",
-      "      frequency *= 2.;",
-      "      p += sin(p.zxy * frequency + z - uTime) / frequency;",
-      "    }",
-      "    z += abs(1. - length(p.xy)) / 3.;",
-      "    glow += (1.1 - cos(p)) / (z * z * max(abs(length(original.xy) - 1.), 0.001));",
-      "  }",
-      // Equivalent to tanh(glow / 30), with a bounded exponent for mobile GPUs.
-      "  vec3 color = 1. - 2. / (exp(2. * min(glow / 30., vec3(10.))) + 1.);",
-      "  float alpha = 1. - smoothstep(1.1, 1.5, length(uv));",
-      "  gl_FragColor = vec4(color * alpha, alpha);",
-      "}"
-    ].join("\n")
-  });
-  var scene = new THREE.Scene(), camera = new THREE.Camera();
-  var quad = new THREE.Mesh(new THREE.PlaneGeometry(2, 2), material);
-  quad.frustumCulled = false; scene.add(quad);
-  // Use CSS pixels for the shape and real drawing-buffer pixels for sampling.
-  // Crop the GL surface to the visible glow and cap its total pixels independently of DPR.
-  var quality = 1, raf = 0, resizeRaf = 0, last = 0, slow = 0, contextLost = false;
-  var heroPast = false;
-  function draw() {
-    if (contextLost || reduce.matches) return;
-    renderer.render(scene, camera);
-    root.classList.add("shader-ready");
-  }
-  function layout() {
-    var placement = placeLogo();
-    var W = placement.width, H = placement.height, diameter = placement.size;
+  function surface() {
+    var placement = placeLogo(), geometry = profile.geometry;
+    var diameter = placement.size, W = placement.width, H = placement.height;
     var originX = placement.left + geometry.shaderOrigin.x * diameter;
     var originY = placement.top + geometry.shaderOrigin.y * diameter;
     var left = Math.max(0, Math.floor(placement.left + geometry.effectBounds.left * diameter));
@@ -121,55 +73,75 @@ afterFirstPaint(async function () {
     canvas.style.inset = "auto";
     canvas.style.left = left + "px"; canvas.style.top = top + "px";
     canvas.style.width = width + "px"; canvas.style.height = height + "px";
-    var budget = (W <= registry.layout.mobile.maxViewportWidth ? rendering.mobileMaxPixels : rendering.desktopMaxPixels)
-      * (heroPast ? rendering.backgroundPixelBudgetScale : 1);
-    var ratio = Math.min(window.devicePixelRatio || 1, rendering.maxPixelRatio, Math.sqrt(budget / (width * height))) * quality;
-    renderer.setPixelRatio(ratio); renderer.setSize(width, height, false);
-    // Query WebGL itself: browser/GPU limits can differ from the requested buffer size.
-    var gl = renderer.getContext(), surface = canvas.getBoundingClientRect();
-    uniforms.uBufferSize.value.set(gl.drawingBufferWidth, gl.drawingBufferHeight);
-    uniforms.uSurfaceSize.value.set(surface.width, surface.height);
-    uniforms.uCenter.value.set(originX - surface.left, surface.height - (originY - surface.top));
-    uniforms.uDiameter.value = diameter;
+    return { width: width, height: height, centerX: originX - left,
+      centerY: height - (originY - top), diameter: diameter,
+      pixelRatio: window.devicePixelRatio || 1,
+      mobile: W <= registry.layout.mobile.maxViewportWidth, revision: ++revision };
+  }
+  function start() {
+    if (worker || failed || !isActive()) return;
+    if (profile.renderer !== "coronal" || typeof Worker === "undefined"
+      || typeof canvas.transferControlToOffscreen !== "function") { fallback(); return; }
+    try {
+      var layout = surface();
+      worker = new Worker("shader-worker.js");
+      worker.onerror = function (event) { event.preventDefault(); fallback(); };
+      worker.onmessageerror = fallback;
+      worker.onmessage = function (event) {
+        if (failed) return;
+        var message = event.data;
+        if (message.type === "ready" && message.revision === revision) {
+          clearTimeout(startupTimer);
+          canvas.dataset.backend = "worker";
+          canvas.dataset.graphicsBackend = message.backend;
+          canvas.dataset.renderPixels = message.pixels;
+          canvas.dataset.cacheBytes = message.cacheBytes;
+          if (!reduce.matches) root.classList.add("shader-ready");
+        } else if (message.type === "lost") {
+          root.classList.remove("shader-ready");
+          clearTimeout(startupTimer);
+          if (isActive()) startupTimer = setTimeout(fallback, 8000);
+        } else if (message.type === "fallback") fallback();
+      };
+      var offscreen = canvas.transferControlToOffscreen();
+      worker.postMessage({ type: "init", canvas: offscreen, renderer: profile.renderer,
+        rendering: rendering, layout: layout, active: isActive(), background: heroPast }, [offscreen]);
+      startupTimer = setTimeout(fallback, 8000);
+    } catch (error) { fallback(); }
   }
   function resize() {
     if (resizeRaf) return;
-    resizeRaf = requestAnimationFrame(function () { resizeRaf = 0; layout(); draw(); });
+    resizeRaf = requestAnimationFrame(function () {
+      resizeRaf = 0;
+      if (worker) worker.postMessage({ type: "resize", layout: surface() });
+      else { placeLogo(); start(); }
+    });
   }
-  function frame(now) {
-    raf = 0;
-    if (reduce.matches) { root.classList.remove("shader-ready"); return; }
-    if (document.hidden || contextLost) return;
-    var interval = 1000 / (heroPast ? rendering.backgroundFps : rendering.heroFps);
-    if (!last || now - last >= interval) {
-      if (last && now - last > interval * 1.8) slow++; else slow = Math.max(0, slow - 1);
-      uniforms.uTime.value = now / 1000 + 6;
-      if (slow > 6 && quality > rendering.minQuality) { quality = Math.max(rendering.minQuality, quality * 0.8); layout(); slow = 0; }
-      draw(); last = now;
-    }
-    raf = requestAnimationFrame(frame);
+  function state() {
+    clearTimeout(startupTimer);
+    if (worker && isActive() && !root.classList.contains("shader-ready")) startupTimer = setTimeout(fallback, 8000);
+    if (reduce.matches) root.classList.remove("shader-ready");
+    if (worker) worker.postMessage({ type: "state", active: isActive(), background: heroPast });
+    else start();
   }
-  function play() { if (!raf && !document.hidden && !reduce.matches && !contextLost) { last = 0; raf = requestAnimationFrame(frame); } }
-  function pause() { cancelAnimationFrame(raf); raf = 0; }
-  canvas.addEventListener("webglcontextlost", function (event) {
-    event.preventDefault(); contextLost = true; pause(); root.classList.remove("shader-ready");
+  document.addEventListener("visibilitychange", state);
+  reduce.addEventListener("change", state);
+  window.addEventListener("pagehide", function (event) {
+    suspended = true;
+    if (event.persisted) state();
+    else { clearTimeout(startupTimer); if (worker) worker.terminate(); worker = null; }
   });
-  canvas.addEventListener("webglcontextrestored", function () { contextLost = false; resize(); play(); });
-  document.addEventListener("visibilitychange", function () { document.hidden ? pause() : play(); });
-  reduce.addEventListener("change", function () {
-    if (reduce.matches) { pause(); root.classList.remove("shader-ready"); }
-    else { resize(); play(); }
-  });
+  window.addEventListener("pageshow", function () { suspended = false; state(); resize(); });
   if ("IntersectionObserver" in window) {
     new IntersectionObserver(function (entries) {
-      var next = entries[0].intersectionRatio < 0.35;
+      var next = entries[0].intersectionRatio < .35;
       root.classList.toggle("hero-past", next);
-      if (heroPast !== next) { heroPast = next; last = 0; resize(); }
-    }, { threshold: [0, 0.35] }).observe(document.getElementById("top"));
+      if (heroPast !== next) { heroPast = next; state(); }
+    }, { threshold: [0, .35] }).observe(document.getElementById("top"));
   }
   if (document.fonts) document.fonts.ready.then(resize);
   if (typeof ResizeObserver !== "undefined") new ResizeObserver(resize).observe(document.querySelector(".hero-inner"));
   window.addEventListener("resize", resize);
   if (window.visualViewport) window.visualViewport.addEventListener("resize", resize);
-  resize(); play();
+  resize();
 });

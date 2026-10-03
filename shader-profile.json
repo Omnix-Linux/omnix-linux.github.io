@@ -80,9 +80,12 @@
     "desktopMaxPixels": 320000,
     "mobileMaxPixels": 160000,
     "maxPixelRatio": 1.25,
-    "heroFps": 30,
-    "backgroundFps": 15,
+    "heroFps": 60,
+    "backgroundFps": 30,
     "backgroundPixelBudgetScale": 0.5,
-    "minQuality": 0.45
+    "minQuality": 0.45,
+    "heroShaderFps": 20,
+    "mobileShaderFps": 15,
+    "backgroundShaderFps": 8
   }
 }
