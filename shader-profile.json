@@ -56,16 +56,16 @@
   "layout": {
     "desktop": {
       "centerXViewport": 0.38,
-      "sizeViewportWidth": 0.528,
-      "sizeViewportHeight": 0.726,
+      "sizeViewportWidth": 0.8,
+      "sizeViewportHeight": 1.1,
       "suffixScaleToLetterHeight": 0.2,
       "suffixGapToArtworkSize": 0
     },
     "mobile": {
       "maxViewportWidth": 640,
       "centerXViewport": 0.37,
-      "sizeViewportWidth": 0.66,
-      "sizeViewportHeight": 0.726,
+      "sizeViewportWidth": 1,
+      "sizeViewportHeight": 1.1,
       "suffixScaleToLetterHeight": 0.15,
       "suffixGapToArtworkSize": 0
     },
