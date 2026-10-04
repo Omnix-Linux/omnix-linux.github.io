@@ -40,3 +40,5 @@ Use **Hyprland - Omarchy** and **KDE Plasma - Atrium** in desktop labels.
 Use **Omarchy** in prose. Follow the [Omnix naming policy](https://github.com/Omnix-Linux/Omnix/blob/main/docs/naming.md); existing flake URLs and installer IDs are compatibility identifiers.
 
 The favicon is rendered from `coronal-shader.js` at time 6 seconds, with the same white O rim as the hero. It uses an artwork diameter of 1.35 times the icon size so the O fills the tab icon. The SVG embeds a 64px shader render; PNG and ICO variants include renders at native tab sizes.
+
+Section reveals observe the first eyebrow or heading inside the viewport band from 10% to 65% of its height. The hero observes its wordmark with 12% top/bottom insets and fades when less than 65% remains visible. Its suffix and subtitle fade out in 180ms; the corona drops to 8% opacity. Pixel observer margins are rebuilt on resize because percentage root margins follow viewport width. This gives the hero time to dim before section copy appears.

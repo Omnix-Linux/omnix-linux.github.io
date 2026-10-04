@@ -159,10 +159,18 @@ afterFirstPaint(async function () {
   });
   window.addEventListener("pageshow", function () { suspended = false; state(); resize(); });
   if ("IntersectionObserver" in window) {
-    new IntersectionObserver(function (entries) {
-      var next = entries[0].intersectionRatio < .35;
-      root.classList.toggle("hero-past", next);
-    }, { threshold: [0, .35] }).observe(document.getElementById("top"));
+    var heroObserver;
+    function observeHero() {
+      if (heroObserver) heroObserver.disconnect();
+      // Pixel margins follow viewport height; percentage IO margins follow width.
+      var inset = Math.round(window.innerHeight * .12);
+      heroObserver = new IntersectionObserver(function (entries) {
+        root.classList.toggle("hero-past", entries[0].intersectionRatio < .65);
+      }, { rootMargin: "-" + inset + "px 0px -" + inset + "px 0px", threshold: [0, .65] });
+      heroObserver.observe(wordmark);
+    }
+    window.addEventListener("resize", observeHero);
+    observeHero();
   }
   if (document.fonts) document.fonts.ready.then(resize);
   if (typeof ResizeObserver !== "undefined") new ResizeObserver(resize).observe(document.querySelector(".hero-inner"));
