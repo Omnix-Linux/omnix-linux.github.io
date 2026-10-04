@@ -11,7 +11,7 @@
 <meta property="og:site_name" content="Omnix">
 <meta property="og:locale" content="en_US">
 <meta property="og:title" content="Omnix — A next generation NixOS fork designed to run Omarchy and Friends">
-<meta property="og:description" content="The next generation of NixOS, with FHS compatibility for Omarchy and friends. Choose Autarchy or KDE Plasma - Atrium and keep reproducible configuration and system rollbacks.">
+<meta property="og:description" content="The next generation of NixOS, with FHS compatibility for Omarchy and friends. Choose HyprLand - Omarchy or KDE Plasma - Atrium and keep reproducible configuration and system rollbacks.">
 <meta property="og:url" content="https://www.omnix-linux.com/">
 <meta property="og:image" content="https://www.omnix-linux.com/social-preview.png?v=8">
 <meta property="og:image:secure_url" content="https://www.omnix-linux.com/social-preview.png?v=8">
@@ -21,7 +21,7 @@
 <meta property="og:image:alt" content="A large cyan-violet Coronal ring forming the O beside smaller mnix lettering, with the tagline A next generation NixOS fork designed to run Omarchy and Friends.">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Omnix — A next generation NixOS fork designed to run Omarchy and Friends">
-<meta name="twitter:description" content="The next generation of NixOS, with FHS compatibility for Omarchy and friends. Choose Autarchy or KDE Plasma - Atrium and keep reproducible configuration and system rollbacks.">
+<meta name="twitter:description" content="The next generation of NixOS, with FHS compatibility for Omarchy and friends. Choose HyprLand - Omarchy or KDE Plasma - Atrium and keep reproducible configuration and system rollbacks.">
 <meta name="twitter:image" content="https://www.omnix-linux.com/social-preview.png?v=8">
 <meta name="twitter:image:alt" content="A large cyan-violet Coronal ring forming the O beside smaller mnix lettering, with the tagline A next generation NixOS fork designed to run Omarchy and Friends.">
 <title>Omnix</title>
@@ -69,7 +69,7 @@
     } catch (e) {}
   })();
 </script>
-<meta name="description" content="Omnix: the next generation of NixOS, with FHS compatibility for Omarchy and friends. Choose Autarchy for Hyprland or KDE Plasma - Atrium.">
+<meta name="description" content="Omnix: the next generation of NixOS, with FHS compatibility for Omarchy and friends. Choose HyprLand - Omarchy or KDE Plasma - Atrium.">
 <link rel="preload" href="fonts/lexend-latin.woff2" as="font" type="font/woff2" crossorigin fetchpriority="high">
 <link rel="preload" href="fonts/instrument-sans-latin.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="fonts/jetbrains-mono-latin.woff2" as="font" type="font/woff2" crossorigin fetchpriority="high">
@@ -366,7 +366,7 @@
 <nav class="rail" aria-label="Sections">
   <a href="#top" aria-label="Omnix"></a>
   <a href="#ported" aria-label="FHS compatibility for Omarchy and friends"></a>
-  <a href="#autarchy" aria-label="Autarchy: Omarchy ported to Omnix"></a>
+  <a href="#omarchy" aria-label="HyprLand - Omarchy: Omarchy ported to Omnix"></a>
   <a href="#runs" aria-label="Fast packages from cache.nixos.org"></a>
   <a href="#cache" aria-label="Prebuilt packages and local builds"></a>
   <a href="#flavors" aria-label="Pick your desktop"></a>
@@ -396,7 +396,7 @@
         <p class="lede">Omarchy’s Hyprland desktop expects the standard Linux paths defined by the
           Filesystem Hierarchy Standard (FHS). NixOS uses a different layout and doesn’t provide those paths out of the box.</p>
         <p class="lede"><strong>Omnix adds the FHS layer that makes the Omarchy port possible on NixOS.</strong>
-          You get Autarchy’s desktop theming through standardized Nix flakes, with declarative configuration
+          You get Omarchy’s desktop theming through standardized Nix flakes, with declarative configuration
           an AI can edit, reproducible builds, and system rollbacks.</p>
       </div>
       <div class="term">
@@ -414,17 +414,17 @@
     </div>
   </section>
 
-  <section id="autarchy">
+  <section id="omarchy">
     <div class="split">
       <div>
-        <div class="eyebrow">Autarchy</div>
+        <div class="eyebrow">HyprLand - Omarchy</div>
         <h2>Omarchy, <em>ported to Omnix.</em></h2>
-        <p class="lede"><strong>Autarchy</strong> brings Omarchy's desktop to Omnix. The port carries over its Hyprland configuration, keybindings, themes, and scripts to preserve the experience.</p>
+        <p class="lede"><strong>Omarchy</strong> brings its Hyprland desktop to Omnix. The port carries over its Hyprland configuration, keybindings, themes, and scripts to preserve the experience.</p>
         <p class="lede">Choose <code>stable</code> for a pinned Omarchy release or <code>latest</code> to follow its development branch. Desktop upgrades and rollbacks follow your system configuration.</p>
       </div>
       <div class="term">
-        <div class="term-bar"><i></i><i></i><i></i><b>Autarchy: paths at a glance</b></div>
-<pre aria-label="ASCII map of Omnix compatibility and Autarchy desktop paths"><span class="hl">Linux compatibility paths</span>
+        <div class="term-bar"><i></i><i></i><i></i><b>HyprLand - Omarchy: paths at a glance</b></div>
+<pre aria-label="ASCII map of Omnix compatibility and Omarchy desktop paths"><span class="hl">Linux compatibility paths</span>
 /bin/bash                 // shell for scripts
 /bin/*                    // tools from your PATH
 /usr/bin/*                // tools from your PATH
@@ -435,7 +435,7 @@
 /etc/ld.so.cache          // generated library index
 /nix/store                // Nix-managed packages
 
-<span class="hl">Autarchy desktop paths</span>
+<span class="hl">Omarchy desktop paths</span>
 $OMARCHY_PATH             // commands, themes &amp; defaults
 ~/.config                 // your desktop configuration</pre>
       </div>
@@ -500,7 +500,7 @@ $OMARCHY_PATH             // commands, themes &amp; defaults
         <div class="eyebrow"><span class="n">3 of 4</span> Why Omnix</div>
         <h2>Pick your desktop at <em>install time</em>.</h2>
         <p class="lede">The base stays small. Everything opinionated lives in a <strong>flavor</strong>, a complete
-          system in its own repository. <strong>Autarchy</strong> ports Omarchy's keyboard-driven Hyprland desktop.
+          system in its own repository. <strong>Omarchy</strong> provides the keyboard-driven Hyprland desktop.
           <strong>KDE Plasma - Atrium</strong> is a polished, mouse-first desktop with independent virtual desktops on
           every monitor.</p>
         <p class="lede">The installer reads the flavor list live, so new styles show up without a new ISO.</p>
@@ -509,8 +509,8 @@ $OMARCHY_PATH             // commands, themes &amp; defaults
         <div class="term-bar"><i></i><i></i><i></i><b>omnix-install</b></div>
         <div class="menu mono">
           <div class="q">What kind of system do you want?</div>
-          <div class="opt sel"><span class="k">▸</span><div>Autarchy (stable)<small>Omarchy-style Hyprland, pinned to an Omarchy release</small></div></div>
-          <div class="opt"><span></span><div>Autarchy (latest)<small>Omarchy-style Hyprland, tracking Omarchy main</small></div></div>
+          <div class="opt sel"><span class="k">▸</span><div>HyprLand - Omarchy (stable)<small>Omarchy-style Hyprland, pinned to an Omarchy release</small></div></div>
+          <div class="opt"><span></span><div>HyprLand - Omarchy (latest)<small>Omarchy-style Hyprland, tracking Omarchy main</small></div></div>
           <div class="opt"><span></span><div>KDE Plasma - Atrium<small>KDE Plasma: polished windows, mouse-first</small></div></div>
           <div class="opt"><span></span><div>Minimal<small>The Omnix base alone</small></div></div>
         </div>
@@ -524,7 +524,7 @@ $OMARCHY_PATH             // commands, themes &amp; defaults
         <div class="eyebrow"><span class="n">4 of 4</span> Why Omnix</div>
         <h2>Your system. <em>Your rollback.</em></h2>
         <p class="lede">Your system is a flake that <strong>you</strong> own in <code>/etc/nixos</code>, and your flavor is
-          one input in it. Switch from KDE Plasma - Atrium to Autarchy by changing that input and rebuilding.</p>
+          one input in it. Switch from KDE Plasma - Atrium to HyprLand - Omarchy by changing that input and rebuilding.</p>
         <p class="lede">The FHS layer is generated from your configuration and versioned with it, so rolling back a
           generation rolls back the library layout too. The previous system is always one entry away in the boot
           menu.</p>
@@ -532,7 +532,7 @@ $OMARCHY_PATH             // commands, themes &amp; defaults
       <div class="term" role="img" aria-label="Boot menu listing system generations">
         <div class="term-bar"><i></i><i></i><i></i><b>boot menu</b></div>
 <pre><span class="c">Omnix</span>
-<span class="hl">▸ Generation 14   Autarchy (stable)   2026-10-03</span>
+<span class="hl">▸ Generation 14   HyprLand - Omarchy (stable)   2026-10-03</span>
   Generation 13   KDE Plasma - Atrium              2026-09-28
   Generation 12   KDE Plasma - Atrium              2026-09-21
   Generation 11   Minimal             2026-09-20
@@ -566,7 +566,7 @@ $OMARCHY_PATH             // commands, themes &amp; defaults
       </div>
       <div class="install-demo" id="install-demo" role="region" aria-label="Looping Omnix installer demonstration">
         <div class="demo-controls" aria-label="Choose a desktop to preview">
-          <button type="button" data-demo-flavor="Autarchy" aria-pressed="true">Autarchy</button>
+          <button type="button" data-demo-flavor="HyprLand - Omarchy" aria-pressed="true">HyprLand - Omarchy</button>
           <button type="button" data-demo-flavor="KDE Plasma - Atrium" aria-pressed="false">KDE Plasma - Atrium</button>
           <button type="button" class="demo-pause" aria-label="Pause installer demo">Pause</button>
         </div>
@@ -595,7 +595,7 @@ $OMARCHY_PATH             // commands, themes &amp; defaults
       <h4>Repositories</h4>
       <ul>
         <li><a href="https://github.com/Omnix-Linux/Omnix">Omnix</a>: the base and installer</li>
-        <li><a href="https://github.com/Omnix-Linux/Autarchy">Autarchy</a>: Omarchy, ported</li>
+        <li><a href="https://github.com/Omnix-Linux/Autarchy">HyprLand - Omarchy</a></li>
         <li><a href="https://github.com/Omnix-Linux/Atrium">KDE Plasma - Atrium</a></li>
         <li><a href="https://github.com/Omnix-Linux/docker-vm/tree/feat/omnix-demo">Try Omnix</a>: the Docker app</li>
       </ul>
@@ -679,7 +679,7 @@ afterFirstPaint(function () {
   var keys = demo.querySelector(".demo-keys"), pauseButton = demo.querySelector(".demo-pause");
   var flavorButtons = demo.querySelectorAll("[data-demo-flavor]");
   var reduce = window.matchMedia("(prefers-reduced-motion: reduce)");
-  var paused = reduce.matches, visible = false, flavor = "Autarchy", elapsed = 0, last = performance.now();
+  var paused = reduce.matches, visible = false, flavor = "HyprLand - Omarchy", elapsed = 0, last = performance.now();
   var duration = 42000, FLAVOR_PREVIEW_MS = 15000;
   var title = '<h3>Omnix installer</h3>';
   var lastHtml, lastLabel, lastHint, lastFlavor, playbackTimer = null;
@@ -697,7 +697,7 @@ afterFirstPaint(function () {
   }
   function render() {
     var t = elapsed / 1000, html, label, hint = "↑ ↓ choose · Enter confirm";
-    var flavorId = flavor === "Autarchy" ? "autarchy-stable" : "atrium";
+    var flavorId = flavor === "HyprLand - Omarchy" ? "autarchy-stable" : "atrium";
     if (lastFlavor !== flavor) {
       flavorButtons.forEach(function (button) { button.setAttribute("aria-pressed", String(button.dataset.demoFlavor === flavor)); });
       lastFlavor = flavor;
@@ -723,14 +723,14 @@ afterFirstPaint(function () {
     } else if (t < 17) {
       label = "Choose your desktop";
       // Match the live registry order; each loop browses before settling on its flavor.
-      var selected = t < 12 ? 0 : t < 13 ? 1 : t < 14 ? 2 : t < 15 ? 3 : flavor === "Autarchy" ? 1 : 0;
+      var selected = t < 12 ? 0 : t < 13 ? 1 : t < 14 ? 2 : t < 15 ? 3 : flavor === "HyprLand - Omarchy" ? 1 : 0;
       html = choices('What kind of system do you want?', [
         'KDE Plasma - Atrium<small>KDE Plasma desktop: polished windows, mouse-first</small>',
-        'Autarchy (stable)<small>Omarchy-style keyboard-driven Hyprland, pinned to an Omarchy release</small>',
-        'Autarchy (latest)<small>Omarchy-style keyboard-driven Hyprland, tracking Omarchy main</small>',
+        'HyprLand - Omarchy (stable)<small>Omarchy-style keyboard-driven Hyprland, pinned to an Omarchy release</small>',
+        'HyprLand - Omarchy (latest)<small>Omarchy-style keyboard-driven Hyprland, tracking Omarchy main</small>',
         'Minimal<small>The Omnix base alone: console, FHS layer, nothing else</small>'
       ], selected);
-      hint = t >= 15 ? "Enter → " + flavor + (flavor === "Autarchy" ? " (stable)" : "") : "↑ ↓ browse flavors";
+      hint = t >= 15 ? "Enter → " + flavor + (flavor === "HyprLand - Omarchy" ? " (stable)" : "") : "↑ ↓ browse flavors";
     } else if (t < 24) {
       label = "Set up your account";
       if (t < 18.4) html = input('Username', 'alex', t - 17, false);
@@ -762,7 +762,7 @@ afterFirstPaint(function () {
       label = t < 39 ? flavor + " installed" : "Reboot into " + flavor;
       var reboot = 'sudo reboot'.slice(0, Math.max(0, Math.floor((t - 39) * 10)));
       html = '<p class="ok">Omnix is installed. Reboot when ready.</p><p><span class="ok">[nixos@nixos:~]$</span> <span class="c">' + reboot + '</span><span class="demo-cursor">▌</span></p>';
-      hint = "After reboot: " + flavor + (flavor === "Autarchy" ? " / Hyprland" : " / KDE Plasma");
+      hint = "After reboot: " + flavor + (flavor === "HyprLand - Omarchy" ? " / Hyprland" : " / KDE Plasma");
     }
     if (lastHtml !== html) { screen.innerHTML = html; lastHtml = html; }
     if (lastLabel !== label) { stage.textContent = label; lastLabel = label; }
@@ -792,7 +792,7 @@ afterFirstPaint(function () {
     var now = performance.now(), dt = Math.min(now - last, 500); last = now;
     if (paused || !visible || document.hidden) return;
     elapsed += dt;
-    if (elapsed >= duration) { elapsed %= duration; flavor = flavor === "Autarchy" ? "KDE Plasma - Atrium" : "Autarchy"; }
+    if (elapsed >= duration) { elapsed %= duration; flavor = flavor === "HyprLand - Omarchy" ? "KDE Plasma - Atrium" : "HyprLand - Omarchy"; }
     render();
     playbackTimer = setTimeout(tick, 100);
   }
