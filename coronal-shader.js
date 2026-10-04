@@ -21,6 +21,11 @@ void main() {
     glow += (1.1 - cos(p)) / (z * z * max(abs(length(original.xy) - 1.), 0.001));
   }
   vec3 color = 1. - 2. / (exp(2. * min(glow / 30., vec3(10.))) + 1.);
+  // A quiet white rim keeps the O readable through the moving corona.
+  float rimDistance = abs(length(uv) - 0.57857143);
+  float rim = 0.22 * exp(-pow(rimDistance / 0.006, 2.))
+    + 0.09 * exp(-pow(rimDistance / 0.035, 2.));
+  color += (vec3(1.) - color) * rim;
   float alpha = 1. - smoothstep(1.1, 1.5, length(uv));
   gl_FragColor = vec4(color * alpha, alpha);
 }`;

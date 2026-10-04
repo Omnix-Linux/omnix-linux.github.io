@@ -30,7 +30,12 @@ struct Params { center: vec2f, surface: vec2f, buffer: vec2f, diameter: f32, tim
     z += abs(1. - length(p.xy)) / 3.;
     glow += (vec3f(1.1) - cos(p)) / (z * z * max(abs(length(original.xy) - 1.), .001));
   }
-  let color = vec3f(1.) - vec3f(2.) / (exp(2. * min(glow / 30., vec3f(10.))) + vec3f(1.));
+  var color = vec3f(1.) - vec3f(2.) / (exp(2. * min(glow / 30., vec3f(10.))) + vec3f(1.));
+  // Match the faint white outline and halo in the WebGL renderer.
+  let rimDistance = abs(length(uv) - 0.57857143);
+  let rim = 0.22 * exp(-pow(rimDistance / 0.006, 2.))
+    + 0.09 * exp(-pow(rimDistance / 0.035, 2.));
+  color += (vec3f(1.) - color) * rim;
   let alpha = 1. - smoothstep(1.1, 1.5, length(uv));
   return vec4f(color * alpha, alpha);
 }`;
