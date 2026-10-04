@@ -10,6 +10,7 @@
 <!-- Anchor uses CORONAL's normalized ring center and radius from shader-profile.json. -->
 <image href="coronal-poster.png" x="130" y="-10" width="640" height="640"/>
 <text x="635.142857" y="310.000000" dominant-baseline="central" font-family="Lexend" font-weight="800" font-size="110" letter-spacing="-4.95" fill="#fff">mnix</text>
-<text x="650" y="405" font-family="Arial,Helvetica,sans-serif" font-size="27" fill="#e8eef8">A NixOS-fork compatible with</text>
-<text x="650" y="445" font-family="Arial,Helvetica,sans-serif" font-size="27" fill="#e8eef8"><tspan fill="#7ebae4">Omarchy and friends</tspan></text>
+<text x="650" y="405" font-family="Arial,Helvetica,sans-serif" font-size="27" fill="#e8eef8">Next generation NixOS.</text>
+<text x="650" y="445" font-family="Arial,Helvetica,sans-serif" font-size="27" fill="#e8eef8">FHS compatibility for</text>
+<text x="650" y="485" font-family="Arial,Helvetica,sans-serif" font-size="27" fill="#e8eef8">Omarchy and friends.</text>
 </svg>

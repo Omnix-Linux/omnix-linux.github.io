@@ -10,20 +10,20 @@
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Omnix">
 <meta property="og:locale" content="en_US">
-<meta property="og:title" content="Omnix — A NixOS-fork compatible with Omarchy and friends">
-<meta property="og:description" content="A NixOS-fork compatible with Omarchy and friends. Choose Autarchy or Atrium, use prebuilt packages when available, and compile when needed.">
+<meta property="og:title" content="Omnix — Next generation NixOS with FHS compatibility">
+<meta property="og:description" content="The next generation of NixOS, with FHS compatibility for Omarchy and friends. Choose Autarchy or Atrium and keep reproducible configuration and system rollbacks.">
 <meta property="og:url" content="https://www.omnix-linux.com/">
-<meta property="og:image" content="https://www.omnix-linux.com/social-preview.png?v=5">
-<meta property="og:image:secure_url" content="https://www.omnix-linux.com/social-preview.png?v=5">
+<meta property="og:image" content="https://www.omnix-linux.com/social-preview.png?v=6">
+<meta property="og:image:secure_url" content="https://www.omnix-linux.com/social-preview.png?v=6">
 <meta property="og:image:type" content="image/png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
-<meta property="og:image:alt" content="A large cyan-violet Coronal ring forming the O beside smaller mnix lettering, with the tagline A NixOS-fork compatible with Omarchy and friends.">
+<meta property="og:image:alt" content="A large cyan-violet Coronal ring forming the O beside smaller mnix lettering, with the tagline Next generation NixOS and FHS compatibility for Omarchy and friends.">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="Omnix — A NixOS-fork compatible with Omarchy and friends">
-<meta name="twitter:description" content="A NixOS-fork compatible with Omarchy and friends. Choose Autarchy or Atrium, use prebuilt packages when available, and compile when needed.">
-<meta name="twitter:image" content="https://www.omnix-linux.com/social-preview.png?v=5">
-<meta name="twitter:image:alt" content="A large cyan-violet Coronal ring forming the O beside smaller mnix lettering, with the tagline A NixOS-fork compatible with Omarchy and friends.">
+<meta name="twitter:title" content="Omnix — Next generation NixOS with FHS compatibility">
+<meta name="twitter:description" content="The next generation of NixOS, with FHS compatibility for Omarchy and friends. Choose Autarchy or Atrium and keep reproducible configuration and system rollbacks.">
+<meta name="twitter:image" content="https://www.omnix-linux.com/social-preview.png?v=6">
+<meta name="twitter:image:alt" content="A large cyan-violet Coronal ring forming the O beside smaller mnix lettering, with the tagline Next generation NixOS and FHS compatibility for Omarchy and friends.">
 <title>Omnix</title>
 <meta name="color-scheme" content="dark">
 <style>html, body { background: #04050c; color: #e8eef8; }
@@ -69,7 +69,7 @@
     } catch (e) {}
   })();
 </script>
-<meta name="description" content="Omnix: a NixOS-fork compatible with Omarchy and friends. Choose an Omarchy-style Hyprland desktop with Autarchy or KDE Plasma with Atrium.">
+<meta name="description" content="Omnix: the next generation of NixOS, with FHS compatibility for Omarchy and friends. Choose Autarchy for Hyprland or Atrium for KDE Plasma.">
 <link rel="preload" href="fonts/lexend-latin.woff2" as="font" type="font/woff2" crossorigin fetchpriority="high">
 <link rel="preload" href="fonts/instrument-sans-latin.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="fonts/jetbrains-mono-latin.woff2" as="font" type="font/woff2" crossorigin fetchpriority="high">
@@ -207,6 +207,7 @@
   .wordmark-ready.hero-past .wordmark-text { opacity: 0; }
   @media (prefers-reduced-motion: reduce) { .wordmark-text { transition: none; } }
   .tagline { position: fixed; z-index: 2; color: #fff; pointer-events: none; left: var(--tagline-left, 61vw); top: var(--tagline-top, calc(50svh + 96px)); width: var(--tagline-width, 34vw); visibility: hidden; opacity: 0; transition: opacity .45s ease-out; text-align: left; font-family: var(--font-display); font-weight: 500; font-size: clamp(.75rem, 1.4vw, 1.5rem); line-height: 1.5; margin: 0; max-width: 32ch; text-wrap: balance; }
+  @media (max-width: 640px) { .tagline { max-width: none; text-align: center; font-size: .875rem; } }
   .wordmark-ready .tagline { visibility: visible; opacity: 1; }
   .wordmark-ready.hero-past .tagline { opacity: 0; }
   @media (prefers-reduced-motion: reduce) { .tagline { transition: none; } }
@@ -346,7 +347,7 @@
 <body>
 <canvas id="coronal" data-shader-profile="shader-profile.json" aria-hidden="true"></canvas>
 <span class="wordmark-text" aria-hidden="true">mnix</span>
-<p class="tagline">A NixOS-fork compatible with<br>Omarchy and friends</p>
+<p class="tagline">The next generation of NixOS.<br>FHS compatibility for Omarchy and friends.</p>
 <div class="scrim"></div>
 
 <header class="site-header">
@@ -362,7 +363,7 @@
 
 <nav class="rail" aria-label="Sections">
   <a href="#top" aria-label="Omnix"></a>
-  <a href="#problem" aria-label="The problem"></a>
+  <a href="#problem" aria-label="Built for Omarchy"></a>
   <a href="#ported" aria-label="The Omnix foundation"></a>
   <a href="#autarchy" aria-label="Autarchy: Omarchy ported to Omnix"></a>
   <a href="#runs" aria-label="Prebuilt software just runs"></a>
@@ -389,28 +390,27 @@
   <section id="problem">
     <div class="split">
       <div>
-        <div class="eyebrow">The problem</div>
-        <h2>Omarchy can't run on NixOS because NixOS is not FHS compliant. <em>Omnix is.</em></h2>
-        <p class="lede"><strong>Omarchy</strong> is DHH's opinionated Hyprland desktop, and it's built for Arch. It installs
-          with a script, its 444 commands are bash scripts that start with <code>#!/bin/bash</code>, 36 of them call
-          <code>pacman</code> or <code>yay</code>, and the apps it ships are prebuilt binaries that expect their libraries in
-          <code>/usr/lib</code>.</p>
-        <p class="lede">NixOS has none of that. It keeps every package in its own hash-named directory in
-          <code>/nix/store</code>, so <code>/bin/bash</code> and <code>/usr/lib</code> don't exist, and there's no pacman.
-          Omarchy stops at its first command. Until now you had to choose between Omarchy's desktop and NixOS's
-          reproducible, rollback-safe system.</p>
+        <div class="eyebrow">Built for Omarchy</div>
+        <h2>Omarchy needs FHS standard paths. <em>Omnix delivers.</em></h2>
+        <p class="lede"><strong>Omarchy</strong> is DHH's opinionated Hyprland desktop, built for Arch. Its scripts and
+          prebuilt apps expect the standard Linux paths defined by the Filesystem Hierarchy Standard (FHS), including
+          <code>/bin/bash</code> and <code>/usr/lib</code>.</p>
+        <p class="lede"><strong>Omnix brings FHS compatibility to NixOS so Omarchy and friends can coexist.</strong>
+          Familiar Linux paths, Nix-managed packages, reproducible configuration, and system rollbacks—all in one platform.</p>
       </div>
-      <div class="term" role="img" aria-label="Terminal: Omarchy's commands failing on stock NixOS">
-        <div class="term-bar"><i></i><i></i><i></i><b>Omarchy on stock NixOS</b></div>
-<pre><span class="p">$</span> <span class="c">omarchy-theme-set tokyo-night</span>
-<span class="bad">bash: omarchy-theme-set: /bin/bash: bad interpreter:
-No such file or directory</span>
+      <div class="term" role="img" aria-label="Standard Linux paths provided by Omnix for scripts and prebuilt apps">
+        <div class="term-bar"><i></i><i></i><i></i><b>Familiar paths. Nix underneath.</b></div>
+<pre><span class="hl">/bin/bash</span>
+<span class="ok">The shell that scripts expect</span>
 
-<span class="p">$</span> <span class="c">sudo pacman -Syu</span>
-<span class="bad">sudo: pacman: command not found</span>
+<span class="hl">/usr/bin</span>
+<span class="ok">Tools and interpreters on your PATH</span>
 
-<span class="p">$</span> <span class="c">ls /usr/lib</span>
-ls: cannot access '/usr/lib': No such file or directory</pre>
+<span class="hl">/usr/lib</span>
+<span class="ok">Shared libraries for prebuilt apps</span>
+
+<span class="hl">/nix/store</span>
+<span class="ok">Nix-managed packages underneath</span></pre>
       </div>
     </div>
   </section>
@@ -419,9 +419,9 @@ ls: cannot access '/usr/lib': No such file or directory</pre>
     <div class="split">
       <div>
         <div class="eyebrow">The Omnix foundation</div>
-        <h2>We're building Omnix <em>with a standard Linux layout.</em></h2>
-        <p class="lede">We're building <strong>Omnix</strong>, a NixOS base designed to provide the standard Linux paths that scripts and prebuilt apps expect.</p>
-        <p class="lede">That foundation brings familiar paths together with Nix-managed packages, reproducible configuration, and system rollbacks.</p>
+        <h2>Familiar Linux paths. <em>NixOS at the core.</em></h2>
+        <p class="lede">Omnix connects <strong>standard Linux paths to Nix-managed software</strong>. Scripts find their shell, apps find their libraries, and packages stay in <code>/nix/store</code>.</p>
+        <p class="lede">The compatibility layer is part of your system configuration, so it upgrades and rolls back with the rest of your system.</p>
       </div>
         <div class="term">
           <div class="term-bar"><i></i><i></i><i></i><b>Two layouts. One system.</b></div>
@@ -468,8 +468,8 @@ ls: cannot access '/usr/lib': No such file or directory</pre>
       <div>
         <div class="eyebrow">Autarchy</div>
         <h2>Omarchy, <em>ported to Omnix.</em></h2>
-        <p class="lede">We're developing <strong>Autarchy</strong>, a port of Omarchy to Omnix. We're bringing over Omarchy's own Hyprland configuration, keybindings, themes, and scripts to preserve its desktop experience.</p>
-        <p class="lede">We're keeping the port in sync with upstream: <code>stable</code> pins an Omarchy release, while <code>latest</code> tracks its development branch. Our goal is reproducible upgrades and rollbacks for the desktop and the rest of the system together.</p>
+        <p class="lede"><strong>Autarchy</strong> brings Omarchy's desktop to Omnix. The port carries over its Hyprland configuration, keybindings, themes, and scripts to preserve the experience.</p>
+        <p class="lede">Choose <code>stable</code> for a pinned Omarchy release or <code>latest</code> to follow its development branch. Desktop upgrades and rollbacks follow your system configuration.</p>
       </div>
       <div class="flow ported">
         <div><b>source</b><span>Omarchy's own repo, pinned: <code>stable</code> is v4.0.4, <code>latest</code> tracks its development branch</span></div>
@@ -492,7 +492,7 @@ ls: cannot access '/usr/lib': No such file or directory</pre>
           resolves <code>#!/bin/bash</code>. Manylinux wheels, rustup, vendor SDKs, Electron apps, and Playwright browsers
           start without patching or wrappers.</p>
       </div>
-      <div class="term" role="img" aria-label="Terminal: the same binary running on Omnix">
+      <div class="term" role="img" aria-label="Illustrative terminal: prebuilt software using Omnix compatibility paths">
         <div class="term-bar"><i></i><i></i><i></i><b>omnix</b></div>
 <pre><span class="p">$</span> <span class="c">./some-vendor-tool --version</span>
 <span class="ok">some-vendor-tool 4.2.0</span>
@@ -518,8 +518,7 @@ ls: cannot access '/usr/lib': No such file or directory</pre>
         <p class="lede">The rule is <strong>add, never relocate</strong>. Omnix never patches or moves a nixpkgs package,
           so Omnix can use the same prebuilt packages as NixOS from <code>cache.nixos.org</code>. Installs and
           upgrades download those packages when available and compile when necessary.</p>
-        <p class="lede">The installer ISO lives on GitHub Releases. Omnix uses the NixOS binary cache for available prebuilt
-          packages and builds software when a suitable cached package is unavailable.</p>
+        <p class="lede">Download the installer ISO from GitHub Releases and choose your desktop during installation.</p>
       </div>
       <div>
         <div class="stat">
@@ -563,7 +562,7 @@ ls: cannot access '/usr/lib': No such file or directory</pre>
     <div class="split">
       <div>
         <div class="eyebrow"><span class="n">4 of 4</span> Why Omnix</div>
-        <h2>Every change <em>rolls back</em>.</h2>
+        <h2>Your system. <em>Your rollback.</em></h2>
         <p class="lede">Your system is a flake that <strong>you</strong> own in <code>/etc/nixos</code>, and your flavor is
           one input in it. Switch from Atrium to Autarchy by changing that input and rebuilding.</p>
         <p class="lede">The FHS layer is generated from your configuration and versioned with it, so rolling back a
@@ -615,7 +614,7 @@ ls: cannot access '/usr/lib': No such file or directory</pre>
   <div class="foot">
     <div>
       <h4>Omnix</h4>
-      <p>A NixOS-fork compatible with Omarchy and friends. Independent, and not affiliated with or endorsed by the NixOS Foundation.</p>
+      <p>Next generation NixOS with FHS compatibility for Omarchy and friends. Independent, and not affiliated with or endorsed by the NixOS Foundation.</p>
     </div>
     <div>
       <h4>Repositories</h4>

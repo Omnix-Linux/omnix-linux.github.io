@@ -56,9 +56,10 @@ afterFirstPaint(async function () {
     if (widthPerPixel > 0) fontSize = Math.min(fontSize, available / widthPerPixel);
     suffix.style.fontSize = fontSize + "px";
     suffix.style.color = registry.layout.suffix.color;
-    tagline.style.setProperty("--tagline-left", suffixLeft + "px");
-    tagline.style.setProperty("--tagline-top", (anchor.y + fontSize / 2 + Math.max(16, fontSize * .18)) + "px");
-    tagline.style.setProperty("--tagline-width", available + "px");
+    var mobileTagline = W <= registry.layout.mobile.maxViewportWidth;
+    tagline.style.setProperty("--tagline-left", (mobileTagline ? 16 : suffixLeft) + "px");
+    tagline.style.setProperty("--tagline-top", (mobileTagline ? anchor.y + anchor.radius + 24 : anchor.y + fontSize / 2 + Math.max(16, fontSize * .18)) + "px");
+    tagline.style.setProperty("--tagline-width", (mobileTagline ? W - 32 : available) + "px");
     if (reduce.matches) revealWordmark();
     return { width: W, height: H, size: size, left: left, top: top, mode: mode };
   }
