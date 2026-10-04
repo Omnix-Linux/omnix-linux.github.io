@@ -246,13 +246,13 @@
   .fs-result { padding: 18px 20px; color: var(--muted); }
   .fs-result h3 { margin: 0; font: inherit; font-size: 1.15em; font-weight: 700; color: var(--ink); }
   .fs-result code { color: var(--ice); overflow-wrap: anywhere; }
-  .fs-mapping { margin: 16px 0 0; padding: 0; list-style: none; }
-  .fs-mapping li { padding-block: 16px; border-top: 1px solid var(--line); }
-  .fs-mapping li:last-child { padding-bottom: 0; }
-  .fs-mapping code, .fs-mapping .purpose { display: block; }
-  .fs-mapping .purpose { margin-block: 4px; font-family: var(--font-body); font-size: var(--step--1); }
-  .fs-mapping .target { display: block; padding-left: 1ch; }
+  .fs-mapping { margin: 16px 0 0; padding: 0 0 6px; list-style: none; overflow-x: auto; }
+  .fs-mapping li { padding-block: 10px; border-top: 1px solid var(--line); white-space: nowrap; }
+  .fs-mapping code { overflow-wrap: normal; }
+  .fs-mapping .comment { color: var(--muted); }
   .fs-mapping .arrow { color: var(--violet); }
+  .fs-mapping:focus-visible { outline: 2px solid var(--ice); outline-offset: 3px; }
+
 
 
   .menu { padding: 16px 0; }
@@ -391,24 +391,21 @@
   <section id="ported">
     <div class="split" id="problem">
       <div>
-        <div class="eyebrow">Built for Omarchy and friends</div>
+        <div class="eyebrow">Link swarm materialization</div>
         <h2>Omarchy needs FHS standard paths. <em>Omnix delivers.</em></h2>
-        <p class="lede">Built for Arch, <strong>Omarchy</strong> expects the standard Linux paths defined by the
-          Filesystem Hierarchy Standard (FHS). Its scripts need <code>/bin/bash</code>, and its prebuilt apps
-          look for libraries in <code>/usr/lib</code>.</p>
-        <p class="lede"><strong>Omnix brings FHS compatibility to NixOS so Omarchy and friends can coexist.</strong>
-          Standard paths connect to packages in <code>/nix/store</code>, keeping reproducible configuration
-          and system rollbacks.</p>
+        <p class="lede">Omnix materializes a <strong>swarm of links</strong> connecting familiar Linux paths
+          to packages in <code>/nix/store</code>. Omarchy and friends get the layout their scripts and apps expect.</p>
+        <p class="lede">Packages stay in the Nix store. The generated layout upgrades and rolls back with your system.</p>
       </div>
       <div class="term">
         <div class="term-bar"><i></i><i></i><i></i><b>Familiar paths. Nix underneath.</b></div>
         <div class="fs-result">
           <h3>FHS paths + Nix packages</h3>
-          <ul class="fs-mapping" aria-label="How Omnix connects standard Linux paths to Nix-managed software">
-            <li><code>/bin/bash</code><span class="purpose">The shell that scripts expect</span><code class="target"><span class="arrow">-&gt;</span> /nix/store/&lt;hash&gt;-bash/bin/bash</code></li>
-            <li><code>/usr/bin/&lt;tool&gt;</code><span class="purpose">Tools and interpreters on your PATH</span><span class="target"><span class="arrow">-&gt;</span> your Nix-managed tool</span></li>
-            <li><code>/lib/, /usr/lib/</code><span class="purpose">Shared libraries for prebuilt apps</span><span class="target"><span class="arrow">-&gt;</span> libraries backed by <code>/nix/store</code></span></li>
-            <li><code>/lib64/</code><span class="purpose">The loader that starts prebuilt binaries</span><span class="target"><span class="arrow">-&gt;</span> nix-ld's compatibility loader</span></li>
+          <ul class="fs-mapping" tabindex="0" aria-label="FHS paths to Nix targets, with purpose comments. Scroll horizontally for full lines.">
+            <li><code>/bin/bash <span class="arrow">-&gt;</span> /nix/store/…-bash/bin/bash <span class="comment">// shell</span></code></li>
+            <li><code>/usr/bin/* <span class="arrow">-&gt;</span> $PATH <span class="comment">// tools &amp; interpreters</span></code></li>
+            <li><code>/lib, /usr/lib <span class="arrow">-&gt;</span> /nix/store/…/lib <span class="comment">// libraries</span></code></li>
+            <li><code>/lib64/ld-linux-x86-64.so.2 <span class="arrow">-&gt;</span> nix-ld <span class="comment">// ELF loader</span></code></li>
           </ul>
         </div>
       </div>
