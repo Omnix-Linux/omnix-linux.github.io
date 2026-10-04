@@ -5,7 +5,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="color-scheme" content="dark">
 <style>html,body{background:#04050c;color:#e8eef8}*,*::before,*::after{box-sizing:border-box}body{margin:0}img,svg{max-width:100%}[hidden]{display:none!important}</style>
-<link rel="icon" type="image/svg+xml" href="favicon.svg">
+<link rel="icon" type="image/svg+xml" href="favicon.svg?v=corona-white-ring">
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png?v=corona-white-ring">
+<link rel="shortcut icon" href="favicon.ico?v=corona-white-ring">
 <link rel="canonical" href="https://www.omnix-linux.com/">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Omnix">
@@ -697,7 +699,7 @@ afterFirstPaint(function () {
   }
   function render() {
     var t = elapsed / 1000, html, label, hint = "↑ ↓ choose · Enter confirm";
-    var flavorId = flavor === "Hyprland - Omarchy" ? "autarchy-stable" : "atrium";
+    var flavorName = flavor + (flavor === "Hyprland - Omarchy" ? " (stable)" : "");
     if (lastFlavor !== flavor) {
       flavorButtons.forEach(function (button) { button.setAttribute("aria-pressed", String(button.dataset.demoFlavor === flavor)); });
       lastFlavor = flavor;
@@ -741,7 +743,7 @@ afterFirstPaint(function () {
       hint = "One prompt at a time · Enter continue";
     } else if (t < 27) {
       label = "Confirm the installation";
-      html = confirm('Erase /dev/nvme0n1 and install Omnix (' + flavorId + ', btrfs, encrypted)?', t >= 25.5);
+      html = confirm('Erase /dev/nvme0n1 and install Omnix (' + flavorName + ', btrfs, encrypted)?', t >= 25.5);
       hint = "← → choose · Enter confirm · disk will be erased";
     } else if (t < 30) {
       label = "Set the disk encryption passphrase";

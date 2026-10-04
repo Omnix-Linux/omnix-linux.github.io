@@ -33,3 +33,10 @@ Run the geometry, pacing, cache reuse and lifecycle checks with `node --test tes
 `column-scroll.js` applies differential scrolling to every section with a two-column `.split`. On desktop, a shorter left column starts aligned with the right column's top and moves more slowly as the section passes the header. If the left height is `L`, the right height is `R`, and scroll distance past that starting point is `d`, its downward translation within the section is `(R - L) × clamp(d / R, 0, 1)`. Its resulting screen speed is `L / R` of normal scrolling, and the translation stays between zero and the available height difference. The right column uses normal document scrolling throughout. Equal or taller left columns, the stacked layout at 860px and below, and reduced-motion mode retain the original layout and scrolling.
 
 The left column's pane clips overflow without creating a nested scroll container. A 28px gradient fades text crossing the visible top boundary beneath the header or the bottom of the viewport; fully visible text stays opaque. Set `data-scroll-fade="false"` on a `.split` to retain differential scrolling without edge fading. Focus within the copy also removes its mask so focused content is visible. Natural column sizes and document positions are cached after font loads, resizing, and section reveals. Passive scroll events only schedule one animation frame, which computes translations and masks from cached geometry; unchanged styles are not written again.
+
+## Desktop names
+
+Use **Hyprland - Omarchy** and **KDE Plasma - Atrium** in desktop labels.
+Use **Omarchy** in prose. Follow the [Omnix naming policy](https://github.com/Omnix-Linux/Omnix/blob/main/docs/naming.md); existing flake URLs and installer IDs are compatibility identifiers.
+
+The favicon is rendered from `coronal-shader.js` at time 6 seconds, with the same white O rim as the hero. It uses an artwork diameter of 1.35 times the icon size so the O fills the tab icon. The SVG embeds a 64px shader render; PNG and ICO variants include renders at native tab sizes.
