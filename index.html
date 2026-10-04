@@ -28,17 +28,14 @@
 <meta name="color-scheme" content="dark">
 <style>html, body { background: #04050c; color: #e8eef8; }
   /* Motion. Entrances decelerate (Material 3 "emphasized decelerate"), run 450-800ms, and stagger
-     children 50-90ms apart: eyebrow, headline words, copy, then the evidence panel and its contents.
+     eyebrow, headline, copy, then the evidence panel and its contents.
      Only transform and opacity animate. Hidden states exist only under .motion, which the head
      script sets before first paint and removes again if the reveal script never runs. */
   :root { --ease-out: cubic-bezier(0.05, 0.7, 0.1, 1); --ease-soft: cubic-bezier(0.16, 1, 0.3, 1); }
-  .w { display: inline-block; overflow: hidden; vertical-align: top; padding-bottom: 0.14em; margin-bottom: -0.14em; }
-  .wi { display: inline-block; transform-origin: 0 100%; }
 
   .motion main section:not(.hero):not(.in) :is(.eyebrow, .lede, .term, .stat, .flow > div, .menu .q, .opt, .steps li, .chips span) { opacity: 0; transition: none; }
-  .motion main section:not(.hero):not(.in) h2:not(.wsplit) { opacity: 0; }
+  .motion main section:not(.hero):not(.in) h2 { opacity: 0; transform: translateY(18px); }
   .motion main section:not(.hero):not(.in) .eyebrow { transform: translateX(-12px); }
-  .motion main section:not(.hero):not(.in) .wi { transform: translateY(108%) rotate(5deg); transition: none; }
   .motion main section:not(.hero):not(.in) .lede { transform: translateY(18px); }
   .motion main section:not(.hero):not(.in) :is(.term, .stat, .steps li) { transform: translateY(40px) scale(0.965); }
   .motion main section:not(.hero):not(.in) :is(.flow > div, .menu .q, .opt, .chips span) { transform: translateY(12px); }
@@ -47,7 +44,7 @@
     transition: opacity .55s var(--ease-soft), transform .75s var(--ease-out);
     transition-delay: var(--d, 0ms);
   }
-  .motion main section.in .wi { transition: transform .8s var(--ease-out); transition-delay: var(--d, 0ms); }
+  .motion main section.in h2 { transition: opacity .55s var(--ease-soft), transform .75s var(--ease-out); transition-delay: var(--d, 0ms); }
   /* The stat lands with a little overshoot. */
   .motion main section.in .stat { transition: opacity .5s var(--ease-soft), transform .9s cubic-bezier(0.34, 1.56, 0.64, 1); transition-delay: var(--d, 0ms); }
 
@@ -60,6 +57,7 @@
   .motion .hero .scrollhint { animation-delay: 420ms; }
   @keyframes nudge { 50% { transform: translateY(5px); } }
   .motion .hero .scrollhint { animation: rise .8s var(--ease-out) 420ms both, nudge 2.4s ease-in-out 1.4s infinite; }
+  .motion.hero-past .hero .scrollhint { animation-play-state: paused; }
 </style>
 <script>
   // Enable section reveals before first paint when motion is allowed.
@@ -159,6 +157,8 @@
   }
   /* Keep content animation invalidations inside their own section. */
   main section:not(.hero) { contain: layout paint; }
+  /* Only skip sections after their natural size has been rendered and remembered. */
+  main section.in { content-visibility: auto; contain-intrinsic-block-size: auto 900px; }
   /* Only the hero fills the screen; the rest size to their content so there are no dead gaps. */
   section.hero { min-height: 100svh; }
   .split {
@@ -321,7 +321,7 @@
 
   /* Section rail */
   .rail { position: fixed; right: max(12px, 2vw); top: 50%; transform: translateY(-50%); z-index: 5; display: grid; gap: 14px; }
-  .rail a { width: 9px; height: 9px; border-radius: 50%; background: rgba(156, 173, 200, 0.35); display: block; transition: background .25s, transform .25s; }
+  .rail a { width: 9px; height: 9px; border-radius: 50%; background: rgba(156, 173, 200, 0.35); display: block; transition: transform .25s; }
   .rail a.on { background: var(--ice); transform: scale(1.5); }
   @media (max-width: 640px) { .rail { display: none; } }
 
@@ -621,33 +621,6 @@ afterFirstPaint(function () {
   var root = document.documentElement;
   if (!root.classList.contains("motion")) return;
 
-  var last = null;
-  function splitWords(h) {
-    var out = document.createDocumentFragment();
-    last = null;
-    Array.prototype.slice.call(h.childNodes).forEach(function (n) {
-      if (n.nodeType === 3) {
-        n.data.split(/(\s+)/).forEach(function (part, k) {
-          if (!part) return;
-          if (/^\s+$/.test(part)) { out.appendChild(document.createTextNode(" ")); last = null; return; }
-          // Punctuation that touches the previous word stays on its line.
-          if (k === 0 && last) { last.appendChild(document.createTextNode(part)); return; }
-          out.appendChild(wrap(document.createTextNode(part)));
-        });
-      } else {
-        out.appendChild(wrap(n.cloneNode(true)));
-      }
-    });
-    h.textContent = "";
-    h.appendChild(out);
-    h.classList.add("wsplit");
-  }
-  function wrap(node) {
-    var w = document.createElement("span"), i = document.createElement("span");
-    w.className = "w"; i.className = "wi"; i.appendChild(node); w.appendChild(i);
-    last = i;
-    return w;
-  }
   function set(el, ms) { el.style.setProperty("--d", Math.round(ms) + "ms"); }
 
   var sections = Array.prototype.slice.call(document.querySelectorAll("main section:not(.hero)"));
@@ -658,7 +631,7 @@ afterFirstPaint(function () {
     var t = 0;
     var eb = sec.querySelector(".eyebrow"); if (eb) { set(eb, t); t += 90; }
     var h = sec.querySelector("h2");
-    if (h) { splitWords(h); h.querySelectorAll(".wi").forEach(function (wi) { set(wi, t); t += 55; }); t += 120; }
+    if (h) { set(h, t); t += 240; }
     sec.querySelectorAll(".lede").forEach(function (p) { set(p, t); t += 90; });
     // Evidence panels follow the copy; their contents chain in once the panel has landed.
     var panelStart = Math.max(260, t - 260);
@@ -834,13 +807,31 @@ afterFirstPaint(function () {
   // Section rail: highlight the panel in view.
   var links = Array.prototype.slice.call(document.querySelectorAll(".rail a"));
   if ("IntersectionObserver" in window) {
-    var io = new IntersectionObserver(function (entries) {
+    var byId = new Map(links.map(function (a) { return [a.hash.slice(1), a]; }));
+    var current = null;
+    function highlight(entries) {
       entries.forEach(function (e) {
         if (!e.isIntersecting) return;
-        links.forEach(function (a) { a.classList.toggle("on", a.getAttribute("href") === "#" + e.target.id); });
+        var next = byId.get(e.target.id);
+        if (!next || next === current) return;
+        if (current) current.classList.remove("on");
+        next.classList.add("on"); current = next;
       });
-    }, { threshold: 0.55 });
-    document.querySelectorAll("main section").forEach(function (s) { io.observe(s); });
+    }
+    var io, viewportHeight = 0, resizeFrame = 0;
+    function observeCenter() {
+      resizeFrame = 0;
+      if (viewportHeight === window.innerHeight) return;
+      viewportHeight = window.innerHeight;
+      if (io) io.disconnect();
+      var inset = Math.floor(viewportHeight * .45);
+      io = new IntersectionObserver(highlight, { rootMargin: "-" + inset + "px 0px -" + inset + "px 0px", threshold: 0 });
+      document.querySelectorAll("main section").forEach(function (s) { io.observe(s); });
+    }
+    window.addEventListener("resize", function () {
+      if (!resizeFrame) resizeFrame = requestAnimationFrame(observeCenter);
+    });
+    observeCenter();
   }
 
 });
