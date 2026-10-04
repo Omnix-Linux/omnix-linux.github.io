@@ -16,7 +16,7 @@ Logo placement batches DOM measurements before style writes, fits the suffix usi
 
 Content sections use paint/layout containment and play their fade/slide entrances once. Panels do not blur the continuously animated background, and text does not animate paint masks or blur filters; those effects caused compositor and paint stalls during mobile scrolling. Scroll dimming remains independent of shader speed.
 
-The white `mnix` text is present in the initial HTML, with its logo and display fonts eagerly preloaded at high priority. No shader placeholder image is requested. The worker initializes asynchronously after first paint; its first rendered frame enables a 200ms opacity fade. Reduced motion and unavailable GPU rendering keep the canvas hidden. `coronal-poster.png` remains an offline reference asset, not a page placeholder.
+The white `mnix` text is present in the initial HTML, with its logo and display fonts eagerly preloaded at high priority. It stays hidden until Lexend loads and the geometry-based size and anchor are applied, avoiding fallback-font flashes and intermediate sizing. No shader placeholder image is requested. The worker initializes asynchronously after first paint; its first rendered frame enables a 200ms opacity fade. Reduced motion and unavailable GPU rendering keep the canvas hidden. `coronal-poster.png` remains an offline reference asset, not a page placeholder.
 
 Link previews use Open Graph and Twitter Card metadata in the static HTML head. `social-preview.png` is the public 1200 × 630 preview image; `social-preview.svg` is its editable source. After editing the SVG, render it to an opaque PNG at the same dimensions and update both files.
 

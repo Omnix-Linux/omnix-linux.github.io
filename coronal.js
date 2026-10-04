@@ -6,16 +6,19 @@ afterFirstPaint(async function () {
   var root = document.documentElement;
   var reduce = window.matchMedia("(prefers-reduced-motion: reduce)");
   if (!orbit || !canvas) return;
+  var logoFontReady = document.fonts.load('800 140px "Lexend"', "mnix");
+  function revealWordmark() { root.classList.add("wordmark-ready"); }
   var registry, profile;
   try {
     var response = await fetch(canvas.dataset.shaderProfile);
-    if (!response.ok) return;
+    if (!response.ok) throw new Error("Shader profile unavailable");
     registry = await response.json();
-    if (registry.version !== 2) return;
+    if (registry.version !== 2) throw new Error("Unsupported shader profile");
     var shaderEnum = canvas.dataset.shader || registry.activeShader;
     profile = registry.shaders[shaderEnum];
-    if (!profile || profile.geometry.ring.character !== "O") return;
-  } catch (e) { return; } // White DOM text stays visible while the shader loads or is unavailable.
+    if (!profile || profile.geometry.ring.character !== "O") throw new Error("Unsupported logo geometry");
+    await logoFontReady;
+  } catch (e) { logoFontReady.then(revealWordmark).catch(function () {}); return; }
   var geometry = profile.geometry, rendering = registry.rendering;
   var wordmark = document.querySelector(".wordmark"), suffix = document.querySelector(".wordmark-text");
   suffix.textContent = registry.layout.suffix.text;
@@ -49,6 +52,7 @@ afterFirstPaint(async function () {
     if (widthPerPixel > 0) fontSize = Math.min(fontSize, available / widthPerPixel);
     suffix.style.fontSize = fontSize + "px";
     suffix.style.color = registry.layout.suffix.color;
+    revealWordmark();
     return { width: W, height: H, size: size, left: left, top: top, mode: mode };
   }
   // The main thread owns DOM placement only. Rendering and cached textures
