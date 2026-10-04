@@ -193,21 +193,22 @@
   .hero .cta { justify-content: center; }
   .hero-inner { max-width: 1240px; width: 100%; display: grid; gap: 28px; }
   .wordmark { position: relative; height: min(62svh, 620px); width: 100%; margin: 0; font-family: "Lexend", "Arial Black", system-ui, sans-serif; font-weight: 800; line-height: 1; }
-  #coronal { position: fixed; inset: 0; width: 100vw; height: 100vh; z-index: 0; pointer-events: none; opacity: 0; transition: opacity .2s ease-out; }
+  #coronal { position: fixed; inset: 0; width: 100vw; height: 100vh; z-index: 0; pointer-events: none; opacity: 0; transition: opacity .45s ease-out; }
   .shader-ready #coronal { opacity: 1; }
   .shader-ready.hero-past #coronal { opacity: .24; }
   .logo-orbit { position: absolute; left: calc(38vw - (100vw - min(88vw, 1240px)) / 2); top: 50%; transform: translate(-50%, -50%); width: min(80vw, 110svh); aspect-ratio: 1; display: block; pointer-events: none; }
   @media (prefers-reduced-motion: reduce) {
     .shader-ready #coronal { opacity: 0; transition: none; }
   }
-  .wordmark-text { visibility: hidden; position: absolute; z-index: 1; left: calc(38vw + min(23.142857vw, 31.821429svh) - (100vw - min(88vw, 1240px)) / 2); top: 50%; transform: translateY(-50%); font-size: clamp(3.5rem, 10vw, 8.75rem); letter-spacing: -.045em; color: #fff; }
+  .wordmark-text { visibility: hidden; opacity: 0; transition: opacity .45s ease-out; position: absolute; z-index: 1; left: calc(38vw + min(23.142857vw, 31.821429svh) - (100vw - min(88vw, 1240px)) / 2); top: 50%; transform: translateY(-50%); font-size: clamp(3.5rem, 10vw, 8.75rem); letter-spacing: -.045em; color: #fff; }
   @media (max-width: 640px) {
     .hero-inner { gap: 24px; }
     .wordmark { height: 44svh; }
     .logo-orbit { width: 100vw; left: calc(37vw - max(16px, 6vw)); }
     .wordmark-text { left: calc(65.928571vw - max(16px, 6vw)); font-size: clamp(2rem, 9vw, 3.5rem); }
   }
-  .wordmark-ready .wordmark-text { visibility: visible; }
+  .wordmark-ready .wordmark-text { visibility: visible; opacity: 1; }
+  @media (prefers-reduced-motion: reduce) { .wordmark-text { transition: none; } }
   .tagline { font-family: var(--font-display); font-weight: 500; font-size: var(--step-1); margin: 0; max-width: 32ch; text-wrap: balance; }
   .cta { display: flex; gap: 12px; flex-wrap: wrap; }
   .btn {

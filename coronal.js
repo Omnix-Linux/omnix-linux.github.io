@@ -52,7 +52,7 @@ afterFirstPaint(async function () {
     if (widthPerPixel > 0) fontSize = Math.min(fontSize, available / widthPerPixel);
     suffix.style.fontSize = fontSize + "px";
     suffix.style.color = registry.layout.suffix.color;
-    revealWordmark();
+    if (reduce.matches) revealWordmark();
     return { width: W, height: H, size: size, left: left, top: top, mode: mode };
   }
   // The main thread owns DOM placement only. Rendering and cached textures
@@ -67,6 +67,7 @@ afterFirstPaint(async function () {
     failed = true; clearTimeout(startupTimer);
     if (worker) { worker.terminate(); worker = null; }
     root.classList.remove("shader-ready"); canvas.dataset.backend = "unavailable";
+    revealWordmark();
   }
   function surface() {
     var placement = placeLogo(), geometry = profile.geometry;
@@ -107,7 +108,7 @@ afterFirstPaint(async function () {
           canvas.dataset.graphicsBackend = message.backend;
           canvas.dataset.renderPixels = message.pixels;
           canvas.dataset.cacheBytes = message.cacheBytes;
-          if (!reduce.matches) root.classList.add("shader-ready");
+          if (!reduce.matches) root.classList.add("shader-ready", "wordmark-ready");
         } else if (message.type === "lost") {
           root.classList.remove("shader-ready");
           clearTimeout(startupTimer);
@@ -134,7 +135,7 @@ afterFirstPaint(async function () {
   function state() {
     clearTimeout(startupTimer);
     if (worker && isActive() && !root.classList.contains("shader-ready")) startupTimer = setTimeout(fallback, 8000);
-    if (reduce.matches) root.classList.remove("shader-ready");
+    if (reduce.matches) { root.classList.remove("shader-ready"); revealWordmark(); }
     if (worker) worker.postMessage({ type: "state", active: isActive() });
     else start();
   }
