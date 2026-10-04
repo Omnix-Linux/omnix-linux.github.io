@@ -33,9 +33,11 @@ struct Params { center: vec2f, surface: vec2f, buffer: vec2f, diameter: f32, tim
   var color = vec3f(1.) - vec3f(2.) / (exp(2. * min(glow / 30., vec3f(10.))) + vec3f(1.));
   // Match the faint white outline and halo in the WebGL renderer.
   let rimDistance = abs(length(uv) - 0.57857143);
-  let rim = 0.72 * exp(-pow(rimDistance / 0.014, 2.))
-    + 0.12 * exp(-pow(rimDistance / 0.045, 2.));
-  color += (vec3f(1.) - color) * rim;
+  let rim = 3.0 * exp(-pow(rimDistance / 0.0035, 2.))
+    + 0.24 * exp(-pow(rimDistance / 0.025, 2.));
+  // Add overbright white light before the display clamps the thin core.
+  // The wider halo preserves its bloom on standard SDR browser canvases.
+  color += vec3f(rim);
   let alpha = 1. - smoothstep(1.1, 1.5, length(uv));
   return vec4f(color * alpha, alpha);
 }`;
