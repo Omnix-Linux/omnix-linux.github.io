@@ -1,0 +1,5 @@
+# Omnix is an open-source project: search engines and AI assistants are welcome.
+User-agent: *
+Allow: /
+
+Sitemap: https://www.omnix-linux.com/sitemap.xml

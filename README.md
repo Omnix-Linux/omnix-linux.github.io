@@ -42,3 +42,7 @@ Use **Omarchy** in prose. Follow the [Omnix naming policy](https://github.com/Om
 The favicon is rendered from `coronal-shader.js` at time 6 seconds, with the same white O rim as the hero. It uses an artwork diameter of 1.35 times the icon size so the O fills the tab icon. The SVG embeds a 64px shader render; PNG and ICO variants include renders at native tab sizes.
 
 Section reveals observe the first eyebrow or heading inside the viewport band from 10% to 65% of its height. The hero observes its wordmark with 12% top/bottom insets and fades when less than 65% remains visible. Its suffix and subtitle fade out in 180ms; the corona drops to 8% opacity. Pixel observer margins are rebuilt on resize because percentage root margins follow viewport width. This gives the hero time to dim before section copy appears.
+
+## Copy and discoverability
+
+Page copy follows the language guidelines in [issue #2](https://github.com/Omnix-Linux/omnix-linux.github.io/issues/2): benefit-first headings, acronyms explained on first use, no hype, and planned work labelled as planned. The FAQ's visible text and the FAQPage JSON-LD in `<head>` must match; edit both together. `robots.txt`, `sitemap.xml` and `llms.txt` describe the site to search engines and AI assistants; update `lastmod` and `llms.txt` when product facts change.

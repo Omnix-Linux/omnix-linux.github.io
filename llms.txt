@@ -1,0 +1,28 @@
+# Omnix
+
+> Omnix is an independent, NixOS-based Linux distribution that adds a small FHS compatibility layer so Omarchy's Hyprland desktop, KDE Plasma - Atrium and prebuilt Linux software run on NixOS, with declarative configuration and boot-menu rollbacks.
+
+- Base: NixOS (nixos-unstable). Packages stay unmodified in /nix/store and download from cache.nixos.org; no overlays or patches.
+- Compatibility layer: nix-ld (the /lib64/ld-linux-x86-64.so.2 loader), envfs (/usr/bin, /bin), and a Nix-managed /usr/lib.
+- Installer: ISO v0.1.0 for x86-64 PCs; run `sudo omnix-install` and choose a disk, encryption and desktop.
+- Desktops ("flavors"):
+  - Hyprland - Omarchy: an independent port of Omarchy. Runs Omarchy's own Hyprland config, keybindings, themes and scripts; maps 131 of its 147 base packages. `stable` pins Omarchy 4.0.4, `latest` follows its development branch.
+  - KDE Plasma - Atrium: a declarative, mouse-first KDE Plasma 6 desktop that borrows Omarchy habits (Meta+W overview, per-screen desktops, JetBrainsMono Nerd Font, fast key repeat).
+  - Minimal: the base alone.
+- Rollback: every system update is a boot-menu entry. Rolling back restores system apps, libraries, settings and the compatibility layer; files and personal settings in the home folder are not changed.
+- Switching desktops: the installed system is a flake the user owns in /etc/nixos; the desktop is one input in it.
+- Independent: not affiliated with or endorsed by Omarchy, 37signals, Basecamp or the NixOS Foundation.
+
+## Links
+
+- [Website](https://www.omnix-linux.com/)
+- [Omnix base and installer](https://github.com/Omnix-Linux/Omnix)
+- [Installer ISO releases](https://github.com/Omnix-Linux/Omnix/releases)
+- [Hyprland - Omarchy flavor](https://github.com/Omnix-Linux/Autarchy)
+- [KDE Plasma - Atrium flavor](https://github.com/Omnix-Linux/Atrium)
+- [Try Omnix Docker app](https://github.com/Omnix-Linux/docker-vm/blob/feat/omnix-demo/docs/OMNIX.md)
+
+## Vision (not yet built)
+
+- Plugins as small, sandboxed WebAssembly (WASM) modules, aiming for near-native speed on a stable kernel-API platform.
+- Actually Portable Executables (APE, Cosmopolitan-style single-file programs) as first-class apps.
