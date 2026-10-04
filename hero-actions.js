@@ -1,4 +1,4 @@
-/* Scroll only the action group at half speed; preserve child entrance animations. */
+/* Scroll the hero hint at half speed; preserve child entrance animations. */
 afterFirstPaint(function () {
   var hero = document.getElementById("top");
   var actions = hero && hero.querySelector(".hero-actions");

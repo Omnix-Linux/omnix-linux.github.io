@@ -50,9 +50,6 @@
 
   /* Hero: plain CSS keyframes, so the cascade starts with the first paint and needs no script. */
   @keyframes rise { from { opacity: 0; transform: translateY(16px); } }
-  .motion .hero :is(.cta .btn, .scrollhint) { animation: rise .8s var(--ease-out) both; }
-  .motion .hero .cta .btn:nth-child(1) { animation-delay: 220ms; }
-  .motion .hero .cta .btn:nth-child(2) { animation-delay: 290ms; }
   .motion .hero .scrollhint { animation-delay: 420ms; }
   @keyframes nudge { 50% { transform: translateY(5px); } }
   .motion .hero .scrollhint { animation: rise .8s var(--ease-out) 420ms both, nudge 2.4s ease-in-out 1.4s infinite; }
@@ -126,7 +123,7 @@
     --step-5: clamp(3.4rem, 2rem + 7vw, 7.5rem);
     color-scheme: dark;
   }
-  html { scroll-behavior: smooth; }
+  html { scroll-behavior: smooth; scroll-padding-top: var(--header-height, 76px); }
   @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
   body {
     background: var(--void);
@@ -189,9 +186,7 @@
   .hero { position: relative; align-items: center; justify-items: center; text-align: center; }
   .hero .hero-inner { justify-items: center; }
   .hero .brand { width: 100%; }
-  .hero .cta { justify-content: center; }
-  .hero-actions { display: grid; justify-items: center; gap: 28px; }
-  @media (max-width: 640px) { .hero-actions { gap: 24px; } }
+  .hero-actions { display: grid; justify-items: center; }
   .hero-inner { max-width: 1240px; width: 100%; display: grid; gap: 28px; }
   .wordmark { position: relative; height: min(62svh, 620px); width: 100%; margin: 0; font-family: "Lexend", "Arial Black", system-ui, sans-serif; font-weight: 800; line-height: 1; }
   #coronal { position: fixed; inset: 0; width: 100vw; height: 100vh; z-index: 0; pointer-events: none; opacity: 0; transition: opacity .45s ease-out; }
@@ -323,6 +318,19 @@
   .foot a { color: var(--ink); text-decoration-color: var(--nix); text-underline-offset: 3px; }
   .foot a:hover { color: var(--ice); }
 
+  /* Persistent navigation, with space for future links and no background effects. */
+  :root { --header-height: 76px; }
+  .site-header { position: fixed; inset: 0 0 auto; z-index: 6; height: var(--header-height); padding-inline: max(16px, 6vw); background: transparent; pointer-events: none; }
+  .site-nav { max-width: 1240px; height: 100%; margin-inline: auto; display: flex; justify-content: flex-end; align-items: center; }
+  .site-nav-links { display: flex; align-items: center; gap: 12px; pointer-events: auto; }
+  .site-nav a { display: inline-flex; align-items: center; justify-content: center; min-height: 44px; padding: 10px 16px; font-family: var(--font-mono); font-size: .875rem; font-weight: 700; color: #fff; text-decoration: none; }
+  .site-nav .nav-install { border: 1px solid var(--line); border-radius: 999px; }
+  .site-nav a:hover { color: var(--ice); }
+  .site-nav .nav-install:hover { border-color: var(--ice); }
+  .site-nav a:focus-visible { outline: 2px solid var(--ice); outline-offset: 3px; }
+  .install-links { margin-top: 24px; }
+  @media (max-width: 640px) { :root { --header-height: 64px; } .site-nav-links { gap: 4px; } }
+
   /* Section rail */
   .rail { position: fixed; right: max(12px, 2vw); top: 50%; transform: translateY(-50%); z-index: 5; display: grid; gap: 14px; }
   .rail a { width: 9px; height: 9px; border-radius: 50%; background: rgba(156, 173, 200, 0.35); display: block; transition: transform .25s; }
@@ -337,6 +345,15 @@
 <span class="wordmark-text" aria-hidden="true">mnix</span>
 <p class="tagline">A NixOS-fork compatible with<br>Omarchy and friends</p>
 <div class="scrim"></div>
+
+<header class="site-header">
+  <nav class="site-nav" aria-label="Main navigation">
+    <div class="site-nav-links">
+      <a href="https://github.com/Omnix-Linux">GitHub</a>
+      <a class="nav-install" href="#install">Install</a>
+    </div>
+  </nav>
+</header>
 
 <nav class="rail" aria-label="Sections">
   <a href="#top" aria-label="Omnix"></a>
@@ -359,10 +376,6 @@
         </h1>
       </div>
       <div class="hero-actions">
-        <div class="cta">
-          <a class="btn primary" href="https://github.com/Omnix-Linux/Omnix/releases">Download the installer</a>
-          <a class="btn" href="https://github.com/Omnix-Linux">View on GitHub</a>
-        </div>
         <div class="scrollhint">Scroll ↓</div>
       </div>
     </div>
@@ -569,8 +582,9 @@ ls: cannot access '/usr/lib': No such file or directory</pre>
   <section id="install">
     <div class="wide">
       <div class="eyebrow">Install</div>
-      <h2>Your next desktop. <em>From the terminal.</em></h2>
+      <h2>Install Omnix. <em>From the terminal.</em></h2>
       <p class="lede">Boot the ISO into a console and run <code>sudo omnix-install</code>. The entire install stays in the terminal; your desktop starts after reboot. Nothing touches your disk until you confirm.</p>
+      <div class="cta install-links"><a class="btn primary" href="https://github.com/Omnix-Linux/Omnix/releases">Download installer ISO</a></div>
       <div class="install-demo" id="install-demo" role="region" aria-label="Looping Omnix installer demonstration">
         <div class="demo-controls" aria-label="Choose a desktop to preview">
           <button type="button" data-demo-flavor="Autarchy" aria-pressed="true">Autarchy</button>
