@@ -200,7 +200,7 @@
   @media (prefers-reduced-motion: reduce) {
     .shader-ready #coronal { opacity: 0; transition: none; }
   }
-  .wordmark-text { visibility: hidden; opacity: 0; transition: opacity .45s ease-out; position: absolute; z-index: 1; left: calc(38vw + min(23.142857vw, 31.821429svh) - (100vw - min(88vw, 1240px)) / 2); top: 50%; transform: translateY(-50%); font-size: clamp(3.5rem, 10vw, 8.75rem); letter-spacing: -.045em; color: #fff; }
+  .wordmark-text { visibility: hidden; opacity: 0; transition: opacity .45s ease-out; position: fixed; z-index: 0; pointer-events: none; font-family: "Lexend", "Arial Black", system-ui, sans-serif; font-weight: 800; line-height: 1; left: calc(38vw + min(23.142857vw, 31.821429svh) - (100vw - min(88vw, 1240px)) / 2); top: 50%; transform: translateY(-50%); font-size: clamp(3.5rem, 10vw, 8.75rem); letter-spacing: -.045em; color: #fff; }
   @media (max-width: 640px) {
     .hero-inner { gap: 24px; }
     .wordmark { height: 44svh; }
@@ -208,6 +208,7 @@
     .wordmark-text { left: calc(65.928571vw - max(16px, 6vw)); font-size: clamp(2rem, 9vw, 3.5rem); }
   }
   .wordmark-ready .wordmark-text { visibility: visible; opacity: 1; }
+  .wordmark-ready.hero-past .wordmark-text { opacity: .24; }
   @media (prefers-reduced-motion: reduce) { .wordmark-text { transition: none; } }
   .tagline { font-family: var(--font-display); font-weight: 500; font-size: var(--step-1); margin: 0; max-width: 32ch; text-wrap: balance; }
   .cta { display: flex; gap: 12px; flex-wrap: wrap; }
@@ -329,6 +330,7 @@
 </head>
 <body>
 <canvas id="coronal" data-shader-profile="shader-profile.json" aria-hidden="true"></canvas>
+<span class="wordmark-text" aria-hidden="true">mnix</span>
 <div class="scrim"></div>
 
 <nav class="rail" aria-label="Sections">
@@ -349,7 +351,6 @@
       <div class="brand">
         <h1 class="wordmark" aria-label="Omnix">
           <span class="logo-orbit" aria-hidden="true"></span>
-          <span class="wordmark-text" aria-hidden="true">mnix</span>
         </h1>
       </div>
       <p class="tagline">A NixOS-based distribution for Omarchy and friends.</p>

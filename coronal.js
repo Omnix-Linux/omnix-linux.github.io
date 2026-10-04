@@ -42,8 +42,8 @@ afterFirstPaint(async function () {
     var anchor = ShaderLayout.ringAnchor(geometry.ring, { left: left, top: top, size: size }, mode.suffixGapToArtworkSize);
     var letterHeight = anchor.radius * 2;
     var suffixLeft = anchor.x;
-    suffix.style.left = (suffixLeft - box.left) + "px";
-    suffix.style.top = (anchor.y - box.top - window.scrollY) + "px";
+    suffix.style.left = suffixLeft + "px";
+    suffix.style.top = anchor.y + "px";
     var fontSize = Math.max(registry.layout.suffix.minFontSize,
       Math.min(registry.layout.suffix.maxFontSize, letterHeight * mode.suffixScaleToLetterHeight));
     // Text width scales with font size. Fit using the earlier read instead of
