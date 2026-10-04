@@ -53,10 +53,30 @@
     }
     monitors.appendChild(screen);
   }
+  function updateDesktop() {
+    var tiled = demo.dataset.desktop === 'omarchy';
+    demo.querySelector('[data-depth]').hidden = tiled;
+    demo.querySelectorAll('.terminal-group').forEach(function (group, index) {
+      group.hidden = tiled && index % 2 === 1;
+      group.disabled = tiled;
+      if (tiled) {
+        group.removeAttribute('aria-pressed');
+        group.setAttribute('aria-label', 'Tiled kitty / tmux terminal panes');
+      } else {
+        group.setAttribute('aria-pressed', String(group.classList.contains('front')));
+        group.setAttribute('aria-label', 'Bring terminal group ' + (index % 2 + 1) + ' forward on monitor ' + (Math.floor(index / 2) + 1));
+      }
+    });
+    document.querySelector('.preview-description').textContent = tiled
+      ? 'Hyprland tiles windows on a single plane. Explore workspaces across one or two monitors.'
+      : 'Explore multiple monitors and layered terminal groups. Select a group to bring it forward.';
+  }
+  updateDesktop();
   document.querySelectorAll('[data-desktop]').forEach(function (button) {
     if (button.tagName !== 'BUTTON') return;
     button.addEventListener('click', function () {
       demo.dataset.desktop = this.dataset.desktop;
+      updateDesktop();
       document.querySelectorAll('.desktop-choices button').forEach(function (item) { item.setAttribute('aria-pressed', String(item === this)); }, this);
       demo.querySelector('.preview-caption').textContent = this.dataset.desktop === 'omarchy' ? 'Hyprland - Omarchy · interactive illustration' : 'KDE Plasma - Atrium · interactive illustration';
     });

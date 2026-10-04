@@ -371,7 +371,7 @@
 
   .no-gl .scrim { background: linear-gradient(90deg, rgba(4, 5, 12, 0.7), rgba(4, 5, 12, 0.2)); }
 </style>
-<link rel="stylesheet" href="desktop-preview.css?v=20261004">
+<link rel="stylesheet" href="desktop-preview.css?v=20261004-single-plane">
 </head>
 <body>
 <canvas id="coronal" data-shader-profile="shader-profile.json?v=mobile-stability-alpha-20261004" data-shader-version="mobile-stability-alpha-20261004" aria-hidden="true"></canvas>
@@ -507,10 +507,10 @@ $OMARCHY_PATH             // commands, themes &amp; defaults
           <button type="button" data-desktop="omarchy" aria-pressed="true">Hyprland - Omarchy<span>Keyboard-driven tiling. Familiar Omarchy style.</span></button>
           <button type="button" data-desktop="plasma" aria-pressed="false">KDE Plasma - Atrium<span>A slim top bar, floating dock, and workspaces per monitor.</span></button>
         </div>
-        <p class="lede">Explore multiple monitors and stacked workspaces. Select a terminal group to bring it forward.</p>
+        <p class="lede preview-description">Hyprland tiles windows on a single plane. Explore workspaces across one or two monitors.</p>
       </div>
       <div class="desktop-demo" data-desktop="omarchy">
-        <div class="preview-controls"><button type="button" data-monitors aria-pressed="false">Two monitors</button><button type="button" data-depth aria-pressed="true">Layered view</button></div>
+        <div class="preview-controls"><button type="button" data-monitors aria-pressed="false">Two monitors</button><button type="button" data-depth aria-pressed="true" hidden>Layered view</button></div>
         <div class="preview-monitors"></div>
         <p class="preview-caption" aria-live="polite">Hyprland - Omarchy · interactive illustration</p>
       </div>
@@ -850,7 +850,7 @@ afterFirstPaint(function () {
 <script src="coronal.js?v=mobile-stability-alpha-20261004" defer></script>
 <script src="hero-actions.js?v=mobile-stability-alpha-20261004" defer></script>
 <script src="column-scroll.js" defer></script>
-<script src="desktop-preview.js?v=20261004" defer></script>
+<script src="desktop-preview.js?v=20261004-single-plane" defer></script>
 
 
 </body>
