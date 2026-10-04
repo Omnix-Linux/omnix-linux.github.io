@@ -10,20 +10,20 @@
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Omnix">
 <meta property="og:locale" content="en_US">
-<meta property="og:title" content="Omnix — A NixOS-fork compatible to run Omarchy and Friends">
+<meta property="og:title" content="Omnix — A next generation NixOS fork designed to run Omarchy and Friends">
 <meta property="og:description" content="The next generation of NixOS, with FHS compatibility for Omarchy and friends. Choose Autarchy or Atrium and keep reproducible configuration and system rollbacks.">
 <meta property="og:url" content="https://www.omnix-linux.com/">
-<meta property="og:image" content="https://www.omnix-linux.com/social-preview.png?v=7">
-<meta property="og:image:secure_url" content="https://www.omnix-linux.com/social-preview.png?v=7">
+<meta property="og:image" content="https://www.omnix-linux.com/social-preview.png?v=8">
+<meta property="og:image:secure_url" content="https://www.omnix-linux.com/social-preview.png?v=8">
 <meta property="og:image:type" content="image/png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
-<meta property="og:image:alt" content="A large cyan-violet Coronal ring forming the O beside smaller mnix lettering, with the tagline A NixOS-fork compatible to run Omarchy and Friends.">
+<meta property="og:image:alt" content="A large cyan-violet Coronal ring forming the O beside smaller mnix lettering, with the tagline A next generation NixOS fork designed to run Omarchy and Friends.">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="Omnix — A NixOS-fork compatible to run Omarchy and Friends">
+<meta name="twitter:title" content="Omnix — A next generation NixOS fork designed to run Omarchy and Friends">
 <meta name="twitter:description" content="The next generation of NixOS, with FHS compatibility for Omarchy and friends. Choose Autarchy or Atrium and keep reproducible configuration and system rollbacks.">
-<meta name="twitter:image" content="https://www.omnix-linux.com/social-preview.png?v=7">
-<meta name="twitter:image:alt" content="A large cyan-violet Coronal ring forming the O beside smaller mnix lettering, with the tagline A NixOS-fork compatible to run Omarchy and Friends.">
+<meta name="twitter:image" content="https://www.omnix-linux.com/social-preview.png?v=8">
+<meta name="twitter:image:alt" content="A large cyan-violet Coronal ring forming the O beside smaller mnix lettering, with the tagline A next generation NixOS fork designed to run Omarchy and Friends.">
 <title>Omnix</title>
 <meta name="color-scheme" content="dark">
 <style>html, body { background: #04050c; color: #e8eef8; }
@@ -163,6 +163,11 @@
     align-items: center; max-width: 1240px; width: 100%;
   }
   .split > * { min-width: 0; }
+  .scroll-copy-pane { display: contents; }
+  .scroll-copy { min-width: 0; }
+  .split.dual-scroll { align-items: start; }
+  .dual-scroll > .scroll-copy-pane { display: block; align-self: stretch; overflow: clip; }
+  .dual-scroll .scroll-copy { display: flow-root; }
   @media (max-width: 860px) { .split { grid-template-columns: minmax(0, 1fr); } }
 
   .eyebrow {
@@ -238,28 +243,15 @@
   .term .ok { color: var(--ok); }
   .term .bad { color: #fca5a5; }
   .term .hl { color: var(--ice); }
-  .fs-comparison { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  .fs-column { min-width: 0; padding: 12px; }
-  .fs-column + .fs-column { border-left: 1px solid var(--line); }
-  .fs-column h3 { margin: 0 0 8px; color: var(--ink); font: inherit; font-weight: 700; }
-  .fs-column p { margin: 0 0 8px; color: var(--muted); overflow-wrap: anywhere; }
-  .fs-paths { margin: 0; padding: 0; list-style: none; }
-  .fs-paths li { display: grid; grid-template-columns: 1ch minmax(0, 1fr); gap: 5px; padding-block: 5px; color: var(--muted); }
-  .fs-paths li::before { content: "*"; color: var(--violet); }
-  .fs-paths code { display: block; color: var(--ice); overflow-wrap: anywhere; }
-  .fs-paths .arrow { color: var(--violet); }
-  .fs-join { position: relative; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); text-align: center; color: var(--violet); padding-block: 8px 20px; }
-  .fs-join span::after { content: "|"; display: block; }
-  .fs-join::after { content: ""; position: absolute; left: 25%; right: 25%; bottom: 20px; border-bottom: 1px solid var(--violet); }
-  .fs-result { position: relative; margin: 0 12px 16px; padding: 14px; border: 1px solid var(--violet); border-radius: 8px; background: rgba(82, 119, 195, .08); color: var(--muted); }
-  .fs-result::before { content: "v"; position: absolute; top: -24px; left: 50%; transform: translateX(-50%); color: var(--violet); }
-  .fs-result h3 { margin: 0 0 6px; font: inherit; font-size: 1.15em; font-weight: 700; color: var(--ink); }
-  .fs-result p { margin: 0; }
+  .fs-result { padding: 18px 20px; color: var(--muted); }
+  .fs-result h3 { margin: 0; font: inherit; font-size: 1.15em; font-weight: 700; color: var(--ink); }
   .fs-result code { color: var(--ice); overflow-wrap: anywhere; }
-  .fs-mapping { margin: 12px 0; padding: 0; list-style: none; }
-  .fs-mapping li { margin-block: 8px; }
-  .fs-mapping code { display: block; }
-  .fs-mapping .target { padding-left: 1ch; }
+  .fs-mapping { margin: 16px 0 0; padding: 0; list-style: none; }
+  .fs-mapping li { padding-block: 16px; border-top: 1px solid var(--line); }
+  .fs-mapping li:last-child { padding-bottom: 0; }
+  .fs-mapping code, .fs-mapping .purpose { display: block; }
+  .fs-mapping .purpose { margin-block: 4px; font-family: var(--font-body); font-size: var(--step--1); }
+  .fs-mapping .target { display: block; padding-left: 1ch; }
   .fs-mapping .arrow { color: var(--violet); }
 
 
@@ -347,7 +339,7 @@
 <body>
 <canvas id="coronal" data-shader-profile="shader-profile.json" aria-hidden="true"></canvas>
 <span class="wordmark-text" aria-hidden="true">mnix</span>
-<p class="tagline">A NixOS-fork compatible to run<br>Omarchy and Friends</p>
+<p class="tagline">A next generation NixOS fork,<br>designed to run Omarchy and Friends.</p>
 <div class="scrim"></div>
 
 <header class="site-header">
@@ -363,10 +355,9 @@
 
 <nav class="rail" aria-label="Sections">
   <a href="#top" aria-label="Omnix"></a>
-  <a href="#problem" aria-label="Built for Omarchy"></a>
-  <a href="#ported" aria-label="The Omnix foundation"></a>
+  <a href="#ported" aria-label="FHS compatibility for Omarchy and friends"></a>
   <a href="#autarchy" aria-label="Autarchy: Omarchy ported to Omnix"></a>
-  <a href="#runs" aria-label="Prebuilt software just runs"></a>
+  <a href="#runs" aria-label="Fast packages from cache.nixos.org"></a>
   <a href="#cache" aria-label="Prebuilt packages and local builds"></a>
   <a href="#flavors" aria-label="Pick your desktop"></a>
   <a href="#rollback" aria-label="Every change rolls back"></a>
@@ -387,79 +378,30 @@
     </div>
   </section>
 
-  <section id="problem">
-    <div class="split">
-      <div>
-        <div class="eyebrow">Built for Omarchy</div>
-        <h2>Omarchy needs FHS standard paths. <em>Omnix delivers.</em></h2>
-        <p class="lede"><strong>Omarchy</strong> is DHH's opinionated Hyprland desktop, built for Arch. Its scripts and
-          prebuilt apps expect the standard Linux paths defined by the Filesystem Hierarchy Standard (FHS), including
-          <code>/bin/bash</code> and <code>/usr/lib</code>.</p>
-        <p class="lede"><strong>Omnix brings FHS compatibility to NixOS so Omarchy and friends can coexist.</strong>
-          Familiar Linux paths, Nix-managed packages, reproducible configuration, and system rollbacks—all in one platform.</p>
-      </div>
-      <div class="term" role="img" aria-label="Standard Linux paths provided by Omnix for scripts and prebuilt apps">
-        <div class="term-bar"><i></i><i></i><i></i><b>Familiar paths. Nix underneath.</b></div>
-<pre><span class="hl">/bin/bash</span>
-<span class="ok">The shell that scripts expect</span>
-
-<span class="hl">/usr/bin</span>
-<span class="ok">Tools and interpreters on your PATH</span>
-
-<span class="hl">/usr/lib</span>
-<span class="ok">Shared libraries for prebuilt apps</span>
-
-<span class="hl">/nix/store</span>
-<span class="ok">Nix-managed packages underneath</span></pre>
-      </div>
-    </div>
-  </section>
-
   <section id="ported">
-    <div class="split">
+    <div class="split" id="problem">
       <div>
-        <div class="eyebrow">The Omnix foundation</div>
-        <h2>Familiar Linux paths. <em>NixOS at the core.</em></h2>
-        <p class="lede">Omnix connects <strong>standard Linux paths to Nix-managed software</strong>. Scripts find their shell, apps find their libraries, and packages stay in <code>/nix/store</code>.</p>
-        <p class="lede">The compatibility layer is part of your system configuration, so it upgrades and rolls back with the rest of your system.</p>
+        <div class="eyebrow">Built for Omarchy and friends</div>
+        <h2>Omarchy needs FHS standard paths. <em>Omnix delivers.</em></h2>
+        <p class="lede">Built for Arch, <strong>Omarchy</strong> expects the standard Linux paths defined by the
+          Filesystem Hierarchy Standard (FHS). Its scripts need <code>/bin/bash</code>, and its prebuilt apps
+          look for libraries in <code>/usr/lib</code>.</p>
+        <p class="lede"><strong>Omnix brings FHS compatibility to NixOS so Omarchy and friends can coexist.</strong>
+          Standard paths connect to packages in <code>/nix/store</code>, keeping reproducible configuration
+          and system rollbacks.</p>
       </div>
-        <div class="term">
-          <div class="term-bar"><i></i><i></i><i></i><b>Two layouts. One system.</b></div>
-          <div class="fs-comparison">
-            <div class="fs-column">
-              <h3>FHS-compliant layout</h3>
-              <p>Standard Linux paths</p>
-              <ul class="fs-paths" aria-label="FHS paths and their purpose">
-                <li><span><code>/bin/bash</code><span class="arrow">-&gt;</span> runs bash scripts</span></li>
-                <li><span><code>/usr/bin/</code><span class="arrow">-&gt;</span> finds tools and interpreters</span></li>
-                <li><span><code>/lib/, /usr/lib/</code><span class="arrow">-&gt;</span> finds shared libraries</span></li>
-                <li><span><code>/lib64/</code><span class="arrow">-&gt;</span> finds the x86-64 ELF loader</span></li>
-              </ul>
-            </div>
-            <div class="fs-column">
-              <h3>NixOS layout</h3>
-              <p>Packages in <code>/nix/store/</code></p>
-              <ul class="fs-paths" aria-label="Example package paths within the Nix store">
-                <li><span><code>&lt;hash&gt;-bash/bin/bash</code><span class="arrow">-&gt;</span> shell in its own package</span></li>
-                <li><span><code>&lt;hash&gt;-app/bin/</code><span class="arrow">-&gt;</span> programs in their own packages</span></li>
-                <li><span><code>&lt;hash&gt;-library/lib/</code><span class="arrow">-&gt;</span> libraries kept separately</span></li>
-                <li><span><code>&lt;hash&gt;-glibc/lib/</code><span class="arrow">-&gt;</span> package-managed ELF loader</span></li>
-              </ul>
-            </div>
-          </div>
-          <div class="fs-join" aria-hidden="true"><span>FHS paths</span><span>Nix packages</span></div>
-          <div class="fs-result">
-            <h3>Omnix = FHS paths + Nix packages</h3>
-            <p>The standard paths resolve to Nix-managed software:</p>
-            <ul class="fs-mapping" aria-label="How Omnix connects standard paths to Nix packages">
-              <li><code>/bin/bash</code><code class="target"><span class="arrow">-&gt;</span> /nix/store/&lt;hash&gt;-bash/bin/bash</code></li>
-              <li><code>/usr/bin/&lt;tool&gt;</code><span class="target"><span class="arrow">-&gt;</span> the Nix-managed tool on your PATH</span></li>
-              <li><code>/lib/, /usr/lib/</code><span class="target"><span class="arrow">-&gt;</span> shared libraries backed by <code>/nix/store</code></span></li>
-              <li><code>/lib64/</code><span class="target"><span class="arrow">-&gt;</span> nix-ld's compatibility loader</span></li>
-            </ul>
-            <p>Packages stay in <code>/nix/store</code>. We're adding the paths scripts and prebuilt binaries expect, while keeping Nix's reproducibility and rollbacks.</p>
-          </div>
+      <div class="term">
+        <div class="term-bar"><i></i><i></i><i></i><b>Familiar paths. Nix underneath.</b></div>
+        <div class="fs-result">
+          <h3>FHS paths + Nix packages</h3>
+          <ul class="fs-mapping" aria-label="How Omnix connects standard Linux paths to Nix-managed software">
+            <li><code>/bin/bash</code><span class="purpose">The shell that scripts expect</span><code class="target"><span class="arrow">-&gt;</span> /nix/store/&lt;hash&gt;-bash/bin/bash</code></li>
+            <li><code>/usr/bin/&lt;tool&gt;</code><span class="purpose">Tools and interpreters on your PATH</span><span class="target"><span class="arrow">-&gt;</span> your Nix-managed tool</span></li>
+            <li><code>/lib/, /usr/lib/</code><span class="purpose">Shared libraries for prebuilt apps</span><span class="target"><span class="arrow">-&gt;</span> libraries backed by <code>/nix/store</code></span></li>
+            <li><code>/lib64/</code><span class="purpose">The loader that starts prebuilt binaries</span><span class="target"><span class="arrow">-&gt;</span> nix-ld's compatibility loader</span></li>
+          </ul>
         </div>
+      </div>
     </div>
   </section>
 
@@ -486,7 +428,7 @@
     <div class="split">
       <div>
         <div class="eyebrow"><span class="n">1 of 4</span> Why Omnix</div>
-        <h2>Prebuilt software <em>just runs</em>.</h2>
+        <h2>cache.nixos.org for <em>the same fast packages.</em></h2>
         <p class="lede">Omnix adds the standard Linux layout on top of NixOS: a loader at <code>/lib64</code>, a declared
           set of common libraries in <code>/usr/lib</code>, a fresh <code>ld.so.cache</code>, and a <code>/bin</code> that
           resolves <code>#!/bin/bash</code>. Manylinux wheels, rustup, vendor SDKs, Electron apps, and Playwright browsers
@@ -863,6 +805,7 @@ afterFirstPaint(function () {
 <script src="shader-layout.js" defer></script>
 <script src="coronal.js" defer></script>
 <script src="hero-actions.js" defer></script>
+<script src="column-scroll.js" defer></script>
 
 
 </body>
