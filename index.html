@@ -370,7 +370,6 @@
   <a href="#ported" aria-label="FHS compatibility for Omarchy and friends"></a>
   <a href="#omarchy" aria-label="Hyprland - Omarchy: Omarchy ported to Omnix"></a>
   <a href="#runs" aria-label="Fast packages from cache.nixos.org"></a>
-  <a href="#cache" aria-label="Prebuilt packages and local builds"></a>
   <a href="#flavors" aria-label="Pick your desktop"></a>
   <a href="#rollback" aria-label="Every change rolls back"></a>
   <a href="#install" aria-label="Try Omnix"></a>
@@ -445,53 +444,30 @@ $OMARCHY_PATH             // commands, themes &amp; defaults
   </section>
 
   <section id="runs">
-    <div class="split">
+    <div class="split" id="cache">
       <div>
-        <div class="eyebrow"><span class="n">1 of 4</span> Why Omnix</div>
-        <h2>cache.nixos.org for <em>the same fast packages.</em></h2>
-        <p class="lede">Omnix adds the standard Linux layout on top of NixOS: a loader at <code>/lib64</code>, a declared
-          set of common libraries in <code>/usr/lib</code>, a fresh <code>ld.so.cache</code>, and a <code>/bin</code> that
-          resolves <code>#!/bin/bash</code>. Manylinux wheels, rustup, vendor SDKs, Electron apps, and Playwright browsers
-          start without patching or wrappers.</p>
+        <div class="eyebrow"><span class="n">1 of 3</span> Why Omnix</div>
+        <h2>Standard Linux paths. <em>The same NixOS packages.</em></h2>
+        <p class="lede">Omnix adds the paths scripts and prebuilt apps expect, including <code>/bin/bash</code>,
+          <code>/usr/lib</code>, and <code>/lib64</code>. Familiar Linux software gets a familiar environment.</p>
+        <p class="lede"><strong>Add, never relocate.</strong> Packages stay unmodified in <code>/nix/store</code>,
+          so installs and upgrades use the same <code>cache.nixos.org</code> as NixOS.
+          Download prebuilt packages when available; compile when needed.</p>
       </div>
-      <div class="term" role="img" aria-label="Illustrative terminal: prebuilt software using Omnix compatibility paths">
-        <div class="term-bar"><i></i><i></i><i></i><b>omnix</b></div>
-<pre><span class="p">$</span> <span class="c">./some-vendor-tool --version</span>
-<span class="ok">some-vendor-tool 4.2.0</span>
-
-<span class="p">$</span> <span class="c">readlink /lib64/ld-linux-x86-64.so.2</span>
-<span class="hl">/nix/store/…-nix-ld/libexec/nix-ld</span>
-
-<span class="p">$</span> <span class="c">python3 -c 'import ctypes.util as u; print(u.find_library("z"))'</span>
-<span class="ok">libz.so.1</span>
-
-<span class="p">$</span> <span class="c">head -1 ./install.sh &amp;&amp; ./install.sh</span>
-#!/bin/bash
-<span class="ok">installed.</span></pre>
-      </div>
-    </div>
-  </section>
-
-  <section id="cache">
-    <div class="split">
-      <div>
-        <div class="eyebrow"><span class="n">2 of 4</span> Why Omnix</div>
-        <h2>Prebuilt when available. <em>Compiled when needed.</em></h2>
-        <p class="lede">The rule is <strong>add, never relocate</strong>. Omnix never patches or moves a nixpkgs package,
-          so Omnix can use the same prebuilt packages as NixOS from <code>cache.nixos.org</code>. Installs and
-          upgrades download those packages when available and compile when necessary.</p>
-        <p class="lede">Download the installer ISO from GitHub Releases and choose your desktop during installation.</p>
-      </div>
-      <div>
-        <div class="stat">
-          <div class="big">Nix<span>.</span></div>
-          <div class="cap">prebuilt packages, with local builds when needed</div>
-        </div>
-        <div class="flow">
-          <div><b>nixpkgs</b><span>nixos-unstable, unmodified</span></div>
-          <div><b>cache</b><span>cache.nixos.org supplies available prebuilt packages</span></div>
-          <div><b>omnix</b><span>symlinks, text files and a library cache on top</span></div>
-        </div>
+      <div class="term" role="img" aria-label="Package sources and compatibility paths: unmodified nixpkgs packages, NixOS binary cache, local builds when needed, and standard Linux paths">
+        <div class="term-bar"><i></i><i></i><i></i><b>Nix packages. Linux compatibility.</b></div>
+<pre><span class="hl">nixpkgs</span>                 // unmodified packages
+  |-- cache.nixos.org    // download when available
+  '-- local builds      // compile when needed
+             |
+             v
+<span class="hl">/nix/store</span>              // packages stay here
+             |
+             v
+<span class="ok">Omnix FHS layer</span>         // familiar Linux paths
+  |-- /bin/bash         // shell for scripts
+  |-- /usr/lib          // shared libraries
+  '-- /lib64            // compatibility loader</pre>
       </div>
     </div>
   </section>
@@ -499,7 +475,7 @@ $OMARCHY_PATH             // commands, themes &amp; defaults
   <section id="flavors">
     <div class="split">
       <div>
-        <div class="eyebrow"><span class="n">3 of 4</span> Why Omnix</div>
+        <div class="eyebrow"><span class="n">2 of 3</span> Why Omnix</div>
         <h2>Pick your desktop at <em>install time</em>.</h2>
         <p class="lede">The base stays small. Everything opinionated lives in a <strong>flavor</strong>, a complete
           system in its own repository. <strong>Omarchy</strong> provides the keyboard-driven Hyprland desktop.
@@ -523,7 +499,7 @@ $OMARCHY_PATH             // commands, themes &amp; defaults
   <section id="rollback">
     <div class="split">
       <div>
-        <div class="eyebrow"><span class="n">4 of 4</span> Why Omnix</div>
+        <div class="eyebrow"><span class="n">3 of 3</span> Why Omnix</div>
         <h2>Your system. <em>Your rollback.</em></h2>
         <p class="lede">Your system is a flake that <strong>you</strong> own in <code>/etc/nixos</code>, and your flavor is
           one input in it. Switch from KDE Plasma - Atrium to Hyprland - Omarchy by changing that input and rebuilding.</p>
