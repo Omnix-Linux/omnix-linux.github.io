@@ -18,10 +18,15 @@ afterFirstPaint(async function () {
   } catch (e) { return; } // CSS and the poster supply the first-paint/offline fallback.
   var geometry = profile.geometry, rendering = registry.rendering;
   var wordmark = document.querySelector(".wordmark"), suffix = document.querySelector(".wordmark-text");
+  suffix.textContent = registry.layout.suffix.text;
   function placeLogo() {
     var W = document.documentElement.clientWidth, H = window.innerHeight;
     var mode = W <= registry.layout.mobile.maxViewportWidth ? registry.layout.mobile : registry.layout.desktop;
+    // Read geometry together before touching any styles.
     var box = wordmark.getBoundingClientRect();
+    var suffixStyle = getComputedStyle(suffix);
+    var measuredFontSize = parseFloat(suffixStyle.fontSize);
+    var widthPerPixel = suffix.getBoundingClientRect().width / measuredFontSize;
     var size = Math.min(W * mode.sizeViewportWidth, H * mode.sizeViewportHeight);
     var centerX = W * mode.centerXViewport;
     var centerY = box.top + window.scrollY + box.height / 2;
@@ -36,21 +41,21 @@ afterFirstPaint(async function () {
     var suffixLeft = anchor.x;
     suffix.style.left = (suffixLeft - box.left) + "px";
     suffix.style.top = (anchor.y - box.top - window.scrollY) + "px";
-    suffix.style.fontSize = Math.max(registry.layout.suffix.minFontSize,
-      Math.min(registry.layout.suffix.maxFontSize, letterHeight * mode.suffixScaleToLetterHeight)) + "px";
-    suffix.style.color = registry.layout.suffix.color;
-    suffix.textContent = registry.layout.suffix.text;
-    // Keep future profiles/longer suffixes inside a narrow viewport too.
-    var suffixWidth = suffix.getBoundingClientRect().width;
+    var fontSize = Math.max(registry.layout.suffix.minFontSize,
+      Math.min(registry.layout.suffix.maxFontSize, letterHeight * mode.suffixScaleToLetterHeight));
+    // Text width scales with font size. Fit using the earlier read instead of
+    // forcing layout again after changing the suffix's styles.
     var available = Math.max(1, W - suffixLeft - 16);
-    if (suffixWidth > available) suffix.style.fontSize = (parseFloat(suffix.style.fontSize) * available / suffixWidth) + "px";
+    if (widthPerPixel > 0) fontSize = Math.min(fontSize, available / widthPerPixel);
+    suffix.style.fontSize = fontSize + "px";
+    suffix.style.color = registry.layout.suffix.color;
     return { width: W, height: H, size: size, left: left, top: top, mode: mode };
   }
   document.querySelector(".logo-orbit img").src = profile.poster;
-  placeLogo();
   // The main thread owns DOM placement only. Rendering and cached textures
   // belong to the worker after the canvas is transferred exactly once.
   var worker = null, failed = false, suspended = false, revision = 0, resizeRaf = 0;
+  var lastLayout = null, sentLayout = null;
   var startupTimer = 0;
   canvas.dataset.backend = "poster";
   rendering = Object.assign({ heroShaderFps: 20, mobileShaderFps: 15 }, rendering);
@@ -73,17 +78,20 @@ afterFirstPaint(async function () {
     canvas.style.inset = "auto";
     canvas.style.left = left + "px"; canvas.style.top = top + "px";
     canvas.style.width = width + "px"; canvas.style.height = height + "px";
-    return { width: width, height: height, centerX: originX - left,
+    var next = { width: width, height: height, centerX: originX - left,
       centerY: height - (originY - top), diameter: diameter,
       pixelRatio: window.devicePixelRatio || 1,
-      mobile: W <= registry.layout.mobile.maxViewportWidth, revision: ++revision };
+      mobile: W <= registry.layout.mobile.maxViewportWidth };
+    if (lastLayout && Object.keys(next).every(function (key) { return next[key] === lastLayout[key]; })) return lastLayout;
+    next.revision = ++revision;
+    return lastLayout = next;
   }
-  function start() {
+  function start(layout) {
     if (worker || failed || !isActive()) return;
     if (profile.renderer !== "coronal" || typeof Worker === "undefined"
       || typeof canvas.transferControlToOffscreen !== "function") { fallback(); return; }
     try {
-      var layout = surface();
+      layout = layout || surface();
       worker = new Worker("shader-worker.js");
       worker.onerror = function (event) { event.preventDefault(); fallback(); };
       worker.onmessageerror = fallback;
@@ -106,6 +114,7 @@ afterFirstPaint(async function () {
       var offscreen = canvas.transferControlToOffscreen();
       worker.postMessage({ type: "init", canvas: offscreen, renderer: profile.renderer,
         rendering: rendering, layout: layout, active: isActive() }, [offscreen]);
+      sentLayout = layout;
       startupTimer = setTimeout(fallback, 8000);
     } catch (error) { fallback(); }
   }
@@ -113,8 +122,10 @@ afterFirstPaint(async function () {
     if (resizeRaf) return;
     resizeRaf = requestAnimationFrame(function () {
       resizeRaf = 0;
-      if (worker) worker.postMessage({ type: "resize", layout: surface() });
-      else { placeLogo(); start(); }
+      var layout = surface();
+      if (worker && layout !== sentLayout) {
+        worker.postMessage({ type: "resize", layout: layout }); sentLayout = layout;
+      } else if (!worker) start(layout);
     });
   }
   function state() {

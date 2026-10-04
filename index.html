@@ -76,14 +76,39 @@
   })();
 </script>
 <meta name="description" content="Omnix: a NixOS-based distribution for Omarchy and friends. Choose an Omarchy-style Hyprland desktop with Autarchy or KDE Plasma with Atrium.">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700;800&family=Instrument+Sans:wght@400;500;600&family=Lexend:wght@800&display=swap">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700;800&family=Instrument+Sans:wght@400;500;600&family=Lexend:wght@800&display=swap" media="print" onload="this.media='all'">
-<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700;800&family=Instrument+Sans:wght@400;500;600&family=Lexend:wght@800&display=swap"></noscript>
+<link rel="preload" href="fonts/lexend-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="fonts/instrument-sans-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="fonts/jetbrains-mono-latin.woff2" as="font" type="font/woff2" crossorigin>
+<style>
+@font-face {
+  font-family: 'Instrument Sans';
+  font-style: normal;
+  font-weight: 400 600;
+  font-stretch: 100%;
+  font-display: swap;
+  src: url(fonts/instrument-sans-latin.woff2) format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-weight: 400 800;
+  font-display: swap;
+  src: url(fonts/jetbrains-mono-latin.woff2) format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: 'Lexend';
+  font-style: normal;
+  font-weight: 800;
+  font-display: swap;
+  src: url(fonts/lexend-latin.woff2) format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+</style>
 <link rel="preload" href="shader-profile.json" as="fetch" crossorigin>
 <style>
-  /* Layout: one idea per full-height panel over a dark starfield; text sits in a left column, evidence on the right. */
+  /* Layout: one idea per panel over the shader backdrop; copy and evidence share two columns. */
   :root {
     --void: #04050c;
     --ink: #e8eef8;
@@ -585,8 +610,16 @@ ls: cannot access '/usr/lib': No such file or directory</pre>
   </div>
 </footer>
 
+
 <script>
-(function () {
+  // Let the page paint before compiling shaders.
+  function afterFirstPaint(fn) {
+    function go() { requestAnimationFrame(function () { setTimeout(fn, 0); }); }
+    document.readyState === "loading" ? document.addEventListener("DOMContentLoaded", go) : go();
+  }
+</script>
+<script>
+afterFirstPaint(function () {
   var root = document.documentElement;
   if (!root.classList.contains("motion")) return;
 
@@ -620,7 +653,10 @@ ls: cannot access '/usr/lib': No such file or directory</pre>
   function set(el, ms) { el.style.setProperty("--d", Math.round(ms) + "ms"); }
 
   var sections = Array.prototype.slice.call(document.querySelectorAll("main section:not(.hero)"));
-  sections.forEach(function (sec) {
+  var prepared = new WeakSet();
+  function prepare(sec) {
+    if (prepared.has(sec)) return;
+    prepared.add(sec);
     var t = 0;
     var eb = sec.querySelector(".eyebrow"); if (eb) { set(eb, t); t += 90; }
     var h = sec.querySelector("h2");
@@ -632,26 +668,37 @@ ls: cannot access '/usr/lib': No such file or directory</pre>
     var inner = panelStart + 320;
     sec.querySelectorAll(".menu .q, .opt").forEach(function (o, k) { set(o, inner + k * 80); });
     sec.querySelectorAll(".flow > div").forEach(function (f, k) { set(f, panelStart + 200 + k * 75); });
-  });
+  }
+
+  // Prepare one nearby section per task, leaving startup and off-screen DOM alone.
+  var pending = [], pendingTask = false;
+  function queue(sec) {
+    if (prepared.has(sec) || pending.indexOf(sec) !== -1) return;
+    pending.push(sec);
+    if (!pendingTask) { pendingTask = true; setTimeout(flush, 0); }
+  }
+  function flush() {
+    var sec = pending.shift();
+    if (sec) prepare(sec);
+    if (pending.length) setTimeout(flush, 0);
+    else pendingTask = false;
+  }
+  var nearby = new IntersectionObserver(function (entries) {
+    entries.forEach(function (e) { if (e.isIntersecting) { queue(e.target); nearby.unobserve(e.target); } });
+  }, { rootMargin: "100% 0px" });
 
   var io = new IntersectionObserver(function (entries) {
     entries.forEach(function (e) {
       if (e.isIntersecting && e.intersectionRatio > 0.22) {
+        prepare(e.target);
         e.target.classList.add("in");
         io.unobserve(e.target);
       }
     });
   }, { threshold: [0, 0.22] });
-  sections.forEach(function (s) { io.observe(s); });
+  sections.forEach(function (s) { nearby.observe(s); io.observe(s); });
   root.classList.add("motion-live");
-})();
-</script>
-<script>
-  // Let the page paint before compiling shaders.
-  function afterFirstPaint(fn) {
-    function go() { requestAnimationFrame(function () { setTimeout(fn, 0); }); }
-    document.readyState === "loading" ? document.addEventListener("DOMContentLoaded", go) : go();
-  }
+});
 </script>
 <script>
 afterFirstPaint(function () {
@@ -664,6 +711,7 @@ afterFirstPaint(function () {
   var paused = reduce.matches, visible = false, flavor = "Autarchy", elapsed = 0, last = performance.now();
   var duration = 42000, FLAVOR_PREVIEW_MS = 15000;
   var title = '<h3>Omnix installer</h3>';
+  var lastHtml, lastLabel, lastHint, lastFlavor, playbackTimer = null;
   function choices(prompt, items, selected) {
     return title + '<div class="demo-prompt">' + prompt + '</div><div class="demo-options">' + items.map(function (item, i) {
       return '<div class="demo-option' + (i === selected ? ' selected' : '') + '">' + (i === selected ? '▸ ' : '&nbsp; ') + item + '</div>';
@@ -679,7 +727,10 @@ afterFirstPaint(function () {
   function render() {
     var t = elapsed / 1000, html, label, hint = "↑ ↓ choose · Enter confirm";
     var flavorId = flavor === "Autarchy" ? "autarchy-stable" : "atrium";
-    flavorButtons.forEach(function (button) { button.setAttribute("aria-pressed", String(button.dataset.demoFlavor === flavor)); });
+    if (lastFlavor !== flavor) {
+      flavorButtons.forEach(function (button) { button.setAttribute("aria-pressed", String(button.dataset.demoFlavor === flavor)); });
+      lastFlavor = flavor;
+    }
     if (t < 4) {
       label = t < 2 ? "Boot ISO → live console" : "Run the installer";
       var command = "sudo omnix-install".slice(0, Math.max(0, Math.floor((t - 2) * 14)));
@@ -742,31 +793,42 @@ afterFirstPaint(function () {
       html = '<p class="ok">Omnix is installed. Reboot when ready.</p><p><span class="ok">[nixos@nixos:~]$</span> <span class="c">' + reboot + '</span><span class="demo-cursor">▌</span></p>';
       hint = "After reboot: " + flavor + (flavor === "Autarchy" ? " / Hyprland" : " / KDE Plasma");
     }
-    if (screen.innerHTML !== html) screen.innerHTML = html;
-    stage.textContent = label; keys.textContent = hint;
+    if (lastHtml !== html) { screen.innerHTML = html; lastHtml = html; }
+    if (lastLabel !== label) { stage.textContent = label; lastLabel = label; }
+    if (lastHint !== hint) { keys.textContent = hint; lastHint = hint; }
   }
   function updatePause() {
     pauseButton.textContent = paused ? "Play" : "Pause";
     pauseButton.setAttribute("aria-label", (paused ? "Play" : "Pause") + " installer demo");
   }
-  pauseButton.addEventListener("click", function () { paused = !paused; last = performance.now(); updatePause(); });
+  pauseButton.addEventListener("click", function () { paused = !paused; updatePause(); updatePlayback(); });
   flavorButtons.forEach(function (button) {
-    button.addEventListener("click", function () { flavor = button.dataset.demoFlavor; elapsed = FLAVOR_PREVIEW_MS; last = performance.now(); render(); });
+    button.addEventListener("click", function () { flavor = button.dataset.demoFlavor; elapsed = FLAVOR_PREVIEW_MS; render(); updatePlayback(); });
   });
-  reduce.addEventListener("change", function () { paused = reduce.matches; last = performance.now(); updatePause(); });
+  reduce.addEventListener("change", function () { paused = reduce.matches; updatePause(); updatePlayback(); });
   if ("IntersectionObserver" in window) {
-    var observer = new IntersectionObserver(function (entries) { visible = entries[0].isIntersecting; last = performance.now(); }, { threshold: 0.15 });
+    var observer = new IntersectionObserver(function (entries) { visible = entries[0].isIntersecting; updatePlayback(); }, { threshold: 0.15 });
     observer.observe(demo);
   } else visible = true;
   if (paused) elapsed = FLAVOR_PREVIEW_MS;
-  updatePause(); render();
-  setInterval(function () {
+  function updatePlayback() {
+    if (playbackTimer !== null) clearTimeout(playbackTimer);
+    playbackTimer = null; last = performance.now();
+    if (!paused && visible && !document.hidden) playbackTimer = setTimeout(tick, 100);
+  }
+  function tick() {
+    playbackTimer = null;
     var now = performance.now(), dt = Math.min(now - last, 500); last = now;
     if (paused || !visible || document.hidden) return;
     elapsed += dt;
     if (elapsed >= duration) { elapsed %= duration; flavor = flavor === "Autarchy" ? "Atrium" : "Autarchy"; }
     render();
-  }, 100);
+    playbackTimer = setTimeout(tick, 100);
+  }
+  document.addEventListener("visibilitychange", updatePlayback);
+  window.addEventListener("pagehide", function () { if (playbackTimer !== null) clearTimeout(playbackTimer); playbackTimer = null; });
+  window.addEventListener("pageshow", updatePlayback);
+  updatePause(); render(); updatePlayback();
 });
 </script>
 <script>
