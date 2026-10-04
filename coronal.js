@@ -15,7 +15,7 @@ afterFirstPaint(async function () {
     var shaderEnum = canvas.dataset.shader || registry.activeShader;
     profile = registry.shaders[shaderEnum];
     if (!profile || profile.geometry.ring.character !== "O") return;
-  } catch (e) { return; } // CSS and the poster supply the first-paint/offline fallback.
+  } catch (e) { return; } // White DOM text stays visible while the shader loads or is unavailable.
   var geometry = profile.geometry, rendering = registry.rendering;
   var wordmark = document.querySelector(".wordmark"), suffix = document.querySelector(".wordmark-text");
   suffix.textContent = registry.layout.suffix.text;
@@ -51,19 +51,18 @@ afterFirstPaint(async function () {
     suffix.style.color = registry.layout.suffix.color;
     return { width: W, height: H, size: size, left: left, top: top, mode: mode };
   }
-  document.querySelector(".logo-orbit img").src = profile.poster;
   // The main thread owns DOM placement only. Rendering and cached textures
   // belong to the worker after the canvas is transferred exactly once.
   var worker = null, failed = false, suspended = false, revision = 0, resizeRaf = 0;
   var lastLayout = null, sentLayout = null;
   var startupTimer = 0;
-  canvas.dataset.backend = "poster";
+  canvas.dataset.backend = "pending";
   rendering = Object.assign({ heroShaderFps: 20, mobileShaderFps: 15 }, rendering);
   function isActive() { return !document.hidden && !reduce.matches && !suspended; }
   function fallback() {
     failed = true; clearTimeout(startupTimer);
     if (worker) { worker.terminate(); worker = null; }
-    root.classList.remove("shader-ready"); canvas.dataset.backend = "poster";
+    root.classList.remove("shader-ready"); canvas.dataset.backend = "unavailable";
   }
   function surface() {
     var placement = placeLogo(), geometry = profile.geometry;
