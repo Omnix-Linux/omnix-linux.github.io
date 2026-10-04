@@ -190,6 +190,8 @@
   .hero .hero-inner { justify-items: center; }
   .hero .brand { width: 100%; }
   .hero .cta { justify-content: center; }
+  .hero-actions { display: grid; justify-items: center; gap: 28px; }
+  @media (max-width: 640px) { .hero-actions { gap: 24px; } }
   .hero-inner { max-width: 1240px; width: 100%; display: grid; gap: 28px; }
   .wordmark { position: relative; height: min(62svh, 620px); width: 100%; margin: 0; font-family: "Lexend", "Arial Black", system-ui, sans-serif; font-weight: 800; line-height: 1; }
   #coronal { position: fixed; inset: 0; width: 100vw; height: 100vh; z-index: 0; pointer-events: none; opacity: 0; transition: opacity .45s ease-out; }
@@ -355,11 +357,13 @@
         </h1>
       </div>
       <p class="tagline">A NixOS-fork compatible with<br>Omarchy and friends</p>
-      <div class="cta">
-        <a class="btn primary" href="https://github.com/Omnix-Linux/Omnix/releases">Download the installer</a>
-        <a class="btn" href="https://github.com/Omnix-Linux">View on GitHub</a>
+      <div class="hero-actions">
+        <div class="cta">
+          <a class="btn primary" href="https://github.com/Omnix-Linux/Omnix/releases">Download the installer</a>
+          <a class="btn" href="https://github.com/Omnix-Linux">View on GitHub</a>
+        </div>
+        <div class="scrollhint">Scroll ↓</div>
       </div>
-      <div class="scrollhint">Scroll ↓</div>
     </div>
   </section>
 
@@ -839,6 +843,7 @@ afterFirstPaint(function () {
 </script>
 <script src="shader-layout.js" defer></script>
 <script src="coronal.js" defer></script>
+<script src="hero-actions.js" defer></script>
 
 
 </body>
