@@ -1,6 +1,7 @@
 /* The transferred canvas, shader passes and cached GPU textures live here.
  * No per-frame pixels or messages cross back to the main thread. */
-importScripts("coronal-shader.js", "coronal-webgpu.js", "shader-timing.js");
+var assetVersion = self.location ? self.location.search : "";
+importScripts("coronal-shader.js" + assetVersion, "coronal-webgpu.js" + assetVersion, "shader-timing.js" + assetVersion);
 
 var canvas, gl, gpu, webgl2, config, layout, active = false;
 var shaderProgram, displayProgram, triangle, shaderUniforms, displayUniforms;

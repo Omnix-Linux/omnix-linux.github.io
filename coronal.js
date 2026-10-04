@@ -36,11 +36,15 @@ afterFirstPaint(async function () {
     var widthPerPixel = suffix.getBoundingClientRect().width / measuredFontSize;
     var rightGutter = W > registry.layout.mobile.maxViewportWidth ? 48 : 16;
     var suffixWidth = Math.min(W * registry.layout.suffix.widthViewport, W - 16 - rightGutter);
-    // Reserve the requested text width and room for the complete O rim.
+    var fontSize = widthPerPixel > 0 ? suffixWidth / widthPerPixel : measuredFontSize;
+    // Treat the O as a letter beside mnix, with a balanced, centered wordmark.
     var maxArtworkSize = (W - suffixWidth - 16 - rightGutter) / (geometry.ring.radius * 2 + mode.suffixGapToArtworkSize);
-    var size = Math.min(W * mode.sizeViewportWidth, H * mode.sizeViewportHeight, maxArtworkSize);
-    var centerX = Math.min(W * mode.centerXViewport,
-      W - suffixWidth - rightGutter - (geometry.ring.radius + mode.suffixGapToArtworkSize) * size);
+    var size = Math.min(W * mode.sizeViewportWidth, H * mode.sizeViewportHeight, maxArtworkSize,
+      fontSize * registry.layout.suffix.ringDiameterToFontSize / (geometry.ring.radius * 2));
+    var ringRadius = geometry.ring.radius * size;
+    var groupWidth = ringRadius * 2 + mode.suffixGapToArtworkSize * size + suffixWidth;
+    var groupLeft = Math.max(16, Math.min((W - groupWidth) / 2, W - groupWidth - rightGutter));
+    var centerX = groupLeft + ringRadius;
     var centerY = box.top + window.scrollY + box.height / 2;
     var left = centerX - geometry.ring.center.x * size;
     var top = centerY - geometry.ring.center.y * size;
@@ -52,15 +56,12 @@ afterFirstPaint(async function () {
     var suffixLeft = anchor.x;
     suffix.style.left = suffixLeft + "px";
     suffix.style.top = anchor.y + "px";
-    // Measure once, then size the four letters to the viewport width target.
-    var available = Math.max(1, W - suffixLeft - rightGutter);
-    var fontSize = widthPerPixel > 0 ? Math.min(suffixWidth, available) / widthPerPixel : measuredFontSize;
     suffix.style.fontSize = fontSize + "px";
     suffix.style.color = registry.layout.suffix.color;
-    var mobileTagline = W <= registry.layout.mobile.maxViewportWidth;
-    tagline.style.setProperty("--tagline-left", (mobileTagline ? 16 : suffixLeft) + "px");
-    tagline.style.setProperty("--tagline-top", (mobileTagline ? anchor.y + anchor.radius + 24 : anchor.y + fontSize / 2 + Math.max(16, fontSize * .18)) + "px");
-    tagline.style.setProperty("--tagline-width", (mobileTagline ? W - 32 : available) + "px");
+    var taglineWidth = Math.min(W - 32, 640);
+    tagline.style.setProperty("--tagline-left", ((W - taglineWidth) / 2) + "px");
+    tagline.style.setProperty("--tagline-top", (anchor.y + Math.max(anchor.radius, fontSize / 2) + 28) + "px");
+    tagline.style.setProperty("--tagline-width", taglineWidth + "px");
     if (reduce.matches) revealWordmark();
     return { width: W, height: H, size: size, left: left, top: top, mode: mode };
   }
@@ -105,7 +106,7 @@ afterFirstPaint(async function () {
       || typeof canvas.transferControlToOffscreen !== "function") { fallback(); return; }
     try {
       layout = layout || surface();
-      worker = new Worker("shader-worker.js");
+      worker = new Worker("shader-worker.js?v=" + encodeURIComponent(canvas.dataset.shaderVersion));
       worker.onerror = function (event) { event.preventDefault(); fallback(); };
       worker.onmessageerror = fallback;
       worker.onmessage = function (event) {

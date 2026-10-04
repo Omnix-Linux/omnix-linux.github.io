@@ -70,7 +70,8 @@
     "suffix": {
       "text": "mnix",
       "color": "#ffffff",
-      "widthViewport": 0.4
+      "widthViewport": 0.4,
+      "ringDiameterToFontSize": 1.4
     }
   },
   "rendering": {
