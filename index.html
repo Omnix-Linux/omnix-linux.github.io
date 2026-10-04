@@ -50,8 +50,7 @@
 
   /* Hero: plain CSS keyframes, so the cascade starts with the first paint and needs no script. */
   @keyframes rise { from { opacity: 0; transform: translateY(16px); } }
-  .motion .hero :is(.tagline, .cta .btn, .scrollhint) { animation: rise .8s var(--ease-out) both; }
-  .motion .hero .tagline { animation-delay: 120ms; }
+  .motion .hero :is(.cta .btn, .scrollhint) { animation: rise .8s var(--ease-out) both; }
   .motion .hero .cta .btn:nth-child(1) { animation-delay: 220ms; }
   .motion .hero .cta .btn:nth-child(2) { animation-delay: 290ms; }
   .motion .hero .scrollhint { animation-delay: 420ms; }
@@ -187,7 +186,7 @@
   .lede code { color: var(--ink); background: rgba(126, 186, 228, 0.1); padding: 1px 6px; border-radius: 4px; }
 
   /* Hero */
-  .hero { align-items: center; justify-items: center; text-align: center; }
+  .hero { position: relative; align-items: center; justify-items: center; text-align: center; }
   .hero .hero-inner { justify-items: center; }
   .hero .brand { width: 100%; }
   .hero .cta { justify-content: center; }
@@ -210,7 +209,9 @@
   .wordmark-ready .wordmark-text { visibility: visible; opacity: 1; }
   .wordmark-ready.hero-past .wordmark-text { opacity: .24; }
   @media (prefers-reduced-motion: reduce) { .wordmark-text { transition: none; } }
-  .tagline { font-family: var(--font-display); font-weight: 500; font-size: var(--step-1); margin: 0; max-width: 32ch; text-wrap: balance; }
+  .tagline { position: absolute; left: var(--tagline-left, 61vw); top: var(--tagline-top, calc(50svh + 96px)); width: var(--tagline-width, 34vw); visibility: hidden; opacity: 0; transition: opacity .45s ease-out; text-align: left; font-family: var(--font-display); font-weight: 500; font-size: clamp(.75rem, 1.4vw, 1.5rem); line-height: 1.5; margin: 0; max-width: 32ch; text-wrap: balance; }
+  .wordmark-ready .tagline { visibility: visible; opacity: 1; }
+  @media (prefers-reduced-motion: reduce) { .tagline { transition: none; } }
   .cta { display: flex; gap: 12px; flex-wrap: wrap; }
   .btn {
     font-family: var(--font-mono); font-size: var(--step--1); font-weight: 700; letter-spacing: 0.04em;

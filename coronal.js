@@ -6,7 +6,10 @@ afterFirstPaint(async function () {
   var root = document.documentElement;
   var reduce = window.matchMedia("(prefers-reduced-motion: reduce)");
   if (!orbit || !canvas) return;
-  var logoFontReady = document.fonts.load('800 140px "Lexend"', "mnix");
+  var logoFontReady = Promise.all([
+    document.fonts.load('800 140px "Lexend"', "mnix"),
+    document.fonts.load('500 20px "JetBrains Mono"', "A NixOS-fork compatible with Omarchy and friends")
+  ]);
   function revealWordmark() { root.classList.add("wordmark-ready"); }
   var registry, profile;
   try {
@@ -21,12 +24,14 @@ afterFirstPaint(async function () {
   } catch (e) { logoFontReady.then(revealWordmark).catch(function () {}); return; }
   var geometry = profile.geometry, rendering = registry.rendering;
   var wordmark = document.querySelector(".wordmark"), suffix = document.querySelector(".wordmark-text");
+  var hero = document.getElementById("top");
   suffix.textContent = registry.layout.suffix.text;
   function placeLogo() {
     var W = document.documentElement.clientWidth, H = window.innerHeight;
     var mode = W <= registry.layout.mobile.maxViewportWidth ? registry.layout.mobile : registry.layout.desktop;
     // Read geometry together before touching any styles.
     var box = wordmark.getBoundingClientRect();
+    var heroBox = hero.getBoundingClientRect();
     var suffixStyle = getComputedStyle(suffix);
     var measuredFontSize = parseFloat(suffixStyle.fontSize);
     var widthPerPixel = suffix.getBoundingClientRect().width / measuredFontSize;
@@ -52,6 +57,9 @@ afterFirstPaint(async function () {
     if (widthPerPixel > 0) fontSize = Math.min(fontSize, available / widthPerPixel);
     suffix.style.fontSize = fontSize + "px";
     suffix.style.color = registry.layout.suffix.color;
+    hero.style.setProperty("--tagline-left", (suffixLeft - heroBox.left) + "px");
+    hero.style.setProperty("--tagline-top", (anchor.y + fontSize / 2 + Math.max(16, fontSize * .18) - heroBox.top - window.scrollY) + "px");
+    hero.style.setProperty("--tagline-width", available + "px");
     if (reduce.matches) revealWordmark();
     return { width: W, height: H, size: size, left: left, top: top, mode: mode };
   }
