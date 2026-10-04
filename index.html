@@ -211,8 +211,9 @@
   .wordmark-ready .wordmark-text { visibility: visible; opacity: 1; }
   .wordmark-ready.hero-past .wordmark-text { opacity: .24; }
   @media (prefers-reduced-motion: reduce) { .wordmark-text { transition: none; } }
-  .tagline { position: absolute; left: var(--tagline-left, 61vw); top: var(--tagline-top, calc(50svh + 96px)); width: var(--tagline-width, 34vw); visibility: hidden; opacity: 0; transition: opacity .45s ease-out; text-align: left; font-family: var(--font-display); font-weight: 500; font-size: clamp(.75rem, 1.4vw, 1.5rem); line-height: 1.5; margin: 0; max-width: 32ch; text-wrap: balance; }
+  .tagline { position: fixed; z-index: 0; pointer-events: none; left: var(--tagline-left, 61vw); top: var(--tagline-top, calc(50svh + 96px)); width: var(--tagline-width, 34vw); visibility: hidden; opacity: 0; transition: opacity .45s ease-out; text-align: left; font-family: var(--font-display); font-weight: 500; font-size: clamp(.75rem, 1.4vw, 1.5rem); line-height: 1.5; margin: 0; max-width: 32ch; text-wrap: balance; }
   .wordmark-ready .tagline { visibility: visible; opacity: 1; }
+  .wordmark-ready.hero-past .tagline { opacity: .24; }
   @media (prefers-reduced-motion: reduce) { .tagline { transition: none; } }
   .cta { display: flex; gap: 12px; flex-wrap: wrap; }
   .btn {
@@ -334,6 +335,7 @@
 <body>
 <canvas id="coronal" data-shader-profile="shader-profile.json" aria-hidden="true"></canvas>
 <span class="wordmark-text" aria-hidden="true">mnix</span>
+<p class="tagline">A NixOS-fork compatible with<br>Omarchy and friends</p>
 <div class="scrim"></div>
 
 <nav class="rail" aria-label="Sections">
@@ -356,7 +358,6 @@
           <span class="logo-orbit" aria-hidden="true"></span>
         </h1>
       </div>
-      <p class="tagline">A NixOS-fork compatible with<br>Omarchy and friends</p>
       <div class="hero-actions">
         <div class="cta">
           <a class="btn primary" href="https://github.com/Omnix-Linux/Omnix/releases">Download the installer</a>
