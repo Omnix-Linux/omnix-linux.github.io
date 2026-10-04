@@ -102,7 +102,7 @@
   unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
 }
 </style>
-<link rel="preload" href="shader-profile.json?v=wordmark-balanced-20261004" as="fetch" crossorigin>
+<link rel="preload" href="shader-profile.json?v=wordmark-left-subtitle-20261004" as="fetch" crossorigin>
 <style>
   /* Layout: one idea per panel over the shader backdrop; copy and evidence share two columns. */
   :root {
@@ -213,8 +213,8 @@
   .wordmark-ready .wordmark-text { visibility: visible; opacity: 1; }
   .wordmark-ready.hero-past .wordmark-text { opacity: 0; }
   @media (prefers-reduced-motion: reduce) { .wordmark-text { transition: none; } }
-  .tagline { position: fixed; z-index: 2; color: #fff; pointer-events: none; left: var(--tagline-left, 61vw); top: var(--tagline-top, calc(50svh + 96px)); width: var(--tagline-width, 34vw); visibility: hidden; opacity: 0; transition: opacity .45s ease-out; text-align: center; font-family: var(--font-display); font-weight: 500; font-size: clamp(.75rem, 1.4vw, 1.5rem); line-height: 1.5; margin: 0; max-width: none; text-wrap: balance; }
-  @media (max-width: 640px) { .tagline { max-width: none; text-align: center; font-size: .875rem; } }
+  .tagline { position: fixed; z-index: 2; color: #fff; pointer-events: none; left: var(--tagline-left, 61vw); top: var(--tagline-top, calc(50svh + 96px)); width: var(--tagline-width, 34vw); visibility: hidden; opacity: 0; transition: opacity .45s ease-out; text-align: left; font-family: var(--font-display); font-weight: 500; font-size: clamp(.75rem, 1.4vw, 1.5rem); line-height: 1.5; margin: 0; max-width: none; text-wrap: balance; }
+  @media (max-width: 640px) { .tagline { max-width: none; text-align: left; font-size: .875rem; } }
   .wordmark-ready .tagline { visibility: visible; opacity: 1; }
   .wordmark-ready.hero-past .tagline { opacity: 0; }
   @media (prefers-reduced-motion: reduce) { .tagline { transition: none; } }
@@ -349,7 +349,7 @@
 </style>
 </head>
 <body>
-<canvas id="coronal" data-shader-profile="shader-profile.json?v=wordmark-balanced-20261004" data-shader-version="wordmark-balanced-20261004" aria-hidden="true"></canvas>
+<canvas id="coronal" data-shader-profile="shader-profile.json?v=wordmark-left-subtitle-20261004" data-shader-version="wordmark-left-subtitle-20261004" aria-hidden="true"></canvas>
 <span class="wordmark-text" aria-hidden="true">mnix</span>
 <p class="tagline">Omnix is a next generation NixOS fork,<br>designed to run Omarchy and Friends.</p>
 <div class="scrim"></div>
@@ -838,8 +838,8 @@ afterFirstPaint(function () {
 
 });
 </script>
-<script src="shader-layout.js?v=wordmark-balanced-20261004" defer></script>
-<script src="coronal.js?v=wordmark-balanced-20261004" defer></script>
+<script src="shader-layout.js?v=wordmark-left-subtitle-20261004" defer></script>
+<script src="coronal.js?v=wordmark-left-subtitle-20261004" defer></script>
 <script src="hero-actions.js" defer></script>
 <script src="column-scroll.js" defer></script>
 

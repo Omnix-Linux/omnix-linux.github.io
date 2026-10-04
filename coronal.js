@@ -58,8 +58,8 @@ afterFirstPaint(async function () {
     suffix.style.top = anchor.y + "px";
     suffix.style.fontSize = fontSize + "px";
     suffix.style.color = registry.layout.suffix.color;
-    var taglineWidth = Math.min(W - 32, 640);
-    tagline.style.setProperty("--tagline-left", ((W - taglineWidth) / 2) + "px");
+    var taglineWidth = Math.min(W - suffixLeft - rightGutter, 640);
+    tagline.style.setProperty("--tagline-left", suffixLeft + "px");
     tagline.style.setProperty("--tagline-top", (anchor.y + Math.max(anchor.radius, fontSize / 2) + 28) + "px");
     tagline.style.setProperty("--tagline-width", taglineWidth + "px");
     if (reduce.matches) revealWordmark();
