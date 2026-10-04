@@ -26,14 +26,20 @@ afterFirstPaint(async function () {
   var wordmark = document.querySelector(".wordmark"), suffix = document.querySelector(".wordmark-text");
   var tagline = document.querySelector(".tagline");
   suffix.textContent = registry.layout.suffix.text;
+  var suffixWidthPerPixel = null;
+  var hero = document.getElementById("top");
   function placeLogo() {
-    var W = document.documentElement.clientWidth, H = window.innerHeight;
+    var W = document.documentElement.clientWidth;
+    // Browser chrome changes innerHeight during mobile scrolling; svh stays stable.
+    var H = W <= 860 ? parseFloat(getComputedStyle(hero).minHeight) : window.innerHeight;
+    H = H || window.innerHeight;
     var mode = W <= registry.layout.mobile.maxViewportWidth ? registry.layout.mobile : registry.layout.desktop;
     // Read geometry together before touching any styles.
     var box = wordmark.getBoundingClientRect();
-    var suffixStyle = getComputedStyle(suffix);
-    var measuredFontSize = parseFloat(suffixStyle.fontSize);
-    var widthPerPixel = suffix.getBoundingClientRect().width / measuredFontSize;
+    var heroTop = hero.getBoundingClientRect().top + window.scrollY;
+    var measuredFontSize = parseFloat(getComputedStyle(suffix).fontSize);
+    if (suffixWidthPerPixel === null) suffixWidthPerPixel = suffix.getBoundingClientRect().width / measuredFontSize;
+    var widthPerPixel = suffixWidthPerPixel;
     var rightGutter = W > registry.layout.mobile.maxViewportWidth ? 48 : 16;
     var suffixWidth = Math.min(W * registry.layout.suffix.widthViewport, W - 16 - rightGutter);
     var fontSize = widthPerPixel > 0 ? suffixWidth / widthPerPixel : measuredFontSize;
@@ -52,6 +58,9 @@ afterFirstPaint(async function () {
     orbit.style.left = (left - box.left) + "px";
     orbit.style.top = (top - box.top - window.scrollY) + "px";
     orbit.style.width = orbit.style.height = size + "px";
+    orbit.style.setProperty("--rim-left", ((geometry.ring.center.x - geometry.ring.radius) * 100) + "%");
+    orbit.style.setProperty("--rim-top", ((geometry.ring.center.y - geometry.ring.radius) * 100) + "%");
+    orbit.style.setProperty("--rim-size", (geometry.ring.radius * 200) + "%");
     var anchor = ShaderLayout.ringAnchor(geometry.ring, { left: left, top: top, size: size }, mode.suffixGapToArtworkSize);
     var suffixLeft = anchor.x;
     suffix.style.left = suffixLeft + "px";
@@ -60,8 +69,10 @@ afterFirstPaint(async function () {
     suffix.style.color = registry.layout.suffix.color;
     var taglineWidth = Math.min(W - suffixLeft - rightGutter, 640);
     tagline.style.setProperty("--tagline-left", suffixLeft + "px");
-    tagline.style.setProperty("--tagline-top", (anchor.y + Math.max(anchor.radius, fontSize / 2) + 28) + "px");
+    var taglineTop = anchor.y + Math.max(anchor.radius, fontSize / 2) + 28;
+    tagline.style.setProperty("--tagline-top", taglineTop + "px");
     tagline.style.setProperty("--tagline-width", taglineWidth + "px");
+    if (W <= 860) hero.style.setProperty("--hero-hint-top", (taglineTop + tagline.offsetHeight + 24 - heroTop) + "px");
     if (reduce.matches) revealWordmark();
     return { width: W, height: H, size: size, left: left, top: top, mode: mode };
   }

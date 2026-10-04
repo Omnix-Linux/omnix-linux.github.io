@@ -29,5 +29,10 @@ void main() {
   float halo = 0.06 * exp(-pow(rimDistance / 0.025, 2.));
   color = mix(color, vec3(1.5), core) + vec3(halo * (1. - core));
   float alpha = 1. - smoothstep(1.1, 1.5, length(uv));
+  // Feather every crop edge, including edges clipped by the mobile viewport.
+  vec2 edge = min(pixel, uSurfaceSize - pixel);
+  float edgeStart = max(1., max(uSurfaceSize.x / uBufferSize.x, uSurfaceSize.y / uBufferSize.y));
+  float feather = max(edgeStart + 1., clamp(uDiameter * 0.08, 12., 48.));
+  alpha *= smoothstep(edgeStart, feather, edge.x) * smoothstep(edgeStart, feather, edge.y);
   gl_FragColor = vec4(color * alpha, alpha);
 }`;

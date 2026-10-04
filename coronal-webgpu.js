@@ -38,7 +38,12 @@ struct Params { center: vec2f, surface: vec2f, buffer: vec2f, diameter: f32, tim
   let core = exp(-pow(rimDistance / rimWidth, 2.));
   let halo = 0.06 * exp(-pow(rimDistance / 0.025, 2.));
   color = mix(color, vec3f(1.5), core) + vec3f(halo * (1. - core));
-  let alpha = 1. - smoothstep(1.1, 1.5, length(uv));
+  var alpha = 1. - smoothstep(1.1, 1.5, length(uv));
+  // Match the transparent crop-edge feather in the WebGL renderer.
+  let edge = min(pixel, params.surface - pixel);
+  let edgeStart = max(1., max(params.surface.x / params.buffer.x, params.surface.y / params.buffer.y));
+  let feather = max(edgeStart + 1., clamp(params.diameter * 0.08, 12., 48.));
+  alpha *= smoothstep(edgeStart, feather, edge.x) * smoothstep(edgeStart, feather, edge.y);
   return vec4f(color * alpha, alpha);
 }`;
   var display = vertex + `

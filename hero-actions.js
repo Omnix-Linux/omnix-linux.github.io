@@ -9,7 +9,7 @@ afterFirstPaint(function () {
     frame = 0;
     var distance = Math.max(0, Math.min(height, window.scrollY - top));
     var progress = distance / height;
-    var translation = reduce.matches ? 0 : distance * .5;
+    var translation = reduce.matches || window.innerWidth <= 860 ? 0 : distance * .5;
     var key = progress + ":" + translation;
     if (key === previous) return;
     previous = key;

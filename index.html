@@ -102,7 +102,7 @@
   unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
 }
 </style>
-<link rel="preload" href="shader-profile.json?v=hero-reveal-timing-20261004" as="fetch" crossorigin>
+<link rel="preload" href="shader-profile.json?v=mobile-stability-alpha-20261004" as="fetch" crossorigin>
 <style>
   /* Layout: one idea per panel over the shader backdrop; copy and evidence share two columns. */
   :root {
@@ -151,7 +151,7 @@
     display: grid;
     align-items: center;
     padding-inline: max(16px, 6vw);
-    padding-block: clamp(56px, 9vh, 120px);
+    padding-block: clamp(56px, 9svh, 120px);
   }
   /* Keep content animation invalidations inside their own section. */
   main section:not(.hero) { contain: layout paint; }
@@ -200,6 +200,14 @@
   .shader-ready #coronal { opacity: 1; }
   .shader-ready.hero-past #coronal { opacity: .08; transition-duration: .18s; }
   .logo-orbit { position: absolute; left: calc(38vw - (100vw - min(88vw, 1240px)) / 2); top: 50%; transform: translate(-50%, -50%); width: min(80vw, 110svh); aspect-ratio: 1; display: block; pointer-events: none; }
+  .logo-orbit::after {
+    content: ""; position: absolute; left: var(--rim-left, 21.0714%); top: var(--rim-top, 21.0714%);
+    width: var(--rim-size, 57.8571%); height: var(--rim-size, 57.8571%); border-radius: 50%;
+    border: clamp(1px, .3vw, 4px) solid white; box-shadow: 0 0 12px rgba(255,255,255,.25);
+    opacity: 0; transition: opacity .18s ease-out;
+  }
+  .wordmark-ready:not(.shader-ready) .logo-orbit::after { opacity: .9; }
+  .wordmark-ready.hero-past .logo-orbit::after { opacity: 0; }
   @media (prefers-reduced-motion: reduce) {
     .shader-ready #coronal { opacity: 0; transition: none; }
   }
@@ -303,6 +311,22 @@
   .demo-status { display: flex; justify-content: space-between; gap: 16px; padding: 12px 16px; border-top: 1px solid var(--line); color: var(--muted); font-size: .75rem; }
   .demo-caption { margin: 12px 0 0; color: var(--muted); font-size: .8rem; }
   @media (max-width: 520px) { .demo-screen { min-height: 500px; } .demo-status { flex-wrap: wrap; gap: 4px; } }
+  @media (max-width: 860px) {
+    /* Keep natural section heights and text positions stable on touch screens. */
+    main section.in { content-visibility: visible; contain-intrinsic-block-size: none; }
+    .motion main section:not(.hero):not(.in) :is(h2, .eyebrow, .lede, .term, .stat, .flow > div, .menu .q, .opt, .steps li, .chips span),
+    .motion main section.in :is(h2, .eyebrow, .lede, .term, .stat, .flow > div, .menu .q, .opt, .steps li, .chips span) {
+      transform: none;
+      transition-property: opacity;
+    }
+    .motion .hero .scrollhint { animation: none; }
+    .hero-actions { position: absolute; top: var(--hero-hint-top, 80svh); left: 0; right: 0; }
+    .tagline { font-size: clamp(.75rem, 2.8vw, .875rem); }
+    .tagline br { display: none; }
+  }
+  @media (max-width: 860px) and (max-height: 500px) and (orientation: landscape) {
+    .hero-actions { display: none; }
+  }
   .wide { max-width: 1240px; width: 100%; }
 
   footer { position: relative; z-index: 3; padding-inline: max(16px, 6vw); padding-block: 48px 64px; border-top: 1px solid var(--line); background: rgba(4, 5, 12, 0.82); }
@@ -347,11 +371,12 @@
 
   .no-gl .scrim { background: linear-gradient(90deg, rgba(4, 5, 12, 0.7), rgba(4, 5, 12, 0.2)); }
 </style>
+<link rel="stylesheet" href="desktop-preview.css?v=20261004">
 </head>
 <body>
-<canvas id="coronal" data-shader-profile="shader-profile.json?v=hero-reveal-timing-20261004" data-shader-version="hero-reveal-timing-20261004" aria-hidden="true"></canvas>
+<canvas id="coronal" data-shader-profile="shader-profile.json?v=mobile-stability-alpha-20261004" data-shader-version="mobile-stability-alpha-20261004" aria-hidden="true"></canvas>
 <span class="wordmark-text" aria-hidden="true">mnix</span>
-<p class="tagline">Omnix is a next generation NixOS fork,<br>designed to run Omarchy and Friends.</p>
+<p class="tagline">Omnix is a next generation NixOS fork,<br> designed to run Omarchy and Friends.</p>
 <div class="scrim"></div>
 
 <header class="site-header">
@@ -370,7 +395,7 @@
   <a href="#ported" aria-label="FHS compatibility for Omarchy and friends"></a>
   <a href="#omarchy" aria-label="Hyprland - Omarchy: Omarchy ported to Omnix"></a>
   <a href="#runs" aria-label="Fast packages from cache.nixos.org"></a>
-  <a href="#flavors" aria-label="Pick your desktop"></a>
+  <a href="#flavors" aria-label="Switch desktop configurations"></a>
   <a href="#rollback" aria-label="Every change rolls back"></a>
   <a href="#install" aria-label="Try Omnix"></a>
 </nav>
@@ -473,25 +498,21 @@ $OMARCHY_PATH             // commands, themes &amp; defaults
   </section>
 
   <section id="flavors">
-    <div class="split">
+    <div class="split desktop-showcase">
       <div>
         <div class="eyebrow"><span class="n">2 of 3</span> Why Omnix</div>
-        <h2>Pick your desktop at <em>install time</em>.</h2>
-        <p class="lede">The base stays small. Everything opinionated lives in a <strong>flavor</strong>, a complete
-          system in its own repository. <strong>Omarchy</strong> provides the keyboard-driven Hyprland desktop.
-          <strong>KDE Plasma - Atrium</strong> is a polished, mouse-first desktop with independent virtual desktops on
-          every monitor.</p>
-        <p class="lede">The installer reads the flavor list live, so new styles show up without a new ISO.</p>
-      </div>
-      <div class="term" role="img" aria-label="The Omnix installer's flavor menu">
-        <div class="term-bar"><i></i><i></i><i></i><b>omnix-install</b></div>
-        <div class="menu mono">
-          <div class="q">What kind of system do you want?</div>
-          <div class="opt sel"><span class="k">▸</span><div>Hyprland - Omarchy (stable)<small>Omarchy-style Hyprland, pinned to an Omarchy release</small></div></div>
-          <div class="opt"><span></span><div>Hyprland - Omarchy (latest)<small>Omarchy-style Hyprland, tracking Omarchy main</small></div></div>
-          <div class="opt"><span></span><div>KDE Plasma - Atrium<small>KDE Plasma: polished windows, mouse-first</small></div></div>
-          <div class="opt"><span></span><div>Minimal<small>The Omnix base alone</small></div></div>
+        <h2>Switch configurations <em>at any time.</em></h2>
+        <p class="lede">Same foundation. Your choice of desktop. Change your flavor in your Nix configuration and rebuild; your previous system stays available for rollback.</p>
+        <div class="desktop-choices" aria-label="Desktop preview">
+          <button type="button" data-desktop="omarchy" aria-pressed="true">Hyprland - Omarchy<span>Keyboard-driven tiling. Familiar Omarchy style.</span></button>
+          <button type="button" data-desktop="plasma" aria-pressed="false">KDE Plasma - Atrium<span>A slim top bar, floating dock, and workspaces per monitor.</span></button>
         </div>
+        <p class="lede">Explore multiple monitors and stacked workspaces. Select a terminal group to bring it forward.</p>
+      </div>
+      <div class="desktop-demo" data-desktop="omarchy">
+        <div class="preview-controls"><button type="button" data-monitors aria-pressed="false">Two monitors</button><button type="button" data-depth aria-pressed="true">Layered view</button></div>
+        <div class="preview-monitors"></div>
+        <p class="preview-caption" aria-live="polite">Hyprland - Omarchy · interactive illustration</p>
       </div>
     </div>
   </section>
@@ -825,10 +846,11 @@ afterFirstPaint(function () {
 
 });
 </script>
-<script src="shader-layout.js?v=hero-reveal-timing-20261004" defer></script>
-<script src="coronal.js?v=hero-reveal-timing-20261004" defer></script>
-<script src="hero-actions.js" defer></script>
+<script src="shader-layout.js?v=mobile-stability-alpha-20261004" defer></script>
+<script src="coronal.js?v=mobile-stability-alpha-20261004" defer></script>
+<script src="hero-actions.js?v=mobile-stability-alpha-20261004" defer></script>
 <script src="column-scroll.js" defer></script>
+<script src="desktop-preview.js?v=20261004" defer></script>
 
 
 </body>
