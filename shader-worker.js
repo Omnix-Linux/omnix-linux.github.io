@@ -72,6 +72,7 @@ function createCache(width, height) {
   return { texture: texture, framebuffer: framebuffer };
 }
 function initializeGL() {
+  stats.hdrOutput = false;
   var options = { alpha: true, premultipliedAlpha: true, antialias: false, depth: false, stencil: false };
   gl = canvas.getContext("webgl2", options); webgl2 = !!gl;
   if (!gl) gl = canvas.getContext("webgl", options);
@@ -179,7 +180,7 @@ function present() {
   stats.displayFrames++;
   if (lastReady !== layout.revision) {
     lastReady = layout.revision;
-    self.postMessage({ type: "ready", revision: layout.revision, pixels: stats.pixels, cacheBytes: stats.cacheBytes, backend: stats.backend });
+    self.postMessage({ type: "ready", revision: layout.revision, pixels: stats.pixels, cacheBytes: stats.cacheBytes, backend: stats.backend, hdrOutput: !!stats.hdrOutput });
   }
 }
 function pollTiming() {

@@ -31,13 +31,13 @@ struct Params { center: vec2f, surface: vec2f, buffer: vec2f, diameter: f32, tim
     glow += (vec3f(1.1) - cos(p)) / (z * z * max(abs(length(original.xy) - 1.), .001));
   }
   var color = vec3f(1.) - vec3f(2.) / (exp(2. * min(glow / 30., vec3f(10.))) + vec3f(1.));
-  // Match the faint white outline and halo in the WebGL renderer.
+  // Keep the core white at 1.5x SDR white; only the thin rim uses HDR.
   let rimDistance = abs(length(uv) - 0.57857143);
-  let rim = 3.0 * exp(-pow(rimDistance / 0.0035, 2.))
-    + 0.24 * exp(-pow(rimDistance / 0.025, 2.));
-  // Add overbright white light before the display clamps the thin core.
-  // The wider halo preserves its bloom on standard SDR browser canvases.
-  color += vec3f(rim);
+  let rimWidth = max(0.0035, 1.4 * max(params.surface.x / params.buffer.x,
+    params.surface.y / params.buffer.y) / params.diameter);
+  let core = exp(-pow(rimDistance / rimWidth, 2.));
+  let halo = 0.06 * exp(-pow(rimDistance / 0.025, 2.));
+  color = mix(color, vec3f(1.5), core) + vec3f(halo * (1. - core));
   let alpha = 1. - smoothstep(1.1, 1.5, length(uv));
   return vec4f(color * alpha, alpha);
 }`;
@@ -58,7 +58,8 @@ struct Params { center: vec2f, surface: vec2f, buffer: vec2f, diameter: f32, tim
     var context, disposed = false, textures = [], groups = [], readings = [], samples = 0, average = 0;
     var params = device.createBuffer({ size: 32, usage: GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST });
     var blend = device.createBuffer({ size: 16, usage: GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST });
-    var format = self.navigator.gpu.getPreferredCanvasFormat();
+    var format = "rgba16float", hdrOutput = false;
+    var cacheFormat = "rgba16float";
     async function pipeline(code, target) {
       var module = device.createShaderModule({ code: code });
       return device.createRenderPipelineAsync({ layout: "auto", vertex: { module: module, entryPoint: "vertexMain" },
@@ -68,10 +69,25 @@ struct Params { center: vec2f, surface: vec2f, buffer: vec2f, diameter: f32, tim
     try {
       // Compile before acquiring the canvas context, allowing a GL fallback if
       // adapter/device/pipeline initialization fails.
-      shaderPipeline = await pipeline(shader, "rgba8unorm"); displayPipeline = await pipeline(display, format);
+      shaderPipeline = await pipeline(shader, cacheFormat); displayPipeline = await pipeline(display, format);
       context = canvas.getContext("webgpu");
       if (!context) { device.destroy(); return null; }
-      context.configure({ device: device, format: format, alphaMode: "premultiplied" });
+      // Older browsers can reject the float canvas or ignore extended mode.
+      device.pushErrorScope("validation");
+      var hdrError = null;
+      try {
+        context.configure({ device: device, format: format, alphaMode: "premultiplied",
+          toneMapping: { mode: "extended" } });
+      } catch (error) { hdrError = error; }
+      hdrError = await device.popErrorScope() || hdrError;
+      var actual = context.getConfiguration && context.getConfiguration();
+      hdrOutput = !hdrError && !!actual && !!actual.toneMapping && actual.toneMapping.mode === "extended";
+      if (!hdrOutput) {
+        format = self.navigator.gpu.getPreferredCanvasFormat();
+        displayPipeline = await pipeline(display, format);
+        context.configure({ device: device, format: format, alphaMode: "premultiplied" });
+      }
+      stats.hdrOutput = hdrOutput;
     } catch (error) { device.destroy(); throw error; }
     var shaderGroup = device.createBindGroup({ layout: shaderPipeline.getBindGroupLayout(0), entries: [{ binding: 0, resource: { buffer: params } }] });
     var sampler = device.createSampler({ minFilter: "linear", magFilter: "linear" });
@@ -84,7 +100,7 @@ struct Params { center: vec2f, surface: vec2f, buffer: vec2f, diameter: f32, tim
       if (canvas.width !== width || canvas.height !== height || textures.length !== 2) {
         textures.forEach(function (texture) { texture.destroy(); });
         canvas.width = width; canvas.height = height;
-        textures = [0, 1].map(function () { return device.createTexture({ size: [width, height], format: "rgba8unorm", usage: GPUTextureUsage.RENDER_ATTACHMENT | GPUTextureUsage.TEXTURE_BINDING }); });
+        textures = [0, 1].map(function () { return device.createTexture({ size: [width, height], format: cacheFormat, usage: GPUTextureUsage.RENDER_ATTACHMENT | GPUTextureUsage.TEXTURE_BINDING }); });
         groups = [];
         for (var p = 0; p < 2; p++) for (var c = 0; c < 2; c++) groups.push(device.createBindGroup({ layout: displayPipeline.getBindGroupLayout(0), entries: [
           { binding: 0, resource: sampler }, { binding: 1, resource: textures[p].createView() },
@@ -92,7 +108,7 @@ struct Params { center: vec2f, surface: vec2f, buffer: vec2f, diameter: f32, tim
         ] }));
       }
       values.set([layout.centerX, layout.centerY, layout.width, layout.height, width, height, layout.diameter, 6]);
-      stats.pixels = width * height; stats.cacheBytes = width * height * 8;
+      stats.pixels = width * height; stats.cacheBytes = width * height * 16;
     }
     function sample(index, time) {
       values[7] = time; device.queue.writeBuffer(params, 0, values);

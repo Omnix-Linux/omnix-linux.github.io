@@ -114,6 +114,7 @@ afterFirstPaint(async function () {
           clearTimeout(startupTimer);
           canvas.dataset.backend = "worker";
           canvas.dataset.graphicsBackend = message.backend;
+          canvas.dataset.hdrOutput = String(message.hdrOutput);
           canvas.dataset.renderPixels = message.pixels;
           canvas.dataset.cacheBytes = message.cacheBytes;
           if (!reduce.matches) root.classList.add("shader-ready", "wordmark-ready");

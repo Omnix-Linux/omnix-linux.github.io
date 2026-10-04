@@ -21,13 +21,13 @@ void main() {
     glow += (1.1 - cos(p)) / (z * z * max(abs(length(original.xy) - 1.), 0.001));
   }
   vec3 color = 1. - 2. / (exp(2. * min(glow / 30., vec3(10.))) + 1.);
-  // A quiet white rim keeps the O readable through the moving corona.
+  // Match the thin white rim on the SDR WebGL fallback.
   float rimDistance = abs(length(uv) - 0.57857143);
-  float rim = 3.0 * exp(-pow(rimDistance / 0.0035, 2.))
-    + 0.24 * exp(-pow(rimDistance / 0.025, 2.));
-  // Add overbright white light before the display clamps the thin core.
-  // The wider halo preserves its bloom on standard SDR browser canvases.
-  color += vec3(rim);
+  float rimWidth = max(0.0035, 1.4 * max(uSurfaceSize.x / uBufferSize.x,
+    uSurfaceSize.y / uBufferSize.y) / uDiameter);
+  float core = exp(-pow(rimDistance / rimWidth, 2.));
+  float halo = 0.06 * exp(-pow(rimDistance / 0.025, 2.));
+  color = mix(color, vec3(1.5), core) + vec3(halo * (1. - core));
   float alpha = 1. - smoothstep(1.1, 1.5, length(uv));
   gl_FragColor = vec4(color * alpha, alpha);
 }`;
