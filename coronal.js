@@ -34,8 +34,13 @@ afterFirstPaint(async function () {
     var suffixStyle = getComputedStyle(suffix);
     var measuredFontSize = parseFloat(suffixStyle.fontSize);
     var widthPerPixel = suffix.getBoundingClientRect().width / measuredFontSize;
-    var size = Math.min(W * mode.sizeViewportWidth, H * mode.sizeViewportHeight);
-    var centerX = W * mode.centerXViewport;
+    var rightGutter = W > registry.layout.mobile.maxViewportWidth ? 48 : 16;
+    var suffixWidth = Math.min(W * registry.layout.suffix.widthViewport, W - 16 - rightGutter);
+    // Reserve the requested text width and room for the complete O rim.
+    var maxArtworkSize = (W - suffixWidth - 16 - rightGutter) / (geometry.ring.radius * 2 + mode.suffixGapToArtworkSize);
+    var size = Math.min(W * mode.sizeViewportWidth, H * mode.sizeViewportHeight, maxArtworkSize);
+    var centerX = Math.min(W * mode.centerXViewport,
+      W - suffixWidth - rightGutter - (geometry.ring.radius + mode.suffixGapToArtworkSize) * size);
     var centerY = box.top + window.scrollY + box.height / 2;
     var left = centerX - geometry.ring.center.x * size;
     var top = centerY - geometry.ring.center.y * size;
@@ -44,16 +49,12 @@ afterFirstPaint(async function () {
     orbit.style.top = (top - box.top - window.scrollY) + "px";
     orbit.style.width = orbit.style.height = size + "px";
     var anchor = ShaderLayout.ringAnchor(geometry.ring, { left: left, top: top, size: size }, mode.suffixGapToArtworkSize);
-    var letterHeight = anchor.radius * 2;
     var suffixLeft = anchor.x;
     suffix.style.left = suffixLeft + "px";
     suffix.style.top = anchor.y + "px";
-    var fontSize = Math.max(registry.layout.suffix.minFontSize,
-      Math.min(registry.layout.suffix.maxFontSize, letterHeight * mode.suffixScaleToLetterHeight));
-    // Text width scales with font size. Fit using the earlier read instead of
-    // forcing layout again after changing the suffix's styles.
-    var available = Math.max(1, W - suffixLeft - 16);
-    if (widthPerPixel > 0) fontSize = Math.min(fontSize, available / widthPerPixel);
+    // Measure once, then size the four letters to the viewport width target.
+    var available = Math.max(1, W - suffixLeft - rightGutter);
+    var fontSize = widthPerPixel > 0 ? Math.min(suffixWidth, available) / widthPerPixel : measuredFontSize;
     suffix.style.fontSize = fontSize + "px";
     suffix.style.color = registry.layout.suffix.color;
     var mobileTagline = W <= registry.layout.mobile.maxViewportWidth;
