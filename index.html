@@ -421,13 +421,22 @@
         <p class="lede"><strong>Autarchy</strong> brings Omarchy's desktop to Omnix. The port carries over its Hyprland configuration, keybindings, themes, and scripts to preserve the experience.</p>
         <p class="lede">Choose <code>stable</code> for a pinned Omarchy release or <code>latest</code> to follow its development branch. Desktop upgrades and rollbacks follow your system configuration.</p>
       </div>
-      <div class="flow ported">
-        <div><b>source</b><span>Omarchy's own repo, pinned: <code>stable</code> is v4.0.4, <code>latest</code> tracks its development branch</span></div>
-        <div><b>scripts</b><span>Omarchy's commands, themes, and defaults installed read-only at <code>$OMARCHY_PATH</code>, where its config looks for them</span></div>
-        <div><b>config</b><span>Each user's <code>~/.config</code> seeded once from Omarchy's templates, the way its installer does it</span></div>
-        <div><b>packages</b><span>131 of Omarchy's 147 base packages mapped to nixpkgs, all downloaded prebuilt</span></div>
-        <div><b>desktop</b><span>Hyprland running Omarchy's Lua config unmodified, tested in a VM on every change</span></div>
-        <div><b>updates</b><span>pacman replaced by <code>nix flake update</code> and a rebuild, with rollback</span></div>
+      <div class="term">
+        <div class="term-bar"><i></i><i></i><i></i><b>Autarchy: paths at a glance</b></div>
+<pre aria-label="ASCII map of Omnix compatibility and Autarchy desktop paths"><span class="hl">Linux compatibility paths</span>
+/bin/bash                 // shell for scripts
+/bin/*                    // tools from your PATH
+/usr/bin/*                // tools from your PATH
+/usr/lib                  // Nix-managed library tree
+/lib -&gt; /usr/lib          // shared libraries
+/lib64/ld-linux-x86-64.so.2 // nix-ld loader
+/sbin/ldconfig            // library cache tool
+/etc/ld.so.cache          // generated library index
+/nix/store                // Nix-managed packages
+
+<span class="hl">Autarchy desktop paths</span>
+$OMARCHY_PATH             // commands, themes &amp; defaults
+~/.config                 // your desktop configuration</pre>
       </div>
     </div>
   </section>
