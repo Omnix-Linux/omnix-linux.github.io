@@ -201,7 +201,7 @@
   @media (prefers-reduced-motion: reduce) {
     .shader-ready #coronal { opacity: 0; transition: none; }
   }
-  .wordmark-text { visibility: hidden; opacity: 0; transition: opacity .45s ease-out; position: fixed; z-index: 0; pointer-events: none; font-family: "Lexend", "Arial Black", system-ui, sans-serif; font-weight: 800; line-height: 1; left: calc(38vw + min(23.142857vw, 31.821429svh) - (100vw - min(88vw, 1240px)) / 2); top: 50%; transform: translateY(-50%); font-size: clamp(3.5rem, 10vw, 8.75rem); letter-spacing: -.045em; color: #fff; }
+  .wordmark-text { visibility: hidden; opacity: 0; transition: opacity .45s ease-out; position: fixed; z-index: 2; pointer-events: none; font-family: "Lexend", "Arial Black", system-ui, sans-serif; font-weight: 800; line-height: 1; left: calc(38vw + min(23.142857vw, 31.821429svh) - (100vw - min(88vw, 1240px)) / 2); top: 50%; transform: translateY(-50%); font-size: clamp(3.5rem, 10vw, 8.75rem); letter-spacing: -.045em; color: #fff; }
   @media (max-width: 640px) {
     .hero-inner { gap: 24px; }
     .wordmark { height: 44svh; }
@@ -209,11 +209,11 @@
     .wordmark-text { left: calc(65.928571vw - max(16px, 6vw)); font-size: clamp(2rem, 9vw, 3.5rem); }
   }
   .wordmark-ready .wordmark-text { visibility: visible; opacity: 1; }
-  .wordmark-ready.hero-past .wordmark-text { opacity: .24; }
+  .wordmark-ready.hero-past .wordmark-text { opacity: 0; }
   @media (prefers-reduced-motion: reduce) { .wordmark-text { transition: none; } }
-  .tagline { position: fixed; z-index: 0; pointer-events: none; left: var(--tagline-left, 61vw); top: var(--tagline-top, calc(50svh + 96px)); width: var(--tagline-width, 34vw); visibility: hidden; opacity: 0; transition: opacity .45s ease-out; text-align: left; font-family: var(--font-display); font-weight: 500; font-size: clamp(.75rem, 1.4vw, 1.5rem); line-height: 1.5; margin: 0; max-width: 32ch; text-wrap: balance; }
+  .tagline { position: fixed; z-index: 2; color: #fff; pointer-events: none; left: var(--tagline-left, 61vw); top: var(--tagline-top, calc(50svh + 96px)); width: var(--tagline-width, 34vw); visibility: hidden; opacity: 0; transition: opacity .45s ease-out; text-align: left; font-family: var(--font-display); font-weight: 500; font-size: clamp(.75rem, 1.4vw, 1.5rem); line-height: 1.5; margin: 0; max-width: 32ch; text-wrap: balance; }
   .wordmark-ready .tagline { visibility: visible; opacity: 1; }
-  .wordmark-ready.hero-past .tagline { opacity: .24; }
+  .wordmark-ready.hero-past .tagline { opacity: 0; }
   @media (prefers-reduced-motion: reduce) { .tagline { transition: none; } }
   .cta { display: flex; gap: 12px; flex-wrap: wrap; }
   .btn {
