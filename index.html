@@ -584,7 +584,7 @@
   <a href="#top" aria-label="Omnix"></a>
   <a href="#who" aria-label="Why Omnix"></a>
   <a href="#flavors" aria-label="Choose your desktop"></a>
-  <a href="#ml" aria-label="Local AI, running in minutes"></a>
+  <a href="#ml" aria-label="Private AI on your own GPU, running in minutes"></a>
   <a href="#rollback" aria-label="Every update can be undone"></a>
   <a href="#runs" aria-label="Linux apps working on NixOS"></a>
   <a href="#ported" aria-label="Save your configuration as a git repo"></a>
@@ -643,20 +643,20 @@
   <section id="ml">
     <div class="split">
       <div>
-        <div class="eyebrow">Local AI · known workflows that evolve</div>
-        <h2>Local AI, <em>running in minutes.</em></h2>
-        <p class="lede">Running models like DeepSeek-R1 on your own machine usually takes an afternoon: a GPU driver, a
-          CUDA version that matches it, a runtime built against that, a model download and a chat app. On Omnix the
-          whole stack is a few lines in your flake, and every piece is chosen to work with the others.</p>
-        <p class="lede"><strong>Pick the tool you already know.</strong> Ollama for the simplest server and the
-          largest model library, LM Studio for a desktop app with a model browser, or llama.cpp for the lean engine
-          underneath them all. Switching between them is an edit and a rebuild.</p>
-        <p class="lede"><strong>It keeps up with the field.</strong> New models and runtimes ship every month. Your setup
-          is pinned in <code>flake.lock</code> until you choose to move, then <code>nix flake update</code> brings the
-          whole stack forward together. Every update is a boot-menu entry, so yesterday's working setup is one step back.</p>
-        <p class="lede"><strong>And <code>pip install</code> still works.</strong> The Omnix base provides the standard
-          Linux layout, so CUDA wheels from PyPI, conda environments and vendor AI SDKs run as they do anywhere else.</p>
-        <p class="lede ai-description">Ollama serves models over a local API, and Open WebUI gives you a ChatGPT-style chat in the browser. Nothing leaves your machine.</p>
+        <div class="eyebrow">Local AI</div>
+        <h2>Private AI on your own GPU, <em>running in minutes.</em></h2>
+        <p class="lede">Run DeepSeek-R1, Qwen and Llama on your own hardware, with no account, no API bill and no data
+          leaving your machine. Omnix turns the usual afternoon of drivers, CUDA versions and install guides into a few
+          lines of configuration and a single rebuild.</p>
+        <p class="lede"><strong>The tools you already know, set up correctly.</strong> Ollama, LM Studio and llama.cpp
+          each come with the GPU runtime that matches your card, built and tested to work together. Switching between
+          them is a one-line change.</p>
+        <p class="lede"><strong>Built to keep pace with AI.</strong> New models and runtimes arrive every month. Your
+          setup stays exactly as it is until you choose to update, then moves forward as a whole with
+          <code>nix flake update</code>. If an update misbehaves, the previous version is one reboot away.</p>
+        <p class="lede"><strong>Compatible with the wider ecosystem.</strong> Because Omnix provides the standard Linux
+          layout, CUDA wheels from PyPI, conda environments and vendor AI SDKs run without workarounds.</p>
+        <p class="lede ai-description">Ollama serves models over a local API, and Open WebUI gives you a polished, ChatGPT-style chat in the browser.</p>
       </div>
       <div class="ai-demo" data-ai="ollama">
         <div class="desktop-tabs ai-tabs" role="group" aria-label="Choose a local AI tool to preview">
@@ -1268,7 +1268,7 @@ afterFirstPaint(function () {
     var V = {
       ollama: {
         bar: "localhost:8080 · Open WebUI",
-        desc: "Ollama serves models over a local API, and Open WebUI gives you a ChatGPT-style chat in the browser. Nothing leaves your machine.",
+        desc: "Ollama serves models over a local API, and Open WebUI gives you a polished, ChatGPT-style chat in the browser.",
         ui: '<div class="ai-side"><small>CHATS</small><span class="on">flake.lock, explained</span><span>Rust lifetimes</span><span>Summarize meeting.txt</span></div>' +
           '<div class="ai-chat"><span class="ai-chip">deepseek-r1:32b ▾</span>' + chat + '<div class="ai-input">Send a message</div></div>',
         cfg: [c("{ pkgs, ... }: {"), "  services.ollama = {", "    enable = true;",
