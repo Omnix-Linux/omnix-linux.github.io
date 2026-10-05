@@ -36,6 +36,8 @@ The left column's pane clips overflow without creating a nested scroll container
 
 `.split` always keeps the copy first in the DOM, so reading order and `column-scroll.js`'s copy/panel assumption hold in every section. The desktop showcase in `#flavors` leads with the interactive demo instead, so it swaps the columns visually with grid `order` and a wider demo track; both properties are reset at 860px so the stacked layout reads copy first again.
 
+In the Plasma - Atrium preview, each terminal group carries a `slot-N` class fixing its seat on the desktop, and `front`/`back` marks only which group is focused. The two are separate so that focusing a group raises it with a new `z-index` and dims the other with `filter`, without moving either window; binding the transform to the focus state instead makes the two windows trade places on every click.
+
 ## Desktop names
 
 Use **Hyprland - Omarchy** and **KDE Plasma - Atrium** in desktop labels.

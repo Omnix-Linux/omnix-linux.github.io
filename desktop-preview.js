@@ -14,7 +14,9 @@
     for (var group = 0; group < 2; group++) {
       var layer = document.createElement('button');
       layer.type = 'button';
-      layer.className = 'terminal-group ' + (group === 0 ? 'front' : 'back');
+      // slot-N is the group's fixed seat on the desktop; front/back is only
+      // which one is focused, so focusing never moves a window.
+      layer.className = 'terminal-group slot-' + (group + 1) + ' ' + (group === 0 ? 'front' : 'back');
       layer.setAttribute('aria-label', 'Bring terminal group ' + (group + 1) + ' forward on monitor ' + (monitor + 1));
       layer.setAttribute('aria-pressed', String(group === 0));
       var title = document.createElement('span');
