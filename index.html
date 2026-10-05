@@ -543,7 +543,7 @@
   <a href="#rollback" aria-label="Every update can be undone"></a>
   <a href="#runs" aria-label="Linux apps working on NixOS"></a>
   <a href="#ported" aria-label="Save your configuration as a git repo"></a>
-  <a href="#soldr" aria-label="Rust that builds fast, on any platform"></a>
+  <a href="#soldr" aria-label="A luxury experience for building Rust apps"></a>
   <a href="#install" aria-label="Try Omnix"></a>
   <a href="#vision" aria-label="Coming next: APE support and a WebAssembly runtime"></a>
   <a href="#faq" aria-label="Frequently asked questions"></a>
@@ -738,9 +738,10 @@ Inter                 // interface font
     <div class="split">
       <div>
         <div class="eyebrow">Rust, optimized</div>
-        <h2>Rust that builds <em>fast, on any platform.</em></h2>
-        <p class="lede">Building Rust on Omnix goes through a toolchain built for it. You use the same
-          <code>cargo</code> commands you already know, and get a build that reuses everything it can.</p>
+        <h2>A <em>luxury</em> experience for building Rust apps.</h2>
+        <p class="lede">On Omnix, <code>cargo</code> is aliased to <code>soldr cargo</code>. You type the commands you
+          already know; underneath, the build is cleaned up for you — the right toolchain fetched and pinned, each
+          compilation cached, and nothing rebuilt that does not have to be.</p>
         <p class="lede"><strong>Warm builds come back in seconds.</strong> The cache is content-addressed, so a build
           reuses the exact compilation it already did — and shares it across branches and pull requests, which a
           per-branch CI cache cannot do. Cross-PR builds run about twice as fast.</p>
@@ -748,8 +749,10 @@ Inter                 // interface font
           builds a macOS binary from Linux, or a Windows one, without renting a runner to produce it.</p>
       </div>
       <div class="term">
-        <div class="term-bar"><i></i><i></i><i></i><b>cargo · cross-compiling</b></div>
-<pre aria-label="Cargo cross-compiling to macOS with a warm cache"><span class="hl">$ cargo build --release</span>
+        <div class="term-bar"><i></i><i></i><i></i><b>cargo · aliased on Omnix</b></div>
+<pre aria-label="Cargo cross-compiling to macOS, aliased to soldr on Omnix"><span class="p"># cargo is aliased to soldr cargo</span>
+
+<span class="hl">$ cargo build --release</span>
   <span class="c">// warm cache · no recompile</span>
 
 <span class="hl">$ cargo build --target mac-arm64</span>
@@ -761,9 +764,9 @@ Inter                 // interface font
       </div>
     </div>
     <div class="wide">
-      <p class="lede">This is <a href="https://github.com/zackees/soldr">Soldr</a>, the toolchain behind it — developed by
-        the same person behind Omnix and used to build its own projects. <code>cargo</code> is wired to it, so this is
-        what you get without changing your commands. It is beta software: pin the release you use.</p>
+      <p class="lede">The alias points at <a href="https://github.com/zackees/soldr">Soldr</a>, the toolchain behind it —
+        developed by the same person behind Omnix and used to build its own projects. It is beta software: pin the
+        release you use.</p>
     </div>
   </section>
 
