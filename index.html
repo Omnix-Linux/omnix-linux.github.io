@@ -513,7 +513,7 @@
   .no-gl .scrim { background: linear-gradient(90deg, rgba(4, 5, 12, 0.7), rgba(4, 5, 12, 0.2)); }
 </style>
 <link rel="stylesheet" href="desktop-preview.css?v=20261004-kde-dock">
-<link rel="stylesheet" href="omarchy-preview.css?v=20261004-omarchy-desk">
+<link rel="stylesheet" href="omarchy-preview.css?v=20261004-desktop-tabs">
 </head>
 <body>
 <canvas id="coronal" data-shader-profile="shader-profile.json?v=mobile-stability-alpha-20261004" data-shader-version="mobile-stability-alpha-20261004" aria-hidden="true"></canvas>
@@ -599,14 +599,10 @@
         <p class="lede">Every Omnix desktop shares the same NixOS base. Choose Hyprland - Omarchy for keyboard-driven tiling, or KDE Plasma - Atrium for a familiar taskbar desktop.</p>
         <p class="lede"><strong>Don’t like the look? Pick another theme and switch immediately.</strong> Hyprland - Omarchy includes Omarchy’s built-in themes, from Tokyo Night and Catppuccin to Gruvbox, Nord and Rosé Pine. Press <kbd>Super</kbd> + <kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>Space</kbd>, choose one, and the bar, window borders, terminal and editor change color on the spot, with no rebuild and no logout. Try it in the preview.</p>
         <p class="lede"><strong>Want a different desktop altogether?</strong> Change one line in your configuration and rebuild. Your previous desktop stays in the boot menu, so trying something new is never a one-way trip.</p>
-        <div class="desktop-choices" aria-label="Desktop preview">
-          <button type="button" data-desktop="omarchy" aria-pressed="true">Hyprland - Omarchy<span>Keyboard-driven tiling with Omarchy’s themes, Waybar and launcher.</span></button>
-          <button type="button" data-desktop="plasma" aria-pressed="false">KDE Plasma - Atrium<span>Your launcher dock, clickable clock, and workspaces per monitor.</span></button>
-        </div>
         <p class="lede preview-description">Hyprland tiles every window automatically. Open and close windows, switch workspaces and try Omarchy’s themes.</p>
       </div>
       <div class="desktop-demo" data-desktop="omarchy">
-        <div class="preview-controls" role="group" aria-label="Choose a desktop to preview"><button type="button" data-desktop="omarchy" aria-pressed="true">Hyprland - Omarchy</button><button type="button" data-desktop="plasma" aria-pressed="false">KDE Plasma - Atrium</button></div>
+        <div class="preview-controls desktop-tabs" role="group" aria-label="Choose a desktop to preview"><button type="button" data-desktop="omarchy" aria-pressed="true"><svg class="tab-icon" viewBox="0 0 27 13" preserveAspectRatio="none" aria-hidden="true"><path fill="currentColor" d="M0 0h27v1h-27zM0 1h2v1h-2zM13 1h2v1h-2zM25 1h2v1h-2zM0 2h2v1h-2zM4 2h11v1h-11zM19 2h4v1h-4zM25 2h2v1h-2zM0 3h2v1h-2zM4 3h2v1h-2zM21 3h2v1h-2zM25 3h2v1h-2zM0 4h2v1h-2zM4 4h2v1h-2zM21 4h2v1h-2zM25 4h2v1h-2zM0 5h2v1h-2zM4 5h2v1h-2zM21 5h2v1h-2zM25 5h2v1h-2zM0 6h6v1h-6zM21 6h2v1h-2zM25 6h2v1h-2zM0 7h2v1h-2zM4 7h2v1h-2zM21 7h2v1h-2zM25 7h2v1h-2zM0 8h2v1h-2zM4 8h2v1h-2zM21 8h2v1h-2zM25 8h2v1h-2zM0 9h2v1h-2zM4 9h2v1h-2zM21 9h2v1h-2zM25 9h2v1h-2zM0 10h2v1h-2zM4 10h19v1h-19zM25 10h2v1h-2zM0 11h2v1h-2zM13 11h2v1h-2zM25 11h2v1h-2zM0 12h15v1h-15zM17 12h10v1h-10z"/></svg><span class="tab-text"><b>Hyprland&nbsp;- Omarchy</b><small>Tiling · Omarchy themes</small></span><span class="tab-dots" aria-hidden="true"><i></i><i></i><i></i></span></button><button type="button" data-desktop="plasma" aria-pressed="false"><svg class="tab-icon" viewBox="0 0 16 16" aria-hidden="true"><path fill="currentColor" d="M5 2a1 1 0 1 0 0 2 1 1 0 0 0 0-2zm5 0L8.5 3.5 11 6 8.5 8.5 10 10l4-4-4-4zM3.25 6.5a1.25 1.25 0 1 0 0 2.5 1.25 1.25 0 0 0 0-2.5zM6.5 11a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3z"/></svg><span class="tab-text"><b>KDE Plasma&nbsp;- Atrium</b><small>Dock · desktops per monitor</small></span></button></div>
         <div class="preview-monitors"></div>
         <p class="preview-caption" aria-live="polite">Hyprland - Omarchy · interactive illustration · colors from Omarchy’s themes</p>
       </div>
@@ -1132,8 +1128,8 @@ afterFirstPaint(function () {
 <script src="coronal.js?v=mobile-stability-alpha-20261004" defer></script>
 <script src="hero-actions.js?v=mobile-stability-alpha-20261004" defer></script>
 <script src="column-scroll.js" defer></script>
-<script src="desktop-preview.js?v=20261004-desktop-tabs" defer></script>
-<script src="omarchy-preview.js?v=20261004-desktop-tabs" defer></script>
+<script src="desktop-preview.js?v=20261004-demo-tabs-only" defer></script>
+<script src="omarchy-preview.js?v=20261004-desktop-tabs2" defer></script>
 
 
 </body>

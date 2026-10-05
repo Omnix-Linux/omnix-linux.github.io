@@ -116,3 +116,41 @@
   .oma-win, .oma-toast { transition: none; }
   .oma-stage.sliding, .oma-win.opening, .o-graph i, .oma-term .oma-body > div:last-child::after, .oma-fetch .oma-body > div:last-child::after, .oma-ls .oma-body > div:last-child::after { animation: none; }
 }
+
+/* Waybar menu icon */
+.oma-left { display: flex; align-items: center; gap: 6px; }
+.oma-logo { display: grid; place-items: center; width: 18px; height: 18px; padding: 2px; border: 0; background: transparent; color: var(--o-accent); cursor: pointer; }
+.oma-logo svg { width: 12px; height: 12px; }
+.oma-logo:hover { color: var(--o-fg-bright); }
+.oma-logo:focus-visible { outline: 1px solid var(--o-accent); }
+
+/* Desktop tabs above the preview */
+.desktop-tabs { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; padding: 5px; border: 1px solid #2a3346; border-radius: 16px; background: linear-gradient(180deg, #0d1324e6, #070a14e6); box-shadow: 0 10px 30px #0006; }
+.desktop-tabs button { position: relative; display: flex; align-items: center; gap: 12px; min-height: 60px; padding: 10px 14px; border: 1px solid transparent; border-radius: 12px; background: transparent; color: #a6b3ca; text-align: left; cursor: pointer;
+  transition: background .25s, border-color .25s, color .25s, box-shadow .25s, transform .2s; }
+.desktop-tabs button:hover { color: #e8eef8; background: #ffffff0a; transform: translateY(-1px); }
+.desktop-tabs .tab-icon { flex: none; width: 26px; height: 26px; color: #6b7a96; transition: color .25s, filter .25s, transform .25s; }
+.desktop-tabs button:hover .tab-icon { transform: scale(1.08); }
+.desktop-tabs .tab-text { display: grid; gap: 2px; min-width: 0; }
+.desktop-tabs b { font-family: var(--font-display); font-size: .9rem; font-weight: 700; color: inherit; line-height: 1.25; text-wrap: balance; }
+.desktop-tabs small { font-family: var(--font-mono); font-size: .68rem; letter-spacing: .02em; color: #7d8aa3; }
+.desktop-tabs .tab-dots { position: absolute; top: 8px; right: 10px; display: flex; gap: 3px; }
+.desktop-tabs .tab-dots i { width: 6px; height: 6px; border-radius: 50%; background: var(--o-accent); transition: background .3s; }
+.desktop-tabs .tab-dots i:nth-child(2) { background: var(--o-magenta); }
+.desktop-tabs .tab-dots i:nth-child(3) { background: var(--o-green); }
+.desktop-tabs [data-desktop=omarchy][aria-pressed=true] { color: #fff; border-color: var(--o-accent);
+  background: linear-gradient(135deg, color-mix(in srgb, var(--o-accent) 26%, #0b1020), color-mix(in srgb, var(--o-magenta) 14%, #0b1020));
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--o-accent) 40%, transparent), 0 8px 28px color-mix(in srgb, var(--o-accent) 32%, transparent); }
+.desktop-tabs [data-desktop=omarchy][aria-pressed=true] .tab-icon { color: var(--o-accent); filter: drop-shadow(0 0 6px color-mix(in srgb, var(--o-accent) 70%, transparent)); }
+.desktop-tabs [data-desktop=plasma][aria-pressed=true] { color: #fff; border-color: #3daee9;
+  background: linear-gradient(135deg, #1b4f6e, #12304a); box-shadow: 0 0 0 1px #3daee966, 0 8px 28px #3daee94d; }
+.desktop-tabs [data-desktop=plasma][aria-pressed=true] .tab-icon { color: #3daee9; filter: drop-shadow(0 0 6px #3daee9b3); }
+.desktop-tabs [aria-pressed=true] small { color: #c9d4e8; }
+.desktop-tabs button:focus-visible { outline: 2px solid #fff; outline-offset: 2px; }
+@media (max-width: 560px) {
+  .desktop-tabs button { gap: 8px; padding: 8px 10px; min-height: 52px; }
+  .desktop-tabs .tab-icon { width: 20px; height: 20px; }
+  .desktop-tabs b { font-size: .8rem; white-space: normal; }
+  .desktop-tabs small, .desktop-tabs .tab-dots { display: none; }
+}
+@media (prefers-reduced-motion: reduce) { .desktop-tabs button, .desktop-tabs .tab-icon { transition: none; } .desktop-tabs button:hover { transform: none; } }

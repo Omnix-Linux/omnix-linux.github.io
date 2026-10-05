@@ -130,6 +130,8 @@
     '<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M2 6h3l4-3v10l-4-3H2zM11.5 5.5a3.5 3.5 0 0 1 0 5" fill="none" stroke="currentColor" stroke-width="1.4"/></svg>' +
     '<svg viewBox="0 0 16 16" aria-hidden="true"><rect x="1.5" y="4.5" width="12" height="7" rx="1.5" fill="none" stroke="currentColor" stroke-width="1.3"/><rect x="3" y="6" width="7" height="4" fill="currentColor"/><path d="M14.5 7v2" stroke="currentColor" stroke-width="1.3"/></svg>';
 
+  // Omarchy's icon (icon.txt in omacom/omarchy), as 27 × 13 cells of a 2:1 character grid.
+  var LOGO = '<svg viewBox="0 0 27 13" preserveAspectRatio="none" aria-hidden="true"><path fill="currentColor" d="M0 0h27v1h-27zM0 1h2v1h-2zM13 1h2v1h-2zM25 1h2v1h-2zM0 2h2v1h-2zM4 2h11v1h-11zM19 2h4v1h-4zM25 2h2v1h-2zM0 3h2v1h-2zM4 3h2v1h-2zM21 3h2v1h-2zM25 3h2v1h-2zM0 4h2v1h-2zM4 4h2v1h-2zM21 4h2v1h-2zM25 4h2v1h-2zM0 5h2v1h-2zM4 5h2v1h-2zM21 5h2v1h-2zM25 5h2v1h-2zM0 6h6v1h-6zM21 6h2v1h-2zM25 6h2v1h-2zM0 7h2v1h-2zM4 7h2v1h-2zM21 7h2v1h-2zM25 7h2v1h-2zM0 8h2v1h-2zM4 8h2v1h-2zM21 8h2v1h-2zM25 8h2v1h-2zM0 9h2v1h-2zM4 9h2v1h-2zM21 9h2v1h-2zM25 9h2v1h-2zM0 10h2v1h-2zM4 10h19v1h-19zM25 10h2v1h-2zM0 11h2v1h-2zM13 11h2v1h-2zM25 11h2v1h-2zM0 12h15v1h-15zM17 12h10v1h-10z"/></svg>';
   var nextId = 1;
   var desks = [];
   var activeDesk = null;
@@ -145,7 +147,7 @@
     desk.setAttribute('role', 'application');
     desk.setAttribute('aria-roledescription', 'Hyprland - Omarchy desktop illustration');
     desk.setAttribute('aria-label', 'Monitor ' + (monitor + 1) + '. Keys: Enter opens a terminal, W closes the focused window, Space opens the launcher, 1 to 5 switch workspaces, arrows move focus, T changes the theme.');
-    desk.innerHTML = '<div class="oma-bar"><div class="oma-ws" role="group" aria-label="Workspaces"></div><div class="oma-clock"></div><div class="oma-tray">' + ICONS + '</div></div>' +
+    desk.innerHTML = '<div class="oma-bar"><div class="oma-left"><button type="button" class="oma-logo" aria-label="Open the launcher">' + LOGO + '</button><div class="oma-ws" role="group" aria-label="Workspaces"></div></div><div class="oma-clock"></div><div class="oma-tray">' + ICONS + '</div></div>' +
       '<div class="oma-stage"></div><div class="oma-empty" hidden>Empty workspace<br><kbd>Super</kbd> + <kbd>Enter</kbd> opens a terminal</div>' +
       '<div class="oma-launcher" hidden><input type="text" aria-label="Search applications" placeholder="Search…" autocomplete="off" spellcheck="false"><ul role="listbox" aria-label="Applications"></ul></div>' +
       '<div class="oma-picker" hidden><b>Themes</b><ul role="listbox" aria-label="Themes"></ul></div>' +
@@ -159,6 +161,7 @@
     });
     desks.push(state);
 
+    desk.querySelector('.oma-logo').addEventListener('click', function () { setActive(state); openLauncher(state); });
     var wsGroup = desk.querySelector('.oma-ws');
     for (var n = 1; n <= 5; n++) {
       var b = document.createElement('button');
