@@ -171,10 +171,10 @@
   var overlay = document.createElement('div');
   overlay.className = 'switch-overlay';
   overlay.hidden = true;
-  overlay.innerHTML = '<div class="switch-window" role="dialog" aria-modal="true" aria-label="Desktop switch command"><div class="switch-bar"><span class="switch-dots" aria-hidden="true"><i></i><i></i><i></i></span><span class="switch-title">omnix · apply</span></div><pre class="switch-log" aria-live="polite"></pre><button type="button" class="switch-done">Close</button></div>';
-  // Appended to the body: sections carry `contain: layout paint`, which would
-  // otherwise make one of them the containing block for this fixed overlay.
-  document.body.appendChild(overlay);
+  overlay.innerHTML = '<div class="switch-window" role="group" aria-label="Desktop switch command"><div class="switch-bar"><span class="switch-dots" aria-hidden="true"><i></i><i></i><i></i></span><span class="switch-title">omnix · apply</span></div><pre class="switch-log" aria-live="polite"></pre><button type="button" class="switch-done">Close</button></div>';
+  // Lives inside the demo: absolutely positioned, so it covers the preview
+  // pane and nothing else. `.desktop-demo` is its containing block.
+  demo.appendChild(overlay);
   var lastFocus = null;
   function stopSwitch() {
     switchTimers.forEach(clearTimeout);
