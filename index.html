@@ -289,6 +289,7 @@
   .split.desktop-showcase { grid-template-columns: minmax(0, 0.95fr) minmax(0, 1.05fr); }
   .split.desktop-showcase > .scroll-copy-pane { order: 2; }
   .split.desktop-showcase > .desktop-demo { order: 1; }
+  .split.desktop-showcase > .ai-demo { order: 1; }
   .scroll-copy-pane { display: contents; }
   .scroll-copy { min-width: 0; }
   .split.dual-scroll { align-items: start; }
@@ -298,7 +299,8 @@
     .split, .split.desktop-showcase { grid-template-columns: minmax(0, 1fr); }
     /* Stacked, the copy has to lead again. */
     .split.desktop-showcase > .scroll-copy-pane,
-    .split.desktop-showcase > .desktop-demo { order: 0; }
+    .split.desktop-showcase > .desktop-demo,
+    .split.desktop-showcase > .ai-demo { order: 0; }
   }
 
   .eyebrow {
@@ -428,6 +430,39 @@
   .demo-cursor { color: var(--ice); }
   .demo-output { font: inherit; white-space: pre-wrap; overflow-wrap: anywhere; line-height: 1.65; color: var(--muted); }
   .demo-status { display: flex; justify-content: space-between; gap: 16px; padding: 12px 16px; border-top: 1px solid var(--line); color: var(--muted); font-size: .75rem; }
+  /* Local AI showcase: the desktop tabs over an app mock and its flake config. */
+  .ai-demo { min-width: 0; align-self: start; }
+  .desktop-tabs.ai-tabs { grid-template-columns: repeat(3, minmax(0, 1fr)); margin-bottom: 16px; }
+  .ai-tabs [aria-pressed=true] { color: #fff; border-color: var(--ai-accent); background: linear-gradient(135deg, color-mix(in srgb, var(--ai-accent) 24%, #0b1020), #0b1020);
+    box-shadow: 0 0 0 1px color-mix(in srgb, var(--ai-accent) 40%, transparent), 0 8px 28px color-mix(in srgb, var(--ai-accent) 28%, transparent); }
+  .ai-tabs [aria-pressed=true] .tab-icon { color: var(--ai-accent); filter: drop-shadow(0 0 6px color-mix(in srgb, var(--ai-accent) 70%, transparent)); }
+  .ai-demo, .ai-tabs [data-ai=ollama] { --ai-accent: #e8eef8; }
+  .ai-demo[data-ai=lmstudio], .ai-tabs [data-ai=lmstudio] { --ai-accent: #a78bfa; }
+  .ai-demo[data-ai=llamacpp], .ai-tabs [data-ai=llamacpp] { --ai-accent: #f0b35a; }
+  .ai-window { height: 300px; display: flex; flex-direction: column; border: 1px solid color-mix(in srgb, var(--ai-accent) 30%, #2a3346); border-radius: 12px; overflow: hidden;
+    background: #0b0f1c; box-shadow: 0 18px 40px #0006; font-family: var(--font-body); font-size: .8rem; color: #d6deec; transition: border-color .3s; }
+  .ai-bar { display: flex; gap: 6px; align-items: center; padding: 9px 12px; background: #121828; border-bottom: 1px solid #222b3f; }
+  .ai-bar i { width: 9px; height: 9px; border-radius: 50%; background: #3a4560; }
+  .ai-bar b { margin-left: 6px; font: 500 .72rem var(--font-mono); color: #8d9ab3; }
+  .ai-body { flex: 1; min-height: 0; display: flex; }
+  .ai-body.enter { animation: ai-in .32s var(--ease-soft); }
+  @keyframes ai-in { from { opacity: 0; transform: translateY(6px); } }
+  .ai-side { width: 34%; padding: 10px; border-right: 1px solid #222b3f; background: #0e1322; display: grid; align-content: start; gap: 4px; }
+  .ai-side span { padding: 6px 8px; border-radius: 6px; font: .68rem var(--font-mono); color: #8d9ab3; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .ai-side .on { background: color-mix(in srgb, var(--ai-accent) 18%, transparent); color: #fff; }
+  .ai-side small { font: 600 .6rem var(--font-mono); letter-spacing: .08em; color: #5d6a85; padding: 4px 8px 2px; }
+  .ai-chat { flex: 1; min-width: 0; padding: 12px 14px; display: flex; flex-direction: column; gap: 9px; }
+  .ai-chip { align-self: flex-start; font: .65rem var(--font-mono); padding: 3px 8px; border-radius: 99px; border: 1px solid #2c3650; color: var(--ai-accent); }
+  .ai-msg { max-width: 92%; padding: 8px 11px; border-radius: 10px; line-height: 1.45; }
+  .ai-msg.me { align-self: flex-end; background: #1d2740; }
+  .ai-msg.bot { background: #131a2b; border: 1px solid #1f283d; }
+  .ai-msg .think { display: block; font: .66rem var(--font-mono); color: #6f7d99; margin-bottom: 4px; }
+  .ai-input { margin-top: auto; padding: 8px 11px; border: 1px solid #263049; border-radius: 10px; color: #5d6a85; }
+  .ai-term { flex: 1; padding: 12px 14px; font: .7rem/1.6 var(--font-mono); color: #8d9ab3; white-space: pre; overflow: auto; }
+  .ai-term b { color: var(--ai-accent); font-weight: 500; } .ai-term em { color: var(--ok); font-style: normal; }
+  .ai-config { margin-top: 12px; } .ai-config pre { font-size: .78rem; }
+  @media (max-width: 560px) { .ai-window { height: 280px; } .ai-side { display: none; } .ai-tabs small { display: none; } }
+  @media (prefers-reduced-motion: reduce) { .ai-body.enter { animation: none; } }
   .demo-caption { margin: 12px 0 0; color: var(--muted); font-size: .8rem; }
   @media (max-width: 520px) { .demo-screen { min-height: 500px; } .demo-status { flex-wrap: wrap; gap: 4px; } }
   @media (max-width: 860px) {
@@ -551,7 +586,7 @@
   <a href="#top" aria-label="Omnix"></a>
   <a href="#who" aria-label="Why Omnix"></a>
   <a href="#flavors" aria-label="Choose your desktop"></a>
-  <a href="#ml" aria-label="Local AI as a first-class citizen"></a>
+  <a href="#ml" aria-label="Premium local AI setup experience"></a>
   <a href="#rollback" aria-label="Every update can be undone"></a>
   <a href="#runs" aria-label="Linux apps working on NixOS"></a>
   <a href="#ported" aria-label="Save your configuration as a git repo"></a>
@@ -608,51 +643,38 @@
   </section>
 
   <section id="ml">
-    <div class="split">
+    <div class="split desktop-showcase">
       <div>
         <div class="eyebrow">Local AI · known workflows that evolve</div>
-        <h2>Local AI as a <em>first-class citizen.</em></h2>
-        <p class="lede">Setting up a computer for machine learning usually takes a day: the GPU driver, a CUDA version
-          that matches it, a PyTorch build that matches that, Jupyter, a model server, and a guide that is already out
-          of date. On Omnix it is one line in your flake.</p>
-        <p class="lede"><strong>Pick a pipeline and rebuild.</strong> Local LLMs like DeepSeek-R1 with a chat app,
-          PyTorch training with CUDA and Jupyter, or the same stack on an AMD card with ROCm. Every piece comes from
-          nixpkgs, with versions chosen to work together, as prebuilt binaries wherever they exist.</p>
-        <p class="lede"><strong>They keep up with the field.</strong> AI moves every month: new models, new CUDA
-          releases, new runtimes. Your workflow is pinned in <code>flake.lock</code>, so it stays exactly as it is until
-          you choose to move. Run <code>nix flake update</code> and the whole stack moves forward together, already
-          tested to work as a set. A new model is one more name in the list.</p>
+        <h2>Premium Local AI <em>Setup Experience.</em></h2>
+        <p class="lede">Running models like DeepSeek-R1 on your own machine usually takes an afternoon: a GPU driver, a
+          CUDA version that matches it, a runtime built against that, a model download and a chat app. On Omnix the
+          whole stack is a few lines in your flake, and every piece is chosen to work with the others.</p>
+        <p class="lede"><strong>Pick the tool you already know.</strong> Ollama for the simplest server and the
+          largest model library, LM Studio for a desktop app with a model browser, or llama.cpp for the lean engine
+          underneath them all. Switching between them is an edit and a rebuild.</p>
+        <p class="lede"><strong>It keeps up with the field.</strong> New models and runtimes ship every month. Your setup
+          is pinned in <code>flake.lock</code> until you choose to move, then <code>nix flake update</code> brings the
+          whole stack forward together. Every update is a boot-menu entry, so yesterday's working setup is one step back.</p>
         <p class="lede"><strong>And <code>pip install</code> still works.</strong> The Omnix base provides the standard
-          Linux layout, so the prebuilt CUDA wheels from PyPI, conda and vendor SDKs run as they do on any other
-          distribution.</p>
-        <p class="lede"><strong>Nothing to break.</strong> Every switch and every update is a new boot-menu entry, so
-          the setup that trained yesterday's model is one step back. Push the flake and your whole team gets the identical
-          stack, down to the CUDA version.</p>
+          Linux layout, so CUDA wheels from PyPI, conda environments and vendor AI SDKs run as they do anywhere else.</p>
+        <p class="lede ai-description">Ollama serves models over a local API, and Open WebUI gives you a ChatGPT-style chat in the browser. Nothing leaves your machine.</p>
       </div>
-      <div class="ai-demo">
-        <div class="demo-controls" role="group" aria-label="Choose a machine learning pipeline">
-          <button type="button" data-ai-model="llm" aria-pressed="true">Local LLM</button>
-          <button type="button" data-ai-model="train" aria-pressed="false">PyTorch training</button>
-          <button type="button" data-ai-model="amd" aria-pressed="false">AMD / ROCm</button>
+      <div class="ai-demo" data-ai="ollama">
+        <div class="desktop-tabs ai-tabs" role="group" aria-label="Choose a local AI tool to preview">
+          <button type="button" data-ai="ollama" aria-pressed="true"><svg class="tab-icon" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M7 2c1.1 0 2 1.6 2 3.6v1.1a7.6 7.6 0 0 1 6 0V5.6C15 3.6 15.9 2 17 2s2 1.6 2 3.6v3.2A7 7 0 0 1 20 12.5V22h-2v-4H6v4H4v-9.5a7 7 0 0 1 1-3.7V5.6C5 3.6 5.9 2 7 2zm2.5 10a1.2 1.2 0 1 0 0 2.4 1.2 1.2 0 0 0 0-2.4zm5 0a1.2 1.2 0 1 0 0 2.4 1.2 1.2 0 0 0 0-2.4z"/></svg><span class="tab-text"><b>Ollama</b><small>Server · Open WebUI chat</small></span></button>
+          <button type="button" data-ai="lmstudio" aria-pressed="false"><svg class="tab-icon" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M3 4h18a1 1 0 0 1 1 1v14a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V5a1 1 0 0 1 1-1zm1 3v11h5V7H4zm7 0v2h9V7h-9zm0 4v2h7v-2h-7zm0 4v2h8v-2h-8z"/></svg><span class="tab-text"><b>LM Studio</b><small>Desktop app · model browser</small></span></button>
+          <button type="button" data-ai="llamacpp" aria-pressed="false"><svg class="tab-icon" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M3 4h18v16H3V4zm2 2v12h14V6H5zm1.5 2.5 3.5 3-3.5 3-1-1.1L8 11.5 5.5 9.6zM11 14h6v1.6h-6z"/></svg><span class="tab-text"><b>llama.cpp</b><small>Lean server · GGUF files</small></span></button>
         </div>
-        <div class="term">
-          <div class="term-bar"><i></i><i></i><i></i><b class="ai-title">/etc/nixos/ml.nix · Local LLM</b></div>
-<pre class="ai-pre" aria-live="polite"><span class="c">{ pkgs, ... }: {</span>
-  services.ollama = {
-    enable = true;
-    package = <span class="p">pkgs.ollama-cuda</span>;
-    loadModels = [ <span class="p">"deepseek-r1:32b"</span> ];
-  };
-  services.open-webui.enable = true;
-<span class="c">}</span>
-
-<span class="hl">$ sudo nixos-rebuild switch</span>
-<span class="ok">✓ chat with DeepSeek-R1 at localhost:8080</span>
-
-<span class="c">// next month: newer models, runtimes, CUDA</span>
-<span class="hl">$ nix flake update &amp;&amp; sudo nixos-rebuild switch</span></pre>
+        <div class="ai-window" aria-live="polite">
+          <div class="ai-bar"><i></i><i></i><i></i><b class="ai-bar-title">localhost:8080 · Open WebUI</b></div>
+          <div class="ai-body"></div>
         </div>
-        <p class="demo-caption">Configurations use modules and packages that ship with NixOS and nixpkgs. Models and batch sizes need matching GPU memory. Output is illustrative.</p>
+        <div class="term ai-config">
+          <div class="term-bar"><i></i><i></i><i></i><b class="ai-config-title">/etc/nixos/ai.nix</b></div>
+<pre class="ai-pre"></pre>
+        </div>
+        <p class="preview-caption">Illustration. Configurations use modules and packages that ship with NixOS and nixpkgs; models need matching GPU memory.</p>
       </div>
     </div>
   </section>
@@ -1233,50 +1255,65 @@ afterFirstPaint(function () {
 
 
 <script>
-  // ML pipeline demo: each choice shows the configuration that sets the machine up for it.
+  // Local AI showcase: each tab shows the tool's UI and the flake config that installs it.
   (function () {
     var root = document.querySelector(".ai-demo");
     if (!root) return;
-    var pre = root.querySelector(".ai-pre"), title = root.querySelector(".ai-title");
+    var body = root.querySelector(".ai-body"), bar = root.querySelector(".ai-bar-title");
+    var pre = root.querySelector(".ai-pre"), desc = document.querySelector(".ai-description");
     function p(t) { return '<span class="p">' + t + "</span>"; }
     function c(t) { return '<span class="c">' + t + "</span>"; }
+    function hl(t) { return '<span class="hl">' + t + "</span>"; }
+    function ok(t) { return '<span class="ok">' + t + "</span>"; }
+    var chat = '<div class="ai-msg me">Explain flake.lock in one sentence.</div>' +
+      '<div class="ai-msg bot"><span class="think">▸ Thought for 4 seconds</span>It pins the exact version of every input, so your system rebuilds the same way until you choose to update.</div>';
     var V = {
-      llm: ["Local LLM", [
-        c("{ pkgs, ... }: {"),
-        "  services.ollama = {", "    enable = true;",
-        "    package = " + p("pkgs.ollama-cuda") + ";",
-        "    loadModels = [ " + p('"deepseek-r1:32b"') + " ];", "  };",
-        "  services.open-webui.enable = true;", c("}"), "",
-        '<span class="hl">$ sudo nixos-rebuild switch</span>',
-        '<span class="ok">✓ chat with DeepSeek-R1 at localhost:8080</span>', '', '<span class="c">// next month: newer models, runtimes, CUDA</span>', '<span class="hl">$ nix flake update &amp;&amp; sudo nixos-rebuild switch</span>']],
-      train: ["PyTorch training", [
-        c("{ pkgs, ... }: {"),
-        "  nixpkgs.config.allowUnfree = true;   " + c("// NVIDIA CUDA"),
-        "  environment.systemPackages = [",
-        "    (" + p("pkgs.python3.withPackages") + " (ps: with ps; [",
-        "      torch-bin torchvision-bin transformers datasets",
-        "      jupyterlab pandas matplotlib", "    ]))",
-        "    " + p("pkgs.nvtopPackages.nvidia") + "   " + c("// watch the GPU"), "  ];", c("}"), "",
-        '<span class="hl">$ sudo nixos-rebuild switch</span>',
-        '<span class="hl">$ python -c "import torch; print(torch.cuda.is_available())"</span>',
-        '<span class="ok">True</span>', '', '<span class="c">// next month: newer models, runtimes, CUDA</span>', '<span class="hl">$ nix flake update &amp;&amp; sudo nixos-rebuild switch</span>']],
-      amd: ["AMD / ROCm", [
-        c("{ pkgs, ... }: {"),
-        "  services.ollama = {", "    enable = true;",
-        "    package = " + p("pkgs.ollama-rocm") + ";",
-        "    loadModels = [ " + p('"deepseek-r1:32b"') + " ];", "  };",
-        "  environment.systemPackages = [ " + p("pkgs.rocmPackages.rocminfo") + " ];", c("}"), "",
-        '<span class="hl">$ sudo nixos-rebuild switch</span>',
-        '<span class="ok">✓ same models, on a Radeon</span>', '', '<span class="c">// next month: newer models, runtimes, CUDA</span>', '<span class="hl">$ nix flake update &amp;&amp; sudo nixos-rebuild switch</span>']]
+      ollama: {
+        bar: "localhost:8080 · Open WebUI",
+        desc: "Ollama serves models over a local API, and Open WebUI gives you a ChatGPT-style chat in the browser. Nothing leaves your machine.",
+        ui: '<div class="ai-side"><small>CHATS</small><span class="on">flake.lock, explained</span><span>Rust lifetimes</span><span>Summarize meeting.txt</span></div>' +
+          '<div class="ai-chat"><span class="ai-chip">deepseek-r1:32b ▾</span>' + chat + '<div class="ai-input">Send a message</div></div>',
+        cfg: [c("{ pkgs, ... }: {"), "  services.ollama = {", "    enable = true;",
+          "    package = " + p("pkgs.ollama-cuda") + ";    " + c("// or ollama-rocm for AMD"),
+          "    loadModels = [ " + p('"deepseek-r1:32b"') + " " + p('"qwen3-coder:30b"') + " ];", "  };",
+          "  services.open-webui.enable = true;", c("}"), "", hl("$ sudo nixos-rebuild switch"),
+          ok("✓ Open WebUI at localhost:8080")]
+      },
+      lmstudio: {
+        bar: "LM Studio",
+        desc: "LM Studio is a desktop app: browse and download models, load one onto the GPU and chat, or serve it to your editor over an OpenAI-compatible API.",
+        ui: '<div class="ai-side"><small>MY MODELS</small><span class="on">DeepSeek-R1-Distill-Qwen-32B</span><span>Qwen3-Coder-30B-A3B</span><span>Llama-3.3-70B-Instruct</span><span>gemma-3-27b-it</span><small>SERVER</small><span>localhost:1234 · running</span></div>' +
+          '<div class="ai-chat"><span class="ai-chip">DeepSeek-R1-Distill-Qwen-32B · Q4_K_M · GPU</span>' + chat + '<div class="ai-input">Type a message</div></div>',
+        cfg: [c("{ pkgs, ... }: {"), "  nixpkgs.config.allowUnfree = true;",
+          "  environment.systemPackages = [ " + p("pkgs.lmstudio") + " ];", c("}"), "",
+          hl("$ sudo nixos-rebuild switch"), ok("✓ LM Studio in your app launcher"), "",
+          c("// the official app, packaged in nixpkgs")]
+      },
+      llamacpp: {
+        bar: "llama-server · localhost:8080",
+        desc: "llama.cpp is the engine inside many local AI tools. Point its server at any GGUF model file and get a web chat and an OpenAI-compatible API.",
+        ui: '<div class="ai-term"><b>$ journalctl -u llama-cpp -f</b>\nload_tensors: offloaded 65/65 layers to GPU\nllama_context: n_ctx = 16384\nmain: model loaded\nmain: server listening on <em>http://127.0.0.1:8080</em>\nslot launch: prompt 18 tokens\nslot release: <em>42.7 tokens per second</em>\n\n<b>$ curl localhost:8080/v1/chat/completions</b> ...\n<em>200 OK</em>  "It pins the exact version of every input..."</div>',
+        cfg: [c("{ pkgs, ... }: {"), "  services.llama-cpp = {", "    enable = true;",
+          "    package = " + p("pkgs.llama-cpp.override { cudaSupport = true; }") + ";",
+          "    model = " + p('"/var/lib/models/DeepSeek-R1-Distill-Qwen-32B-Q4_K_M.gguf"') + ";",
+          "    extraFlags = [ " + p('"-ngl" "99"') + " ];   " + c("// all layers on the GPU"), "  };", c("}"), "",
+          hl("$ sudo nixos-rebuild switch"), ok("✓ llama-server at localhost:8080")]
+      }
     };
-    root.querySelectorAll("[data-ai-model]").forEach(function (btn) {
-      btn.addEventListener("click", function () {
-        var v = V[btn.getAttribute("data-ai-model")];
-        root.querySelectorAll("[data-ai-model]").forEach(function (b) { b.setAttribute("aria-pressed", String(b === btn)); });
-        title.textContent = "/etc/nixos/ml.nix · " + v[0];
-        pre.innerHTML = v[1].join("\n");
-      });
-    });
+    var tabs = root.querySelectorAll("[data-ai]:not(.ai-demo)");
+    function show(key, animate) {
+      var v = V[key];
+      root.setAttribute("data-ai", key);
+      tabs.forEach(function (b) { b.setAttribute("aria-pressed", String(b.getAttribute("data-ai") === key)); });
+      bar.textContent = v.bar;
+      body.innerHTML = v.ui;
+      pre.innerHTML = v.cfg.join("\n");
+      if (desc) desc.textContent = v.desc;
+      body.classList.remove("enter");
+      if (animate) { void body.offsetWidth; body.classList.add("enter"); }
+    }
+    tabs.forEach(function (b) { b.addEventListener("click", function () { show(b.getAttribute("data-ai"), true); }); });
+    show("ollama", false);
   })();
 </script>
 </body>
