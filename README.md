@@ -34,6 +34,8 @@ Run the geometry, pacing, cache reuse and lifecycle checks with `node --test tes
 
 The left column's pane clips overflow without creating a nested scroll container. A 28px gradient fades text crossing the visible top boundary beneath the header or the bottom of the viewport; fully visible text stays opaque. Set `data-scroll-fade="false"` on a `.split` to retain differential scrolling without edge fading. Focus within the copy also removes its mask so focused content is visible. Natural column sizes and document positions are cached after font loads, resizing, and section reveals. Passive scroll events only schedule one animation frame, which computes translations and masks from cached geometry; unchanged styles are not written again.
 
+`.split` always keeps the copy first in the DOM, so reading order and `column-scroll.js`'s copy/panel assumption hold in every section. The desktop showcase in `#flavors` leads with the interactive demo instead, so it swaps the columns visually with grid `order` and a wider demo track; both properties are reset at 860px so the stacked layout reads copy first again.
+
 ## Desktop names
 
 Use **Hyprland - Omarchy** and **KDE Plasma - Atrium** in desktop labels.

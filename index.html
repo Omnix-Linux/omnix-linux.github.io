@@ -290,12 +290,22 @@
     align-items: center; max-width: 1240px; width: 100%;
   }
   .split > * { min-width: 0; }
+  /* The desktop showcase leads with the demo. DOM order stays copy-first for
+     reading order and column-scroll, so only the visual order is swapped. */
+  .split.desktop-showcase { grid-template-columns: minmax(0, 0.95fr) minmax(0, 1.05fr); }
+  .split.desktop-showcase > .scroll-copy-pane { order: 2; }
+  .split.desktop-showcase > .desktop-demo { order: 1; }
   .scroll-copy-pane { display: contents; }
   .scroll-copy { min-width: 0; }
   .split.dual-scroll { align-items: start; }
   .dual-scroll > .scroll-copy-pane { display: block; align-self: stretch; overflow: clip; }
   .dual-scroll .scroll-copy { display: flow-root; }
-  @media (max-width: 860px) { .split { grid-template-columns: minmax(0, 1fr); } }
+  @media (max-width: 860px) {
+    .split, .split.desktop-showcase { grid-template-columns: minmax(0, 1fr); }
+    /* Stacked, the copy has to lead again. */
+    .split.desktop-showcase > .scroll-copy-pane,
+    .split.desktop-showcase > .desktop-demo { order: 0; }
+  }
 
   .eyebrow {
     font-family: var(--font-mono); font-size: var(--step--1); letter-spacing: 0.14em;
