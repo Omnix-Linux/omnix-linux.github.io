@@ -168,6 +168,11 @@
     ]
   };
   var switchTimers = [];
+  // Milliseconds per character while the command types itself in.
+  var TYPE_INTERVAL = 11;
+  // Which desktop the mock is currently themed for, so re-running the same
+  // switch does not flash the surface back to neutral.
+  var themedFor = null;
   var overlay = document.createElement('div');
   overlay.className = 'switch-overlay';
   overlay.hidden = true;
@@ -182,6 +187,10 @@
   }
   function closeSwitch() {
     stopSwitch();
+    // Never leave the mock un-themed: whatever the sequence reached, the
+    // preview settles on the palette of the currently selected desktop.
+    themedFor = demo.dataset.desktop;
+    demo.classList.add('themed');
     overlay.hidden = true;
     if (lastFocus) lastFocus.focus();
   }
@@ -202,11 +211,56 @@
     void overlay.offsetWidth;
     overlay.classList.add('enter');
     overlay.querySelector('.switch-done').focus();
-    switchSteps[desktop].forEach(function (step, index) {
+    var steps = switchSteps[desktop];
+    var reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    // Re-running on the desktop that is already themed should not flash it
+    // back to un-themed; a genuine switch starts from the neutral surface.
+    if (demo.dataset.desktop !== themedFor) demo.classList.remove('themed');
+    var cmd = steps[0];
+    // Reduced motion: no typing, no staggering — everything lands at once.
+    if (reduced) {
+      steps.forEach(function (step, index) {
+        var line = document.createElement('span');
+        line.className = index === 0 ? 'switch-cmd' : 'switch-out';
+        line.textContent = step.text;
+        log.appendChild(line);
+      });
+      // No motion: land straight on the final theme.
+      themedFor = desktop;
+      demo.classList.add('themed');
+      return;
+    }
+    // The command is typed, fast: one character per TYPE_INTERVAL, which puts
+    // a ~57 character command at roughly half a second. The response waits for
+    // the last character, then keeps its own line-by-line rhythm.
+    var typeLine = document.createElement('span');
+    typeLine.className = 'switch-cmd typing';
+    typeLine.textContent = '';
+    log.appendChild(typeLine);
+    var command = cmd.text;
+    for (var i = 0; i < command.length; i++) {
+      (function (at) {
+        switchTimers.push(setTimeout(function () {
+          typeLine.textContent = command.slice(0, at + 1);
+          if (at === command.length - 1) typeLine.classList.remove('typing');
+        }, at * TYPE_INTERVAL));
+      })(i);
+    }
+    var responseAt = command.length * TYPE_INTERVAL;
+    var last = steps[steps.length - 1];
+    steps.slice(1).forEach(function (step, index) {
       var line = document.createElement('span');
-      line.className = index === 0 ? 'switch-cmd' : 'switch-out';
+      line.className = 'switch-out';
       line.textContent = step.text;
-      switchTimers.push(setTimeout(function () { log.appendChild(line); }, step.delay));
+      switchTimers.push(setTimeout(function () {
+        log.appendChild(line);
+        // The theme lands with the final line: the switch is what the command
+        // did, so the preview recolours only once the apply has succeeded.
+        if (step === last) {
+          themedFor = desktop;
+          demo.classList.add('themed');
+        }
+      }, responseAt + step.delay));
     });
   }
   function updateDesktop(play) {
@@ -228,6 +282,10 @@
     if (play) playSwitch(demo.dataset.desktop);
   }
   updateDesktop();
+  // The page opens already showing a themed desktop, so the first switch is a
+  // theme change rather than a jump from an un-themed surface.
+  themedFor = demo.dataset.desktop;
+  demo.classList.add('themed');
   document.querySelectorAll('[data-desktop]').forEach(function (button) {
     if (button.tagName !== 'BUTTON') return;
     button.addEventListener('click', function () {

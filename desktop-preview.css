@@ -12,7 +12,24 @@
 .dock-overview img{filter:brightness(0) invert(1)}
 
 /* Desktop-switch terminal, contained inside the preview pane. */
-.switch-overlay{position:absolute;inset:0;z-index:20;display:grid;place-items:center;padding:clamp(8px,2vw,18px);background:#04060cd9;overflow:auto;border-radius:12px}
+.switch-overlay{position:absolute;inset:0;z-index:20;display:grid;place-items:center;padding:clamp(8px,2vw,18px);background:#04060cdd;overflow:auto;border-radius:12px}
+
+/* Theme applied. `.themed` is set the moment the apply finishes, so the mock
+   visibly recolours as the result of the command rather than before it. The
+   tint is a layer over the preview surface (under the terminal overlay), and
+   transitions only animate its opacity. */
+.preview-screen::after{content:"";position:absolute;inset:0;z-index:15;pointer-events:none;opacity:0;transition:opacity .24s cubic-bezier(.2,.7,.3,1)}
+/* Hyprland: a decisive, mechanical snap to the theme accent. */
+.desktop-demo[data-desktop=omarchy] .preview-screen::after{background:radial-gradient(ellipse 78% 70% at 62% 34%,color-mix(in srgb,var(--o-accent,#9d7cd8) 34%,transparent),transparent 72%)}
+.desktop-demo[data-desktop=omarchy].themed .preview-screen::after{opacity:1}
+/* Plasma: softer and rounder, matching the floating-window metaphor. */
+.desktop-demo[data-desktop=plasma] .preview-screen{transition:opacity .42s cubic-bezier(.22,.68,.3,1)}
+.desktop-demo[data-desktop=plasma] .preview-screen::after{transition:opacity .42s cubic-bezier(.22,.68,.3,1);background:radial-gradient(ellipse 90% 74% at 50% 22%,#3daee955,transparent 74%)}
+.desktop-demo[data-desktop=plasma].themed .preview-screen::after{opacity:1}
+@media (prefers-reduced-motion: reduce){
+  .preview-screen::after,
+  .desktop-demo[data-desktop=plasma] .preview-screen::after{transition:none}
+}
 .switch-window{position:relative;width:100%;max-height:100%;overflow:auto;border:1px solid #2b3648;border-radius:9px;background:#080d17;box-shadow:0 16px 40px #000a}
 .switch-bar{display:flex;align-items:center;gap:10px;padding:8px 12px;border-bottom:1px solid #1c2536;background:#0d1524}
 .switch-dots{display:flex;gap:5px}
@@ -21,6 +38,12 @@
 .switch-log{margin:0;padding:clamp(12px,2.2vw,22px) clamp(12px,2.2vw,22px) clamp(44px,5vw,56px);font:400 clamp(.58rem,1.05vw,.86rem)/1.55 var(--font-mono,monospace);color:#c0caf5;white-space:pre;overflow-x:auto}
 .switch-log span{display:block;opacity:0;animation:switch-in .22s ease-out forwards;white-space:pre}
 .switch-cmd{color:#7dcfff}
+/* Blinking caret while the command is being typed; it stops with `.typing`. */
+/* The typed line must be fully opaque from its first character, otherwise
+   the opening characters appear while it is still fading in. */
+.switch-log .switch-cmd,.switch-log .switch-cmd.typing{animation:none;opacity:1}
+.switch-cmd.typing::after{content:"▌";margin-left:1px;color:#7dcfff;animation:switch-blink .55s steps(1,end) infinite}
+@keyframes switch-blink{50%{opacity:0}}
 .switch-out{color:#9ece6a}
 .switch-out:last-child{color:#c792ea}
 .switch-done{position:absolute;right:8px;bottom:8px;min-height:32px;padding:6px 14px;border:1px solid #3a4a63;border-radius:7px;background:#131c2c;color:#e4f4ff;font:500 .7rem var(--font-mono,monospace);cursor:pointer}
@@ -69,6 +92,7 @@
   .desktop-demo[data-desktop=omarchy] .switch-overlay.enter .switch-window,
   .desktop-demo[data-desktop=plasma] .switch-overlay.enter .switch-window{animation:none}
   .switch-log span{animation:none;opacity:1}
+  .switch-cmd.typing::after{animation:none;content:none}
 }
 
 /* Anchor the switch overlay to the demo pane, not the page. */
