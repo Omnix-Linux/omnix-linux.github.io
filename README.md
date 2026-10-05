@@ -1,3 +1,5 @@
+<img src=".github/assets/icon.png" alt="" width="96">
+
 # omnix-linux.github.io
 
 The Omnix website, served at https://www.omnix-linux.com.

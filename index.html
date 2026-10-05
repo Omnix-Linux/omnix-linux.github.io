@@ -489,6 +489,8 @@
   .foot h4 { margin: 0 0 10px; font-family: var(--font-mono); font-size: var(--step--1); letter-spacing: 0.12em; text-transform: uppercase; color: var(--ice); font-weight: 500; }
   .foot p, .foot li { margin: 0; color: var(--muted); font-size: 0.92rem; }
   .foot ul { list-style: none; padding: 0; margin: 0; display: grid; gap: 6px; }
+  .foot li:has(.repo-icon) { display: flex; align-items: center; gap: 8px; }
+  .foot .repo-icon { flex: none; width: 20px; height: 20px; border-radius: 5px; color: var(--muted); }
   .foot a { color: var(--ink); text-decoration-color: var(--nix); text-underline-offset: 3px; }
   .foot a:hover { color: var(--ice); }
 
@@ -1021,11 +1023,11 @@
     <div>
       <h4>Repositories</h4>
       <ul>
-        <li><a href="https://github.com/Omnix-Linux/Omnix">Omnix</a>: the base and installer</li>
-        <li><a href="https://github.com/Omnix-Linux/Autarchy">Hyprland - Omarchy</a></li>
-        <li><a href="https://github.com/Omnix-Linux/Atrium">KDE Plasma - Atrium</a></li>
-        <li><a href="https://github.com/Omnix-Linux/docker-vm/tree/feat/omnix-demo">Try Omnix</a>: the Docker app</li>
-        <li><a href="https://github.com/Omnix-Linux/Omnix/issues/new?template=bug.yml">Report a bug</a>: one form for everything</li>
+        <li><img class="repo-icon" src="assets/project-icons/omnix.png" alt="" width="20" height="20" loading="lazy"><span><a href="https://github.com/Omnix-Linux/Omnix">Omnix</a>: the base and installer</span></li>
+        <li><img class="repo-icon" src="assets/project-icons/autarchy.png" alt="" width="20" height="20" loading="lazy"><span><a href="https://github.com/Omnix-Linux/Autarchy">Hyprland - Omarchy</a></span></li>
+        <li><img class="repo-icon" src="assets/project-icons/atrium.png" alt="" width="20" height="20" loading="lazy"><span><a href="https://github.com/Omnix-Linux/Atrium">KDE Plasma - Atrium</a></span></li>
+        <li><img class="repo-icon" src="assets/project-icons/docker-vm.png" alt="" width="20" height="20" loading="lazy"><span><a href="https://github.com/Omnix-Linux/docker-vm/tree/feat/omnix-demo">Try Omnix</a>: the Docker app</span></li>
+        <li><svg class="repo-icon" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M9 4.5 7.6 3.1l1.1-1.1L10.4 3.7a5 5 0 0 1 3.2 0L15.3 2l1.1 1.1L15 4.5A4.9 4.9 0 0 1 16.9 8H7.1A4.9 4.9 0 0 1 9 4.5zM6 10h12v4a6 6 0 0 1-5 5.9V12h-2v7.9A6 6 0 0 1 6 14v-4z"/></svg><span><a href="https://github.com/Omnix-Linux/Omnix/issues/new?template=bug.yml">Report a bug</a>: one form for everything</span></li>
       </ul>
     </div>
     <div>
