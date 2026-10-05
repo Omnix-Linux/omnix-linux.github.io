@@ -13,7 +13,7 @@
 <meta property="og:site_name" content="Omnix">
 <meta property="og:locale" content="en_US">
 <meta property="og:title" content="Omnix: Run Omarchy on NixOS — Hyprland or KDE Plasma">
-<meta property="og:description" content="Run Omarchy on NixOS. Omnix is an independent NixOS-based Linux with standard Linux paths, a choice of Hyprland - Omarchy or KDE Plasma - Atrium, and boot-menu rollbacks.">
+<meta property="og:description" content="Run Omarchy on NixOS. Omnix is NixOS with the standard Linux filesystem layout, a choice of Hyprland - Omarchy or KDE Plasma - Atrium, and boot-menu rollbacks.">
 <meta property="og:url" content="https://www.omnix-linux.com/">
 <meta property="og:image" content="https://www.omnix-linux.com/social-preview.png?v=9">
 <meta property="og:image:secure_url" content="https://www.omnix-linux.com/social-preview.png?v=9">
@@ -23,7 +23,7 @@
 <meta property="og:image:alt" content="A large cyan-violet Coronal ring forming the O beside smaller mnix lettering, with the tagline Run Omarchy on NixOS, with Linux paths and rollbacks.">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Omnix: Run Omarchy on NixOS — Hyprland or KDE Plasma">
-<meta name="twitter:description" content="Run Omarchy on NixOS. Omnix is an independent NixOS-based Linux with standard Linux paths, a choice of Hyprland - Omarchy or KDE Plasma - Atrium, and boot-menu rollbacks.">
+<meta name="twitter:description" content="Run Omarchy on NixOS. Omnix is NixOS with the standard Linux filesystem layout, a choice of Hyprland - Omarchy or KDE Plasma - Atrium, and boot-menu rollbacks.">
 <meta name="twitter:image" content="https://www.omnix-linux.com/social-preview.png?v=9">
 <meta name="twitter:image:alt" content="A large cyan-violet Coronal ring forming the O beside smaller mnix lettering, with the tagline Run Omarchy on NixOS, with Linux paths and rollbacks.">
 <title>Omnix: Run Omarchy on NixOS — Hyprland or KDE Plasma</title>
@@ -71,7 +71,7 @@
     } catch (e) {}
   })();
 </script>
-<meta name="description" content="Run Omarchy on NixOS. Omnix is an independent NixOS-based Linux with standard Linux paths, a choice of Hyprland - Omarchy or KDE Plasma - Atrium, and boot-menu rollbacks.">
+<meta name="description" content="Run Omarchy on NixOS. Omnix is NixOS with the standard Linux filesystem layout, a choice of Hyprland - Omarchy or KDE Plasma - Atrium, and boot-menu rollbacks.">
 <script type="application/ld+json">
 {
  "@context": "https://schema.org",
@@ -86,7 +86,7 @@
    "@type": "SoftwareApplication",
    "@id": "https://www.omnix-linux.com/#omnix",
    "name": "Omnix",
-   "description": "Omnix is an independent, NixOS-based Linux distribution that adds a small FHS compatibility layer so Omarchy's Hyprland desktop, KDE Plasma - Atrium and prebuilt Linux software run on NixOS, with declarative configuration and boot-menu rollbacks.",
+   "description": "Omnix is NixOS with the standard Linux filesystem layout. It adds that layout as a layer — no forked packages, no overlays — so Omarchy's Hyprland desktop, KDE Plasma - Atrium and prebuilt Linux software run unmodified, with declarative configuration and boot-menu rollbacks.",
    "applicationCategory": "OperatingSystem",
    "operatingSystem": "Linux (x86-64)",
    "softwareVersion": "0.1.0",
@@ -117,7 +117,7 @@
      "name": "What is Omnix?",
      "acceptedAnswer": {
       "@type": "Answer",
-      "text": "Omnix is an independent, NixOS-based Linux distribution that adds a small FHS compatibility layer so Omarchy's Hyprland desktop, KDE Plasma - Atrium and prebuilt Linux software run on NixOS, with declarative configuration and boot-menu rollbacks."
+      "text": "Omnix is NixOS with the standard Linux filesystem layout. It adds that layout as a layer — no forked packages, no overlays — so Omarchy's Hyprland desktop, KDE Plasma - Atrium and prebuilt Linux software run unmodified, with declarative configuration and boot-menu rollbacks."
      }
     },
     {
@@ -149,7 +149,7 @@
      "name": "Is Omnix a NixOS fork?",
      "acceptedAnswer": {
       "@type": "Answer",
-      "text": "No. Omnix is NixOS (nixos-unstable) with unmodified nixpkgs packages from cache.nixos.org. It adds a small compatibility layer built from nix-ld and envfs, with no overlays or patches."
+      "text": "No. Omnix is NixOS (nixos-unstable) with unmodified nixpkgs packages from cache.nixos.org. It adds the standard Linux filesystem layout as a layer built from nix-ld and envfs — symlinks and a library cache, with no overlays, no patched packages and nothing forked."
      }
     },
     {
@@ -388,15 +388,6 @@
   .term .ok { color: var(--ok); }
   .term .bad { color: #fca5a5; }
   .term .hl { color: var(--ice); }
-  .fs-result { padding: 18px 20px; color: var(--muted); }
-  .fs-result h3 { margin: 0; font: inherit; font-size: 1.15em; font-weight: 700; color: var(--ink); }
-  .fs-result code { color: var(--ice); overflow-wrap: anywhere; }
-  .fs-mapping { margin: 16px 0 0; padding: 0 0 6px; list-style: none; overflow-x: auto; }
-  .fs-mapping li { padding-block: 10px; border-top: 1px solid var(--line); white-space: nowrap; }
-  .fs-mapping code { overflow-wrap: normal; }
-  .fs-mapping .comment { color: var(--muted); }
-  .fs-mapping .arrow { color: var(--violet); }
-  .fs-mapping:focus-visible { outline: 2px solid var(--ice); outline-offset: 3px; }
 
 
 
@@ -547,12 +538,11 @@
   <a href="#who" aria-label="Who Omnix is for"></a>
   <a href="#flavors" aria-label="Choose your desktop"></a>
   <a href="#atrium" aria-label="KDE Plasma - Atrium"></a>
-  <a href="#omarchy" aria-label="Hyprland - Omarchy: Omarchy ported to NixOS"></a>
   <a href="#rollback" aria-label="Every update can be undone"></a>
   <a href="#runs" aria-label="Linux apps working on NixOS"></a>
-  <a href="#ported" aria-label="Under the hood: standard Linux paths"></a>
+  <a href="#ported" aria-label="Save your configuration as a git repo"></a>
   <a href="#install" aria-label="Try Omnix"></a>
-  <a href="#vision" aria-label="Vision: WASM plugins and portable executables"></a>
+  <a href="#vision" aria-label="Coming next: APE support and a WebAssembly runtime"></a>
   <a href="#faq" aria-label="Frequently asked questions"></a>
 </nav>
 
@@ -573,8 +563,8 @@
   <section id="who" class="who">
     <div class="who-intro">
       <div class="eyebrow">Who it’s for</div>
-      <h2>Start from <em>wherever you are.</em></h2>
-      <p class="lede">Omnix is an independent, NixOS-based Linux distribution that adds a small FHS compatibility layer so Omarchy’s Hyprland desktop, KDE Plasma - Atrium and prebuilt Linux software run on NixOS, with declarative configuration and boot-menu rollbacks.</p>
+      <h2>Pick a desktop</h2>
+      <p class="lede">Omnix is NixOS with the standard Linux filesystem layout. It adds that layout as a layer — no forked packages, no overlays — so Omarchy’s Hyprland desktop, KDE Plasma - Atrium and prebuilt Linux software run unmodified, with declarative configuration and boot-menu rollbacks.</p>
       <div class="try-options">
         <article class="try-card">
           <h3>New to Linux?</h3>
@@ -650,33 +640,6 @@ Inter                 // interface font
     </div>
   </section>
 
-  <section id="omarchy">
-    <div class="split">
-      <div>
-        <div class="eyebrow">Hyprland - Omarchy</div>
-        <h2>Omarchy’s Hyprland desktop, <em>ported to NixOS.</em></h2>
-        <p class="lede"><strong>Hyprland - Omarchy is an independent port of Omarchy to Omnix.</strong> It runs Omarchy’s own Hyprland configuration, keybindings, themes and scripts, and maps 131 of Omarchy’s 147 base packages to nixpkgs.</p>
-        <p class="lede">Choose <code>stable</code> for a pinned Omarchy release or <code>latest</code> to follow its development branch. Updates come from <code>nix flake update</code> and a rebuild instead of pacman. <a href="https://github.com/Omnix-Linux/Autarchy#readme">See the port’s known gaps</a>.</p>
-      </div>
-      <div class="term">
-        <div class="term-bar"><i></i><i></i><i></i><b>Hyprland - Omarchy: paths at a glance</b></div>
-<pre aria-label="ASCII map of Omnix compatibility and Omarchy desktop paths"><span class="hl">Linux compatibility paths</span>
-/bin/bash                 // shell for scripts
-/bin/*                    // tools from your PATH
-/usr/bin/*                // tools from your PATH
-/usr/lib                  // Nix-managed library tree
-/lib -&gt; /usr/lib          // shared libraries
-/lib64/ld-linux-x86-64.so.2 // nix-ld loader
-/sbin/ldconfig            // library cache tool
-/etc/ld.so.cache          // generated library index
-/nix/store                // Nix-managed packages
-
-<span class="hl">Omarchy desktop paths</span>
-$OMARCHY_PATH             // commands, themes &amp; defaults
-~/.config                 // your desktop configuration</pre>
-      </div>
-    </div>
-  </section>
 
   <section id="rollback">
     <div class="split">
@@ -734,25 +697,37 @@ $OMARCHY_PATH             // commands, themes &amp; defaults
   <section id="ported">
     <div class="split" id="problem">
       <div>
-        <div class="eyebrow">Under the hood</div>
-        <h2>Why Omarchy needs <em>standard Linux paths.</em></h2>
-        <p class="lede">Omarchy’s scripts expect the folder layout defined by the Filesystem Hierarchy Standard (FHS).
-          Stock NixOS provides only <code>/bin/sh</code> and <code>/usr/bin/env</code>, so Omarchy can’t run on it as is.</p>
-        <p class="lede"><strong>Omnix fills that gap with tools nixpkgs already ships:</strong> nix-ld for the ELF loader and
-          envfs for <code>/usr/bin</code>. The result is Omarchy’s desktop in a declarative Nix configuration that you,
-          or an AI assistant, can read, edit and reproduce.</p>
+        <div class="eyebrow">Your system, in text</div>
+        <h2>Save your entire computer configuration <em>as a git repo.</em></h2>
+        <p class="lede">Your whole system is one file you own in <code>/etc/nixos</code>: the packages, the desktop, the
+          keyboard shortcuts, the wallpaper. Change it in a text editor, commit it, and the history is the record of
+          what you changed and when.</p>
+        <p class="lede"><strong>Share it as an Omnix flake.</strong> Point a friend, a teammate or an AI assistant at the
+          repo and they get the same machine. Nothing is hidden in a GUI, and nothing is lost when the disk dies.</p>
       </div>
       <div class="term">
-        <div class="term-bar"><i></i><i></i><i></i><b>Familiar paths. Nix underneath.</b></div>
-        <div class="fs-result">
-          <h3>FHS paths + Nix packages</h3>
-          <ul class="fs-mapping" tabindex="0" aria-label="FHS paths to Nix targets, with purpose comments. Scroll horizontally for full lines.">
-            <li><code>/bin/bash <span class="arrow">-&gt;</span> /nix/store/…-bash/bin/bash <span class="comment">// shell</span></code></li>
-            <li><code>/usr/bin/* <span class="arrow">-&gt;</span> $PATH <span class="comment">// tools &amp; interpreters</span></code></li>
-            <li><code>/lib, /usr/lib <span class="arrow">-&gt;</span> /nix/store/…/lib <span class="comment">// libraries</span></code></li>
-            <li><code>/lib64/ld-linux-x86-64.so.2 <span class="arrow">-&gt;</span> nix-ld <span class="comment">// ELF loader</span></code></li>
-          </ul>
-        </div>
+        <div class="term-bar"><i></i><i></i><i></i><b>~/.config/omnix</b></div>
+<pre aria-label="An Omnix configuration flake committed to git"><span class="hl">$ git init &amp;&amp; git remote add origin</span>
+  <span class="p">git@github.com:you/omnix-config.git</span>
+
+<span class="hl">$ cat flake.nix</span>
+{
+  <span class="c">// the whole machine, as text</span>
+  inputs.nixpkgs.url = <span class="p">"github:NixOS/nixpkgs/nixos-unstable"</span>;
+  inputs.omnix.url = <span class="p">"github:Omnix-Linux/Omnix"</span>;
+  outputs = { nixpkgs, omnix, ... }: {
+    nixosConfigurations.<span class="p">"laptop"</span> = nixpkgs.lib.nixosSystem {
+      modules = [
+        omnix.nixosModules.default
+        <span class="p">./hardware.nix</span>      <span class="c">// disks, GPU</span>
+        <span class="p">./desktop.nix</span>      <span class="c">// Hyprland - Omarchy</span>
+      ];
+    };
+  };
+}
+
+<span class="hl">$ git push</span>
+<span class="ok">✓ same machine, anywhere</span></pre>
       </div>
     </div>
   </section>
@@ -801,21 +776,21 @@ $OMARCHY_PATH             // commands, themes &amp; defaults
   <section id="vision">
     <div class="split">
       <div>
-        <div class="eyebrow">Vision · not yet built</div>
-        <h2>What’s next: <em>tiny plugins, portable programs.</em></h2>
-        <p class="lede">These are ideas the Omnix project is exploring. Nothing in this section ships today.</p>
-        <p class="lede"><strong>WebAssembly (WASM) plugins.</strong> Plugins as small, sandboxed WASM modules, aiming for
-          near-native speed on top of a stable kernel-API platform.</p>
-        <p class="lede"><strong>Actually Portable Executables (APE).</strong> Single-file programs in the style of Cosmopolitan,
-          one binary for many operating systems, treated as first-class apps beside Nix packages.</p>
+        <div class="eyebrow">Coming next</div>
+        <h2>Portable programs <em>and a WebAssembly runtime.</em></h2>
+        <p class="lede">Running prebuilt software already works out of the box: the base ships a loader, so ordinary Linux programs run unmodified. What comes next covers the two kinds that do not need a Linux binary at all.</p>
+        <p class="lede"><strong>Actually Portable Executables (APE).</strong> Built-in support for Cosmopolitan-style
+          single-file programs: one file that runs on many operating systems, treated as a first-class app beside Nix packages.</p>
+        <p class="lede"><strong>A WebAssembly runtime for micro apps.</strong> Small sandboxed WASM modules, aiming for
+          near-native speed on top of a stable kernel API — programs with no Linux build at all.</p>
       </div>
       <div class="term">
         <div class="term-bar"><i></i><i></i><i></i><b>status: planned</b></div>
-<pre aria-label="Planned plugin and executable model"><span class="hl">plugin.wasm</span>            // tiny, sandboxed
-  '-- kernel-API platform // stable host interface
-
-<span class="hl">app.com</span> (APE)          // one file, many OSes
+<pre aria-label="Planned APE and WebAssembly application model"><span class="hl">app.ape</span>               // one file, many OSes
   '-- first-class app    // runs like any app
+
+<span class="hl">micro.wasm</span>             // no Linux build needed
+  '-- kernel-API platform // sandboxed, stable host
 
 <span class="p">/* planned · not shipped */</span></pre>
       </div>
@@ -829,7 +804,7 @@ $OMARCHY_PATH             // commands, themes &amp; defaults
       <div class="faq-list">
         <details open>
           <summary>What is Omnix?</summary>
-          <p>Omnix is an independent, NixOS-based Linux distribution that adds a small FHS compatibility layer so Omarchy's Hyprland desktop, KDE Plasma - Atrium and prebuilt Linux software run on NixOS, with declarative configuration and boot-menu rollbacks.</p>
+          <p>Omnix is NixOS with the standard Linux filesystem layout. It adds that layout as a layer — no forked packages, no overlays — so Omarchy's Hyprland desktop, KDE Plasma - Atrium and prebuilt Linux software run unmodified, with declarative configuration and boot-menu rollbacks.</p>
         </details>
         <details>
           <summary>Can I run Omarchy on NixOS?</summary>
@@ -845,7 +820,7 @@ $OMARCHY_PATH             // commands, themes &amp; defaults
         </details>
         <details>
           <summary>Is Omnix a NixOS fork?</summary>
-          <p>No. Omnix is NixOS (nixos-unstable) with unmodified nixpkgs packages from cache.nixos.org. It adds a small compatibility layer built from nix-ld and envfs, with no overlays or patches.</p>
+          <p>No. Omnix is NixOS (nixos-unstable) with unmodified nixpkgs packages from cache.nixos.org. It adds the standard Linux filesystem layout as a layer built from nix-ld and envfs — symlinks and a library cache, with no overlays, no patched packages and nothing forked.</p>
         </details>
         <details>
           <summary>What does an Omnix rollback restore?</summary>

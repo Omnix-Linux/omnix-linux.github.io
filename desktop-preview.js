@@ -3,7 +3,7 @@
   var demo = document.querySelector('.desktop-demo');
   if (!demo) return;
   var monitors = demo.querySelector('.preview-monitors');
-  var dockApps = [{"name": "Settings", "icon": "assets/desktop-icons/preferences-system.svg"}, {"name": "Dolphin", "icon": "assets/desktop-icons/org.kde.dolphin.svg"}, {"name": "Brave", "icon": "assets/desktop-icons/brave-browser.png"}, {"name": "Telegram", "icon": "assets/desktop-icons/org.telegram.desktop.png"}, {"name": "Signal", "icon": "assets/desktop-icons/signal-desktop.png"}, {"name": "Slack", "icon": "assets/desktop-icons/slack.png"}, {"name": "Zoom", "icon": null}, {"name": "DBeaver", "icon": "assets/desktop-icons/dbeaver.png"}, {"name": "kitty", "icon": "assets/desktop-icons/kitty.svg"}, {"name": "Sublime Text", "icon": "assets/desktop-icons/sublime-text.png"}, {"name": "Photon Studio", "icon": null}, {"name": "Kdenlive", "icon": "assets/desktop-icons/kdenlive.svg"}, {"name": "HandBrake", "icon": "assets/desktop-icons/fr.handbrake.ghb.svg"}, {"name": "OBS Studio", "icon": "assets/desktop-icons/com.obsproject.Studio.svg"}, {"name": "Docker", "icon": "assets/desktop-icons/docker-tui.svg"}, {"name": "Podman Desktop", "icon": "assets/desktop-icons/podman-desktop.svg"}, {"name": "Docker VM", "icon": null}, {"name": "Boatswain", "icon": "assets/desktop-icons/com.feaneron.Boatswain.svg"}, {"name": "Hermes", "icon": "assets/desktop-icons/pyweb-view.hermes.png"}];
+  var dockApps = [{"name": "Settings", "icon": "assets/desktop-icons/preferences-system.svg"}, {"name": "Dolphin", "icon": "assets/desktop-icons/org.kde.dolphin.svg"}, {"name": "Brave", "icon": "assets/desktop-icons/brave-browser.png"}, {"name": "Telegram", "icon": "assets/desktop-icons/org.telegram.desktop.png"}, {"name": "Signal", "icon": "assets/desktop-icons/signal-desktop.png"}, {"name": "Slack", "icon": "assets/desktop-icons/slack.png"}, {"name": "Zoom", "icon": "zoom"}, {"name": "DBeaver", "icon": "assets/desktop-icons/dbeaver.png"}, {"name": "kitty", "icon": "assets/desktop-icons/kitty.svg"}, {"name": "Sublime Text", "icon": "assets/desktop-icons/sublime-text.png"}, {"name": "Photon Studio", "icon": "photon"}, {"name": "Kdenlive", "icon": "assets/desktop-icons/kdenlive.svg"}, {"name": "HandBrake", "icon": "assets/desktop-icons/fr.handbrake.ghb.svg"}, {"name": "OBS Studio", "icon": "assets/desktop-icons/com.obsproject.Studio.svg"}, {"name": "Docker", "icon": "assets/desktop-icons/docker-tui.svg"}, {"name": "Podman Desktop", "icon": "assets/desktop-icons/podman-desktop.svg"}, {"name": "Docker VM", "icon": "dockervm"}, {"name": "Boatswain", "icon": "assets/desktop-icons/com.feaneron.Boatswain.svg"}, {"name": "Hermes", "icon": "assets/desktop-icons/pyweb-view.hermes.png"}];
   var names = ['editor', 'build', 'logs', 'shell'];
   for (var monitor = 0; monitor < 2; monitor++) {
     let screen = document.createElement('div');
@@ -42,7 +42,9 @@
       stage.appendChild(layer);
     }
     var switcher = screen.querySelector('.workspace-switcher');
-    for (var workspace = 1; workspace <= 4; workspace++) {
+    // Atrium ships two virtual desktops; the tiled Omarchy demo shows four.
+    var desktopCount = 2;
+    for (var workspace = 1; workspace <= desktopCount; workspace++) {
       var button = document.createElement('button');
       button.type = 'button';
       button.textContent = workspace;
@@ -60,12 +62,18 @@
       launcher.type = 'button';
       launcher.title = app.name;
       launcher.setAttribute('aria-label', 'Preview ' + app.name);
-      if (app.icon) {
+      if (app.icon.indexOf('/') === -1) {
+        // No asset for this app; draw a simple glyph so the dock stays even.
+        var mark = document.createElement('span');
+        mark.className = 'dock-glyph glyph-' + app.icon;
+        mark.setAttribute('aria-hidden', 'true');
+        launcher.appendChild(mark);
+      } else {
         var icon = document.createElement('img');
         icon.src = app.icon;
         icon.alt = '';
         launcher.appendChild(icon);
-      } else { launcher.textContent = app.name.slice(0, 2); }
+      }
       launcher.addEventListener('click', function () {
         screen.querySelector('.app-preview-notice').textContent = app.name + ' · launcher preview';
       });
@@ -115,7 +123,7 @@
           card.setAttribute('aria-pressed', workspace.getAttribute('aria-pressed'));
           var thumbnail = document.createElement('span');
           thumbnail.className = 'overview-thumbnail';
-          for (var tile = 0; tile < 4; tile++) thumbnail.appendChild(document.createElement('i'));
+          for (var tile = 0; tile < desktopCount; tile++) thumbnail.appendChild(document.createElement('i'));
           card.appendChild(thumbnail);
           card.addEventListener('click', function () {
             workspace.click();

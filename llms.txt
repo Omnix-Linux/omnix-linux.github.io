@@ -1,8 +1,8 @@
 # Omnix
 
-> Omnix is an independent, NixOS-based Linux distribution that adds a small FHS compatibility layer so Omarchy's Hyprland desktop, KDE Plasma - Atrium and prebuilt Linux software run on NixOS, with declarative configuration and boot-menu rollbacks.
+> Omnix is NixOS with the standard Linux filesystem layout. That layout is a layer of symlinks and a library cache over unmodified nixpkgs — nothing is forked, overlaid or patched — so Omarchy's Hyprland desktop, KDE Plasma - Atrium and prebuilt Linux software run as-is, with declarative configuration and boot-menu rollbacks.
 
-- Base: NixOS (nixos-unstable). Packages stay unmodified in /nix/store and download from cache.nixos.org; no overlays or patches.
+- Base: NixOS (nixos-unstable), unmodified. Packages stay as-is in /nix/store and download from cache.nixos.org; Omnix adds only filesystem layout (symlinks, a library cache), so there are no overlays, no patched packages and no fork.
 - Compatibility layer: nix-ld (the /lib64/ld-linux-x86-64.so.2 loader), envfs (/usr/bin, /bin), and a Nix-managed /usr/lib.
 - Installer: ISO v0.1.0 for x86-64 PCs; run `sudo omnix-install` and choose a disk, encryption and desktop.
 - Desktops ("flavors"):
@@ -23,7 +23,9 @@
 - [KDE Plasma - Atrium flavor](https://github.com/Omnix-Linux/Atrium)
 - [Try Omnix Docker app](https://github.com/Omnix-Linux/docker-vm/blob/feat/omnix-demo/docs/OMNIX.md)
 
-## Vision (not yet built)
+## Coming next
 
-- Plugins as small, sandboxed WebAssembly (WASM) modules, aiming for near-native speed on a stable kernel-API platform.
-- Actually Portable Executables (APE, Cosmopolitan-style single-file programs) as first-class apps.
+Running prebuilt software already works out of the box: the base ships a loader, so ordinary Linux programs run unmodified. The planned work covers the two kinds that need no Linux binary at all.
+
+- Built-in support for Actually Portable Executables (APE): Cosmopolitan-style single-file programs, one file that runs on many operating systems, treated as first-class apps.
+- A WebAssembly runtime for micro apps: small sandboxed WASM modules on a stable kernel API, aiming for near-native speed.
