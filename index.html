@@ -264,12 +264,14 @@
   }
 
   /* Subtle static backdrop; the animated shader belongs to the logo. */
+  /* Fixed backdrops take the large viewport height (vh is lvh on iOS), which stays constant
+     while Safari's toolbars slide. inset: 0 would resize them mid-scroll and the glow would jump. */
   body::before {
-    content: ""; position: fixed; inset: 0; z-index: 0; pointer-events: none;
+    content: ""; position: fixed; inset: 0 0 auto; height: 100vh; height: 100lvh; z-index: 0; pointer-events: none;
     background: radial-gradient(ellipse 55% 42% at 28% 35%, #10152f 0%, #080b19 45%, var(--void) 80%);
   }
   .scrim {
-    position: fixed; inset: 0; z-index: 1; pointer-events: none;
+    position: fixed; inset: 0 0 auto; height: 100vh; height: 100lvh; z-index: 1; pointer-events: none;
     background: linear-gradient(90deg, rgba(4, 5, 12, 0.08) 0%, rgba(4, 5, 12, 0.12) 48%, rgba(4, 5, 12, 0.55) 100%);
   }
   main { position: relative; z-index: 3; }
@@ -600,7 +602,7 @@
   <a href="#top" aria-label="Omnix"></a>
   <a href="#who" aria-label="Why Omnix"></a>
   <a href="#flavors" aria-label="Choose your desktop"></a>
-  <a href="#ml" aria-label="Private AI on your own GPU, running in minutes"></a>
+  <a href="#ml" aria-label="Private AI on your own GPU, running instantly"></a>
   <a href="#rollback" aria-label="Every update can be undone"></a>
   <a href="#runs" aria-label="Linux apps working on NixOS"></a>
   <a href="#ported" aria-label="Save your configuration as a git repo"></a>
@@ -661,7 +663,7 @@
     <div class="split">
       <div>
         <div class="eyebrow">Local AI</div>
-        <h2>Private AI on your own GPU, <em>running in minutes.</em></h2>
+        <h2>Private AI on your own GPU, <em>running instantly.</em></h2>
         <p class="lede">Run Qwen, Llama and Gemma on your own hardware, with no account, no API bill and no data
           leaving your machine. Omnix turns the usual afternoon of drivers, CUDA versions and install guides into a few
           lines of configuration and a single rebuild.</p>
