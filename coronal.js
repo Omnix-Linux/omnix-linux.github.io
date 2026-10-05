@@ -45,8 +45,11 @@ afterFirstPaint(async function () {
     var fontSize = widthPerPixel > 0 ? suffixWidth / widthPerPixel : measuredFontSize;
     // Treat the O as a letter beside mnix, with a balanced, centered wordmark.
     var maxArtworkSize = (W - suffixWidth - 16 - rightGutter) / (geometry.ring.radius * 2 + mode.suffixGapToArtworkSize);
+    // Phones have height to spare, so the O grows past the desktop letter ratio
+    // instead of leaving the hero slack. The width cap still bounds it.
+    var ringRatio = mode.ringDiameterToFontSize || registry.layout.suffix.ringDiameterToFontSize;
     var size = Math.min(W * mode.sizeViewportWidth, H * mode.sizeViewportHeight, maxArtworkSize,
-      fontSize * registry.layout.suffix.ringDiameterToFontSize / (geometry.ring.radius * 2));
+      fontSize * ringRatio / (geometry.ring.radius * 2));
     var ringRadius = geometry.ring.radius * size;
     var groupWidth = ringRadius * 2 + mode.suffixGapToArtworkSize * size + suffixWidth;
     var groupLeft = Math.max(16, Math.min((W - groupWidth) / 2, W - groupWidth - rightGutter));

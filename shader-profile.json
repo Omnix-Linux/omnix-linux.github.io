@@ -65,7 +65,8 @@
       "centerXViewport": 0.37,
       "sizeViewportWidth": 1,
       "sizeViewportHeight": 1.1,
-      "suffixGapToArtworkSize": 0
+      "suffixGapToArtworkSize": 0,
+      "ringDiameterToFontSize": 2.35
     },
     "suffix": {
       "text": "mnix",
