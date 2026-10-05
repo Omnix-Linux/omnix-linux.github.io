@@ -36,7 +36,6 @@ afterFirstPaint(async function () {
     var mode = W <= registry.layout.mobile.maxViewportWidth ? registry.layout.mobile : registry.layout.desktop;
     // Read geometry together before touching any styles.
     var box = wordmark.getBoundingClientRect();
-    var heroTop = hero.getBoundingClientRect().top + window.scrollY;
     var measuredFontSize = parseFloat(getComputedStyle(suffix).fontSize);
     if (suffixWidthPerPixel === null) suffixWidthPerPixel = suffix.getBoundingClientRect().width / measuredFontSize;
     var widthPerPixel = suffixWidthPerPixel;
@@ -75,7 +74,6 @@ afterFirstPaint(async function () {
     var taglineTop = anchor.y + Math.max(anchor.radius, fontSize / 2) + 28;
     tagline.style.setProperty("--tagline-top", taglineTop + "px");
     tagline.style.setProperty("--tagline-width", taglineWidth + "px");
-    if (W <= 860) hero.style.setProperty("--hero-hint-top", (taglineTop + tagline.offsetHeight + 24 - heroTop) + "px");
     if (reduce.matches) revealWordmark();
     return { width: W, height: H, size: size, left: left, top: top, mode: mode };
   }

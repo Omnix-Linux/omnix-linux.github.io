@@ -175,6 +175,8 @@
   var themedFor = null;
   // The desktop the user asked for, not yet applied.
   var pendingDesktop = null;
+  // Set while the console is dismissing itself after a successful apply.
+  var autoClosing = false;
   var overlay = document.createElement('div');
   overlay.className = 'switch-overlay';
   overlay.hidden = true;
@@ -189,9 +191,10 @@
   }
   function closeSwitch() {
     stopSwitch();
-    // Settle on whatever the user chose, even if the sequence was cut short,
-    // so the preview never disagrees with the pressed tab.
-    if (pendingDesktop) { commitDesktop(pendingDesktop); pendingDesktop = null; }
+    // Settle on whatever the user chose, unless the apply already finished and
+    // scheduled its own swap: do not commit twice, or the theme would flip and
+    // then immediately re-run.
+    if (pendingDesktop && !autoClosing) { commitDesktop(pendingDesktop); pendingDesktop = null; }
     themedFor = demo.dataset.desktop;
     demo.classList.add('themed');
     overlay.hidden = true;
@@ -259,17 +262,23 @@
     var last = steps[steps.length - 1];
     // The swap waits out a beat after the last line: a short reboot pause
     // before the desktop actually changes over.
-    var REBOOT_PAUSE = 250;
+    var SETTLE_MS = 220, REBOOT_PAUSE = 250;
     steps.slice(1).forEach(function (step, index) {
       var line = document.createElement('span');
       line.className = 'switch-out';
       line.textContent = step.text;
       switchTimers.push(setTimeout(function () {
         log.appendChild(line);
-        // The swap lands a beat after the final line: the command finishes,
-        // the system reboots, and only then does the desktop change over.
+        // The console terminates itself once the apply reports success, and
+        // the desktop changes over a quarter-second after it has gone.
         if (step === last) {
-          switchTimers.push(setTimeout(function () { commitDesktop(desktop); }, REBOOT_PAUSE));
+          switchTimers.push(setTimeout(function () {
+            autoClosing = true;
+            closeSwitch();
+            autoClosing = false;
+            pendingDesktop = null;
+            switchTimers.push(setTimeout(function () { commitDesktop(desktop); }, REBOOT_PAUSE));
+          }, SETTLE_MS));
         }
       }, responseAt + step.delay));
     });
