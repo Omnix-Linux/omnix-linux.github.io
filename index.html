@@ -553,7 +553,7 @@
   <a href="#top" aria-label="Omnix"></a>
   <a href="#who" aria-label="Why Omnix"></a>
   <a href="#flavors" aria-label="Choose your desktop"></a>
-  <a href="#atrium" aria-label="KDE Plasma - Atrium"></a>
+  <a href="#ml" aria-label="Switch your machine into an ML workstation"></a>
   <a href="#rollback" aria-label="Every update can be undone"></a>
   <a href="#runs" aria-label="Linux apps working on NixOS"></a>
   <a href="#ported" aria-label="Save your configuration as a git repo"></a>
@@ -609,37 +609,48 @@
     </div>
   </section>
 
-  <section id="atrium">
+  <section id="ml">
     <div class="split">
       <div>
-        <div class="eyebrow">KDE Plasma - Atrium</div>
-        <h2>Omarchy ideas, <em>on KDE Plasma.</em></h2>
-        <p class="lede"><strong>KDE Plasma - Atrium is a polished, mouse-first KDE Plasma 6 desktop</strong> for people who like windows,
-          a taskbar and a mouse. It borrows keyboard habits Omarchy users will recognize, while staying a familiar desktop.</p>
-        <p class="lede">The whole desktop is declared in Nix through home-manager and plasma-manager, so a fresh install looks
-          exactly like the screenshot and you can edit it as text. Bringing more of Omarchy’s ideas to KDE Plasma is where this flavor is headed.</p>
+        <div class="eyebrow">Machine learning, ready to run</div>
+        <h2>Switch your machine into <em>an ML workstation.</em></h2>
+        <p class="lede">Setting up a computer for machine learning usually takes a day: the GPU driver, a CUDA version
+          that matches it, a PyTorch build that matches that, Jupyter, a model server, and a guide that is already out
+          of date. On Omnix it is one line in your flake.</p>
+        <p class="lede"><strong>Pick a pipeline and rebuild.</strong> Local LLMs like DeepSeek-R1 with a chat app,
+          PyTorch training with CUDA and Jupyter, or the same stack on an AMD card with ROCm. Every piece comes from
+          nixpkgs, with versions chosen to work together, as prebuilt binaries wherever they exist.</p>
+        <p class="lede"><strong>And <code>pip install</code> still works.</strong> The Omnix base provides the standard
+          Linux layout, so the prebuilt CUDA wheels from PyPI, conda and vendor SDKs run as they do on any other
+          distribution.</p>
+        <p class="lede"><strong>Nothing to break.</strong> Switching pipelines is a new boot-menu entry, so the setup
+          that trained yesterday's model is one step back. Push the flake and your whole team gets the identical
+          stack, down to the CUDA version.</p>
       </div>
-      <div class="term">
-        <div class="term-bar"><i></i><i></i><i></i><b>KDE Plasma - Atrium: what ships today</b></div>
-<pre aria-label="KDE Plasma - Atrium features"><span class="hl">Keyboard</span>
-Meta+W, Meta+Tab      // overview of windows
-Meta+G                // grid of desktops
-250 ms key repeat     // 50 keys a second
+      <div class="ai-demo">
+        <div class="demo-controls" role="group" aria-label="Choose a machine learning pipeline">
+          <button type="button" data-ai-model="llm" aria-pressed="true">Local LLM</button>
+          <button type="button" data-ai-model="train" aria-pressed="false">PyTorch training</button>
+          <button type="button" data-ai-model="amd" aria-pressed="false">AMD / ROCm</button>
+        </div>
+        <div class="term">
+          <div class="term-bar"><i></i><i></i><i></i><b class="ai-title">/etc/nixos/ml.nix · Local LLM</b></div>
+<pre class="ai-pre" aria-live="polite"><span class="c">{ pkgs, ... }: {</span>
+  services.ollama = {
+    enable = true;
+    package = <span class="p">pkgs.ollama-cuda</span>;
+    loadModels = [ <span class="p">"deepseek-r1:32b"</span> ];
+  };
+  services.open-webui.enable = true;
+<span class="c">}</span>
 
-<span class="hl">Desktop</span>
-per-screen desktops   // each monitor on its own
-launcher dock         // pinned apps
-clickable clock       // calendar popup
-
-<span class="hl">Fonts</span>
-JetBrainsMono Nerd    // Omarchy's terminal font
-Inter                 // interface font
-
-<span class="ok">home-manager + plasma-manager</span> // all as Nix</pre>
+<span class="hl">$ sudo nixos-rebuild switch</span>
+<span class="ok">✓ chat with DeepSeek-R1 at localhost:8080</span></pre>
+        </div>
+        <p class="demo-caption">Configurations use modules and packages that ship with NixOS and nixpkgs. Models and batch sizes need matching GPU memory. Output is illustrative.</p>
       </div>
     </div>
   </section>
-
 
   <section id="rollback">
     <div class="split">
@@ -1211,5 +1222,52 @@ afterFirstPaint(function () {
 <script src="omarchy-preview.js?v=20261005-chrome-resize" defer></script>
 
 
+<script>
+  // ML pipeline demo: each choice shows the configuration that sets the machine up for it.
+  (function () {
+    var root = document.querySelector(".ai-demo");
+    if (!root) return;
+    var pre = root.querySelector(".ai-pre"), title = root.querySelector(".ai-title");
+    function p(t) { return '<span class="p">' + t + "</span>"; }
+    function c(t) { return '<span class="c">' + t + "</span>"; }
+    var V = {
+      llm: ["Local LLM", [
+        c("{ pkgs, ... }: {"),
+        "  services.ollama = {", "    enable = true;",
+        "    package = " + p("pkgs.ollama-cuda") + ";",
+        "    loadModels = [ " + p('"deepseek-r1:32b"') + " ];", "  };",
+        "  services.open-webui.enable = true;", c("}"), "",
+        '<span class="hl">$ sudo nixos-rebuild switch</span>',
+        '<span class="ok">✓ chat with DeepSeek-R1 at localhost:8080</span>']],
+      train: ["PyTorch training", [
+        c("{ pkgs, ... }: {"),
+        "  nixpkgs.config.allowUnfree = true;   " + c("// NVIDIA CUDA"),
+        "  environment.systemPackages = [",
+        "    (" + p("pkgs.python3.withPackages") + " (ps: with ps; [",
+        "      torch-bin torchvision-bin transformers datasets",
+        "      jupyterlab pandas matplotlib", "    ]))",
+        "    " + p("pkgs.nvtopPackages.nvidia") + "   " + c("// watch the GPU"), "  ];", c("}"), "",
+        '<span class="hl">$ sudo nixos-rebuild switch</span>',
+        '<span class="hl">$ python -c "import torch; print(torch.cuda.is_available())"</span>',
+        '<span class="ok">True</span>']],
+      amd: ["AMD / ROCm", [
+        c("{ pkgs, ... }: {"),
+        "  services.ollama = {", "    enable = true;",
+        "    package = " + p("pkgs.ollama-rocm") + ";",
+        "    loadModels = [ " + p('"deepseek-r1:32b"') + " ];", "  };",
+        "  environment.systemPackages = [ " + p("pkgs.rocmPackages.rocminfo") + " ];", c("}"), "",
+        '<span class="hl">$ sudo nixos-rebuild switch</span>',
+        '<span class="ok">✓ same models, on a Radeon</span>']]
+    };
+    root.querySelectorAll("[data-ai-model]").forEach(function (btn) {
+      btn.addEventListener("click", function () {
+        var v = V[btn.getAttribute("data-ai-model")];
+        root.querySelectorAll("[data-ai-model]").forEach(function (b) { b.setAttribute("aria-pressed", String(b === btn)); });
+        title.textContent = "/etc/nixos/ml.nix · " + v[0];
+        pre.innerHTML = v[1].join("\n");
+      });
+    });
+  })();
+</script>
 </body>
 </html>
