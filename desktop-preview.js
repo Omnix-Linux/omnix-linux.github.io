@@ -9,7 +9,7 @@
     let screen = document.createElement('div');
     screen.className = 'preview-screen';
     screen.hidden = monitor === 1;
-    screen.innerHTML = '<div class="desktop-bar"><span>◉ Omnix</span><span>12:34 · ♫ · Wi-Fi</span></div><div class="workspace-stage"></div><div class="desktop-dock"><div class="dock-launchers"></div><button type="button" class="dock-overview" aria-label="Open multi-monitor workspace overview" aria-expanded="false"><img src="assets/desktop-icons/virtual-desktops.svg" alt=""></button><button type="button" class="dock-clock" aria-label="Open calendar" aria-expanded="false">12:34</button></div><div class="preview-calendar" hidden></div><div class="preview-overview" hidden></div><div class="app-preview-notice" role="status"></div><div class="switch-terminal" hidden><span class="switch-title">kitty · desktop switch</span><pre class="switch-log" aria-live="polite"></pre></div><div class="workspace-switcher" aria-label="Monitor ' + (monitor + 1) + ' workspaces"></div>';
+    screen.innerHTML = '<div class="desktop-bar"><span>◉ Omnix</span><span>12:34 · ♫ · Wi-Fi</span></div><div class="workspace-stage"></div><div class="desktop-dock"><div class="dock-launchers"></div><button type="button" class="dock-overview" aria-label="Open multi-monitor workspace overview" aria-expanded="false"><img src="assets/desktop-icons/virtual-desktops.svg" alt=""></button><button type="button" class="dock-clock" aria-label="Open calendar" aria-expanded="false">12:34</button></div><div class="preview-calendar" hidden></div><div class="preview-overview" hidden></div><div class="app-preview-notice" role="status"></div><div class="workspace-switcher" aria-label="Monitor ' + (monitor + 1) + ' workspaces"></div>';
     var stage = screen.querySelector('.workspace-stage');
     for (var group = 0; group < 2; group++) {
       var layer = document.createElement('button');
@@ -160,30 +160,48 @@
     ]
   };
   var switchTimers = [];
-  function playSwitch(desktop) {
+  var overlay = document.createElement('div');
+  overlay.className = 'switch-overlay';
+  overlay.hidden = true;
+  overlay.innerHTML = '<div class="switch-window" role="dialog" aria-modal="true" aria-label="Desktop switch command"><div class="switch-bar"><span class="switch-dots" aria-hidden="true"><i></i><i></i><i></i></span><span class="switch-title">omnix · apply</span></div><pre class="switch-log" aria-live="polite"></pre><button type="button" class="switch-done">Close</button></div>';
+  // Appended to the body: sections carry `contain: layout paint`, which would
+  // otherwise make one of them the containing block for this fixed overlay.
+  document.body.appendChild(overlay);
+  var lastFocus = null;
+  function stopSwitch() {
     switchTimers.forEach(clearTimeout);
     switchTimers = [];
-    demo.querySelectorAll('.switch-terminal').forEach(function (terminal) {
-      var log = terminal.querySelector('.switch-log');
-      log.textContent = '';
-      terminal.hidden = false;
-      terminal.classList.remove('done');
-      // Replay from the top each time so a repeated switch still reads.
-      terminal.classList.remove('enter');
-      void terminal.offsetWidth;
-      terminal.classList.add('enter');
-      switchSteps[desktop].forEach(function (step, index) {
-        var line = document.createElement('span');
-        line.className = index === 0 ? 'switch-cmd' : 'switch-out';
-        line.textContent = step.text;
-        switchTimers.push(setTimeout(function () {
-          log.appendChild(line);
-          if (index === switchSteps[desktop].length - 1) terminal.classList.add('done');
-        }, step.delay));
-      });
+  }
+  function closeSwitch() {
+    stopSwitch();
+    overlay.hidden = true;
+    if (lastFocus) lastFocus.focus();
+  }
+  overlay.querySelector('.switch-done').addEventListener('click', closeSwitch);
+  overlay.addEventListener('click', function (event) {
+    if (event.target === overlay) closeSwitch();
+  });
+  document.addEventListener('keydown', function (event) {
+    if (event.key === 'Escape' && !overlay.hidden) closeSwitch();
+  });
+  function playSwitch(desktop) {
+    stopSwitch();
+    var log = overlay.querySelector('.switch-log');
+    log.textContent = '';
+    lastFocus = document.activeElement;
+    overlay.hidden = false;
+    overlay.classList.remove('enter');
+    void overlay.offsetWidth;
+    overlay.classList.add('enter');
+    overlay.querySelector('.switch-done').focus();
+    switchSteps[desktop].forEach(function (step, index) {
+      var line = document.createElement('span');
+      line.className = index === 0 ? 'switch-cmd' : 'switch-out';
+      line.textContent = step.text;
+      switchTimers.push(setTimeout(function () { log.appendChild(line); }, step.delay));
     });
   }
-  function updateDesktop() {
+  function updateDesktop(play) {
     var tiled = demo.dataset.desktop === 'omarchy';
     demo.querySelectorAll('.terminal-group').forEach(function (group, index) {
       group.hidden = tiled && index % 2 === 1;
@@ -199,14 +217,14 @@
     document.querySelector('.preview-description').textContent = tiled
       ? 'Hyprland tiles every window automatically. Open and close windows, switch workspaces and try Omarchy’s themes.'
       : 'Explore multiple monitors and layered terminal groups. Select a group to bring it forward.';
-    playSwitch(demo.dataset.desktop);
+    if (play) playSwitch(demo.dataset.desktop);
   }
   updateDesktop();
   document.querySelectorAll('[data-desktop]').forEach(function (button) {
     if (button.tagName !== 'BUTTON') return;
     button.addEventListener('click', function () {
       demo.dataset.desktop = this.dataset.desktop;
-      updateDesktop();
+      updateDesktop(true);
       document.querySelectorAll('button[data-desktop]').forEach(function (item) { item.setAttribute('aria-pressed', String(item.dataset.desktop === this.dataset.desktop)); }, this);
       demo.querySelector('.preview-caption').textContent = this.dataset.desktop === 'omarchy' ? 'Hyprland - Omarchy · interactive illustration · colors from Omarchy’s themes' : 'KDE Plasma - Atrium · interactive illustration';
     });
