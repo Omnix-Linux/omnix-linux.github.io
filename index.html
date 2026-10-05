@@ -553,7 +553,7 @@
   <a href="#top" aria-label="Omnix"></a>
   <a href="#who" aria-label="Why Omnix"></a>
   <a href="#flavors" aria-label="Choose your desktop"></a>
-  <a href="#ml" aria-label="Switch your machine into an ML workstation"></a>
+  <a href="#ml" aria-label="Known AI workflows that evolve with the technology"></a>
   <a href="#rollback" aria-label="Every update can be undone"></a>
   <a href="#runs" aria-label="Linux apps working on NixOS"></a>
   <a href="#ported" aria-label="Save your configuration as a git repo"></a>
@@ -612,19 +612,23 @@
   <section id="ml">
     <div class="split">
       <div>
-        <div class="eyebrow">Machine learning, ready to run</div>
-        <h2>Switch your machine into <em>an ML workstation.</em></h2>
+        <div class="eyebrow">AI workflows, ready to run</div>
+        <h2>Known AI workflows <em>that evolve with the technology.</em></h2>
         <p class="lede">Setting up a computer for machine learning usually takes a day: the GPU driver, a CUDA version
           that matches it, a PyTorch build that matches that, Jupyter, a model server, and a guide that is already out
           of date. On Omnix it is one line in your flake.</p>
         <p class="lede"><strong>Pick a pipeline and rebuild.</strong> Local LLMs like DeepSeek-R1 with a chat app,
           PyTorch training with CUDA and Jupyter, or the same stack on an AMD card with ROCm. Every piece comes from
           nixpkgs, with versions chosen to work together, as prebuilt binaries wherever they exist.</p>
+        <p class="lede"><strong>They keep up with the field.</strong> AI moves every month: new models, new CUDA
+          releases, new runtimes. Your workflow is pinned in <code>flake.lock</code>, so it stays exactly as it is until
+          you choose to move. Run <code>nix flake update</code> and the whole stack moves forward together, already
+          tested to work as a set. A new model is one more name in the list.</p>
         <p class="lede"><strong>And <code>pip install</code> still works.</strong> The Omnix base provides the standard
           Linux layout, so the prebuilt CUDA wheels from PyPI, conda and vendor SDKs run as they do on any other
           distribution.</p>
-        <p class="lede"><strong>Nothing to break.</strong> Switching pipelines is a new boot-menu entry, so the setup
-          that trained yesterday's model is one step back. Push the flake and your whole team gets the identical
+        <p class="lede"><strong>Nothing to break.</strong> Every switch and every update is a new boot-menu entry, so
+          the setup that trained yesterday's model is one step back. Push the flake and your whole team gets the identical
           stack, down to the CUDA version.</p>
       </div>
       <div class="ai-demo">
@@ -645,7 +649,10 @@
 <span class="c">}</span>
 
 <span class="hl">$ sudo nixos-rebuild switch</span>
-<span class="ok">✓ chat with DeepSeek-R1 at localhost:8080</span></pre>
+<span class="ok">✓ chat with DeepSeek-R1 at localhost:8080</span>
+
+<span class="c">// next month: newer models, runtimes, CUDA</span>
+<span class="hl">$ nix flake update &amp;&amp; sudo nixos-rebuild switch</span></pre>
         </div>
         <p class="demo-caption">Configurations use modules and packages that ship with NixOS and nixpkgs. Models and batch sizes need matching GPU memory. Output is illustrative.</p>
       </div>
@@ -1238,7 +1245,7 @@ afterFirstPaint(function () {
         "    loadModels = [ " + p('"deepseek-r1:32b"') + " ];", "  };",
         "  services.open-webui.enable = true;", c("}"), "",
         '<span class="hl">$ sudo nixos-rebuild switch</span>',
-        '<span class="ok">✓ chat with DeepSeek-R1 at localhost:8080</span>']],
+        '<span class="ok">✓ chat with DeepSeek-R1 at localhost:8080</span>', '', '<span class="c">// next month: newer models, runtimes, CUDA</span>', '<span class="hl">$ nix flake update &amp;&amp; sudo nixos-rebuild switch</span>']],
       train: ["PyTorch training", [
         c("{ pkgs, ... }: {"),
         "  nixpkgs.config.allowUnfree = true;   " + c("// NVIDIA CUDA"),
@@ -1249,7 +1256,7 @@ afterFirstPaint(function () {
         "    " + p("pkgs.nvtopPackages.nvidia") + "   " + c("// watch the GPU"), "  ];", c("}"), "",
         '<span class="hl">$ sudo nixos-rebuild switch</span>',
         '<span class="hl">$ python -c "import torch; print(torch.cuda.is_available())"</span>',
-        '<span class="ok">True</span>']],
+        '<span class="ok">True</span>', '', '<span class="c">// next month: newer models, runtimes, CUDA</span>', '<span class="hl">$ nix flake update &amp;&amp; sudo nixos-rebuild switch</span>']],
       amd: ["AMD / ROCm", [
         c("{ pkgs, ... }: {"),
         "  services.ollama = {", "    enable = true;",
@@ -1257,7 +1264,7 @@ afterFirstPaint(function () {
         "    loadModels = [ " + p('"deepseek-r1:32b"') + " ];", "  };",
         "  environment.systemPackages = [ " + p("pkgs.rocmPackages.rocminfo") + " ];", c("}"), "",
         '<span class="hl">$ sudo nixos-rebuild switch</span>',
-        '<span class="ok">✓ same models, on a Radeon</span>']]
+        '<span class="ok">✓ same models, on a Radeon</span>', '', '<span class="c">// next month: newer models, runtimes, CUDA</span>', '<span class="hl">$ nix flake update &amp;&amp; sudo nixos-rebuild switch</span>']]
     };
     root.querySelectorAll("[data-ai-model]").forEach(function (btn) {
       btn.addEventListener("click", function () {
