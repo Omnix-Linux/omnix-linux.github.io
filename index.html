@@ -138,6 +138,14 @@
     },
     {
      "@type": "Question",
+     "name": "Can I change the look without reinstalling?",
+     "acceptedAnswer": {
+      "@type": "Answer",
+      "text": "Yes. In Hyprland - Omarchy, press Super + Ctrl + Shift + Space and pick one of Omarchy's built-in themes; the bar, window borders, terminal and editor change immediately, with no rebuild. To change the whole desktop, change one line in your configuration and rebuild, and the previous desktop stays in the boot menu."
+     }
+    },
+    {
+     "@type": "Question",
      "name": "Is Omnix a NixOS fork?",
      "acceptedAnswer": {
       "@type": "Answer",
@@ -495,6 +503,7 @@
   a.scrollhint { color: var(--muted); text-decoration: none; display: inline-block; min-height: 44px; padding: 12px 8px; }
   a.scrollhint:hover { color: var(--ice); }
   a.scrollhint:focus-visible { outline: 2px solid var(--ice); outline-offset: 3px; }
+  .lede kbd { font-family: var(--font-mono); font-size: .85em; color: var(--ink); padding: 0 5px; border: 1px solid var(--line); border-radius: 4px; }
   /* Section rail */
   .rail { position: fixed; right: max(12px, 2vw); top: 50%; transform: translateY(-50%); z-index: 5; display: grid; gap: 14px; }
   .rail a { width: 9px; height: 9px; border-radius: 50%; background: rgba(156, 173, 200, 0.35); display: block; transition: transform .25s; }
@@ -504,6 +513,7 @@
   .no-gl .scrim { background: linear-gradient(90deg, rgba(4, 5, 12, 0.7), rgba(4, 5, 12, 0.2)); }
 </style>
 <link rel="stylesheet" href="desktop-preview.css?v=20261004-kde-dock">
+<link rel="stylesheet" href="omarchy-preview.css?v=20261004-omarchy-desk">
 </head>
 <body>
 <canvas id="coronal" data-shader-profile="shader-profile.json?v=mobile-stability-alpha-20261004" data-shader-version="mobile-stability-alpha-20261004" aria-hidden="true"></canvas>
@@ -586,17 +596,19 @@
       <div>
         <div class="eyebrow">Choose your desktop</div>
         <h2>Pick a desktop. <em>Switch any time.</em></h2>
-        <p class="lede">Every Omnix desktop shares the same NixOS base. Choose Hyprland - Omarchy for keyboard-driven tiling, or KDE Plasma - Atrium for a familiar taskbar desktop. To switch, change one line in your configuration and rebuild.</p>
+        <p class="lede">Every Omnix desktop shares the same NixOS base. Choose Hyprland - Omarchy for keyboard-driven tiling, or KDE Plasma - Atrium for a familiar taskbar desktop.</p>
+        <p class="lede"><strong>Don’t like the look? Pick another theme and switch immediately.</strong> Hyprland - Omarchy includes Omarchy’s built-in themes, from Tokyo Night and Catppuccin to Gruvbox, Nord and Rosé Pine. Press <kbd>Super</kbd> + <kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>Space</kbd>, choose one, and the bar, window borders, terminal and editor change color on the spot, with no rebuild and no logout. Try it in the preview.</p>
+        <p class="lede"><strong>Want a different desktop altogether?</strong> Change one line in your configuration and rebuild. Your previous desktop stays in the boot menu, so trying something new is never a one-way trip.</p>
         <div class="desktop-choices" aria-label="Desktop preview">
-          <button type="button" data-desktop="omarchy" aria-pressed="true">Hyprland - Omarchy<span>Keyboard-driven tiling. Familiar Omarchy style.</span></button>
+          <button type="button" data-desktop="omarchy" aria-pressed="true">Hyprland - Omarchy<span>Keyboard-driven tiling with Omarchy’s themes, Waybar and launcher.</span></button>
           <button type="button" data-desktop="plasma" aria-pressed="false">KDE Plasma - Atrium<span>Your launcher dock, clickable clock, and workspaces per monitor.</span></button>
         </div>
-        <p class="lede preview-description">Hyprland tiles windows on a single plane. Explore workspaces across one or two monitors.</p>
+        <p class="lede preview-description">Hyprland tiles every window automatically. Open and close windows, switch workspaces and try Omarchy’s themes.</p>
       </div>
       <div class="desktop-demo" data-desktop="omarchy">
         <div class="preview-controls"><button type="button" data-monitors aria-pressed="false">Two monitors</button><button type="button" data-depth aria-pressed="true" hidden>Layered view</button></div>
         <div class="preview-monitors"></div>
-        <p class="preview-caption" aria-live="polite">Hyprland - Omarchy · interactive illustration</p>
+        <p class="preview-caption" aria-live="polite">Hyprland - Omarchy · interactive illustration · colors from Omarchy’s themes</p>
       </div>
     </div>
   </section>
@@ -820,6 +832,10 @@ $OMARCHY_PATH             // commands, themes &amp; defaults
         <details>
           <summary>Is there an Omarchy-like setup for KDE Plasma?</summary>
           <p>Yes. KDE Plasma - Atrium is a declarative KDE Plasma 6 desktop that borrows Omarchy habits such as a Meta+W overview, per-screen virtual desktops, the JetBrainsMono Nerd Font and fast key repeat, while staying a familiar, mouse-first taskbar desktop.</p>
+        </details>
+        <details>
+          <summary>Can I change the look without reinstalling?</summary>
+          <p>Yes. In Hyprland - Omarchy, press Super + Ctrl + Shift + Space and pick one of Omarchy's built-in themes; the bar, window borders, terminal and editor change immediately, with no rebuild. To change the whole desktop, change one line in your configuration and rebuild, and the previous desktop stays in the boot menu.</p>
         </details>
         <details>
           <summary>Is Omnix a NixOS fork?</summary>
@@ -1116,7 +1132,8 @@ afterFirstPaint(function () {
 <script src="coronal.js?v=mobile-stability-alpha-20261004" defer></script>
 <script src="hero-actions.js?v=mobile-stability-alpha-20261004" defer></script>
 <script src="column-scroll.js" defer></script>
-<script src="desktop-preview.js?v=20261004-kde-dock" defer></script>
+<script src="desktop-preview.js?v=20261004-omarchy-desk" defer></script>
+<script src="omarchy-preview.js?v=20261004-omarchy-desk" defer></script>
 
 
 </body>

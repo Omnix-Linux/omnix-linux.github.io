@@ -10,7 +10,8 @@
   - KDE Plasma - Atrium: a declarative, mouse-first KDE Plasma 6 desktop that borrows Omarchy habits (Meta+W overview, per-screen desktops, JetBrainsMono Nerd Font, fast key repeat).
   - Minimal: the base alone.
 - Rollback: every system update is a boot-menu entry. Rolling back restores system apps, libraries, settings and the compatibility layer; files and personal settings in the home folder are not changed.
-- Switching desktops: the installed system is a flake the user owns in /etc/nixos; the desktop is one input in it.
+- Themes: Hyprland - Omarchy includes Omarchy's built-in themes (Tokyo Night, Catppuccin, Gruvbox, Nord, Rosé Pine and more); Super + Ctrl + Shift + Space switches theme immediately, with no rebuild.
+- Switching desktops: the installed system is a flake the user owns in /etc/nixos; the desktop is one input in it. Change it and rebuild; the previous desktop stays in the boot menu.
 - Independent: not affiliated with or endorsed by Omarchy, 37signals, Basecamp or the NixOS Foundation.
 
 ## Links

@@ -155,7 +155,7 @@
       }
     });
     document.querySelector('.preview-description').textContent = tiled
-      ? 'Hyprland tiles windows on a single plane. Explore workspaces across one or two monitors.'
+      ? 'Hyprland tiles every window automatically. Open and close windows, switch workspaces and try Omarchy’s themes.'
       : 'Explore multiple monitors and layered terminal groups. Select a group to bring it forward.';
   }
   updateDesktop();
@@ -165,7 +165,7 @@
       demo.dataset.desktop = this.dataset.desktop;
       updateDesktop();
       document.querySelectorAll('.desktop-choices button').forEach(function (item) { item.setAttribute('aria-pressed', String(item === this)); }, this);
-      demo.querySelector('.preview-caption').textContent = this.dataset.desktop === 'omarchy' ? 'Hyprland - Omarchy · interactive illustration' : 'KDE Plasma - Atrium · interactive illustration';
+      demo.querySelector('.preview-caption').textContent = this.dataset.desktop === 'omarchy' ? 'Hyprland - Omarchy · interactive illustration · colors from Omarchy’s themes' : 'KDE Plasma - Atrium · interactive illustration';
     });
   });
   demo.querySelector('[data-monitors]').addEventListener('click', function () {
