@@ -436,4 +436,27 @@
   demo.querySelector('.preview-monitors').after(keys, hint);
 
   applyTheme(0, null);
+
+  // Reserve the taller desktop's height so switching desktops never changes the section's
+  // layout. Otherwise column-scroll.js flips between its layouts and the copy jumps for a frame.
+  // Both desktops are measured synchronously, so nothing paints in between.
+  var reserveFrame = 0;
+  function reserveHeight() {
+    reserveFrame = 0;
+    var current = demo.dataset.desktop;
+    demo.style.minHeight = '';
+    var tallest = 0;
+    ['omarchy', 'plasma'].forEach(function (desktop) {
+      demo.dataset.desktop = desktop;
+      tallest = Math.max(tallest, demo.offsetHeight);
+    });
+    demo.dataset.desktop = current;
+    demo.style.minHeight = tallest + 'px';
+  }
+  function scheduleReserve() { if (!reserveFrame) reserveFrame = requestAnimationFrame(reserveHeight); }
+  reserveHeight();
+  window.addEventListener('resize', scheduleReserve);
+  if (document.fonts) document.fonts.ready.then(scheduleReserve);
+  // Two monitors changes the height of both desktops alike.
+  if ('MutationObserver' in window) new MutationObserver(scheduleReserve).observe(demo.querySelector('.preview-monitors'), { attributes: true, attributeFilter: ['class'] });
 })();
