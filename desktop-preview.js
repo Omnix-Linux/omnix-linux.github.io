@@ -173,6 +173,8 @@
   // Which desktop the mock is currently themed for, so re-running the same
   // switch does not flash the surface back to neutral.
   var themedFor = null;
+  // The desktop the user asked for, not yet applied.
+  var pendingDesktop = null;
   var overlay = document.createElement('div');
   overlay.className = 'switch-overlay';
   overlay.hidden = true;
@@ -187,8 +189,9 @@
   }
   function closeSwitch() {
     stopSwitch();
-    // Never leave the mock un-themed: whatever the sequence reached, the
-    // preview settles on the palette of the currently selected desktop.
+    // Settle on whatever the user chose, even if the sequence was cut short,
+    // so the preview never disagrees with the pressed tab.
+    if (pendingDesktop) { commitDesktop(pendingDesktop); pendingDesktop = null; }
     themedFor = demo.dataset.desktop;
     demo.classList.add('themed');
     overlay.hidden = true;
@@ -201,6 +204,14 @@
   document.addEventListener('keydown', function (event) {
     if (event.key === 'Escape' && !overlay.hidden) closeSwitch();
   });
+  function commitDesktop(desktop) {
+    // The desktop only actually swaps here, when the apply has succeeded.
+    if (demo.dataset.desktop === desktop) return;
+    demo.dataset.desktop = desktop;
+    themedFor = desktop;
+    demo.classList.add('themed');
+    updateDesktop();
+  }
   function playSwitch(desktop) {
     stopSwitch();
     var log = overlay.querySelector('.switch-log');
@@ -213,9 +224,8 @@
     overlay.querySelector('.switch-done').focus();
     var steps = switchSteps[desktop];
     var reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    // Re-running on the desktop that is already themed should not flash it
-    // back to un-themed; a genuine switch starts from the neutral surface.
-    if (demo.dataset.desktop !== themedFor) demo.classList.remove('themed');
+    // Start from the neutral surface only when this is a genuine switch.
+    if (demo.dataset.desktop !== desktop) demo.classList.remove('themed');
     var cmd = steps[0];
     // Reduced motion: no typing, no staggering — everything lands at once.
     if (reduced) {
@@ -225,9 +235,8 @@
         line.textContent = step.text;
         log.appendChild(line);
       });
-      // No motion: land straight on the final theme.
-      themedFor = desktop;
-      demo.classList.add('themed');
+      // No motion: land straight on the swapped desktop.
+      commitDesktop(desktop);
       return;
     }
     // The command is typed, fast: one character per TYPE_INTERVAL, which puts
@@ -254,12 +263,9 @@
       line.textContent = step.text;
       switchTimers.push(setTimeout(function () {
         log.appendChild(line);
-        // The theme lands with the final line: the switch is what the command
-        // did, so the preview recolours only once the apply has succeeded.
-        if (step === last) {
-          themedFor = desktop;
-          demo.classList.add('themed');
-        }
+        // The swap lands with the final line: the desktop changes because the
+        // command did it, not because a tab was pressed.
+        if (step === last) commitDesktop(desktop);
       }, responseAt + step.delay));
     });
   }
@@ -289,10 +295,12 @@
   document.querySelectorAll('[data-desktop]').forEach(function (button) {
     if (button.tagName !== 'BUTTON') return;
     button.addEventListener('click', function () {
-      demo.dataset.desktop = this.dataset.desktop;
-      updateDesktop(true);
+      // The tab and caption update now, but the preview keeps showing the old
+      // desktop until the apply finishes: that is when the swap happens.
+      pendingDesktop = this.dataset.desktop;
       document.querySelectorAll('button[data-desktop]').forEach(function (item) { item.setAttribute('aria-pressed', String(item.dataset.desktop === this.dataset.desktop)); }, this);
       demo.querySelector('.preview-caption').textContent = this.dataset.desktop === 'omarchy' ? 'Hyprland - Omarchy · interactive illustration · colors from Omarchy’s themes' : 'KDE Plasma - Atrium · interactive illustration';
+      playSwitch(this.dataset.desktop);
     });
   });
 })();
