@@ -30,12 +30,12 @@
   .preview-screen::after,
   .desktop-demo[data-desktop=plasma] .preview-screen::after{transition:none}
 }
-.switch-window{position:relative;width:100%;max-height:100%;overflow:auto;border:1px solid #2b3648;border-radius:9px;background:#080d17;box-shadow:0 16px 40px #000a}
+.switch-window{position:relative;width:100%;height:clamp(132px,44%,190px);overflow:hidden;border:1px solid #2b3648;border-radius:9px;background:#080d17;box-shadow:0 16px 40px #000a}
 .switch-bar{display:flex;align-items:center;gap:10px;padding:8px 12px;border-bottom:1px solid #1c2536;background:#0d1524}
 .switch-dots{display:flex;gap:5px}
 .switch-dots i{width:9px;height:9px;border-radius:50%;background:#2b3648}
 .switch-title{color:#8fa3c0;font:500 .62rem/1 var(--font-mono,monospace);letter-spacing:.08em;text-transform:uppercase}
-.switch-log{margin:0;padding:clamp(12px,2.2vw,22px) clamp(12px,2.2vw,22px) clamp(44px,5vw,56px);font:400 clamp(.58rem,1.05vw,.86rem)/1.55 var(--font-mono,monospace);color:#c0caf5;white-space:pre;overflow-x:auto}
+.switch-log{margin:0;padding:clamp(10px,1.8vw,18px) clamp(12px,2.2vw,22px) clamp(38px,4.4vw,48px);font:400 clamp(.58rem,1.05vw,.86rem)/1.55 var(--font-mono,monospace);color:#c0caf5;white-space:pre;overflow-x:auto}
 .switch-log span{display:block;opacity:0;animation:switch-in .22s ease-out forwards;white-space:pre}
 .switch-cmd{color:#7dcfff}
 /* Blinking caret while the command is being typed; it stops with `.typing`. */

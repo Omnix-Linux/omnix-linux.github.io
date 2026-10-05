@@ -257,15 +257,20 @@
     }
     var responseAt = command.length * TYPE_INTERVAL;
     var last = steps[steps.length - 1];
+    // The swap waits out a beat after the last line: a short reboot pause
+    // before the desktop actually changes over.
+    var REBOOT_PAUSE = 250;
     steps.slice(1).forEach(function (step, index) {
       var line = document.createElement('span');
       line.className = 'switch-out';
       line.textContent = step.text;
       switchTimers.push(setTimeout(function () {
         log.appendChild(line);
-        // The swap lands with the final line: the desktop changes because the
-        // command did it, not because a tab was pressed.
-        if (step === last) commitDesktop(desktop);
+        // The swap lands a beat after the final line: the command finishes,
+        // the system reboots, and only then does the desktop change over.
+        if (step === last) {
+          switchTimers.push(setTimeout(function () { commitDesktop(desktop); }, REBOOT_PAUSE));
+        }
       }, responseAt + step.delay));
     });
   }
