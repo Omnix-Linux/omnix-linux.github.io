@@ -328,8 +328,9 @@
   .wordmark { position: relative; height: min(62svh, 620px); width: 100%; margin: 0; font-family: "Lexend", "Arial Black", system-ui, sans-serif; font-weight: 800; line-height: 1; }
   /* inset: 0 fills the viewport; 100vh would track Safari's collapsing chrome. */
   #coronal { position: fixed; inset: 0; z-index: 0; pointer-events: none; opacity: 0; transition: opacity .45s ease-out; }
-  .shader-ready #coronal { opacity: 1; }
-  .shader-ready.hero-past #coronal { opacity: .08; transition-duration: .18s; }
+  .shader-ready #coronal { opacity: calc(1 - .92 * var(--hero-fade, 0)); }
+  /* Once scrolling drives the fade, opacity must track the scroll position without lag. */
+  .hero-linked :is(#coronal, .wordmark-text, .tagline), .hero-linked .logo-orbit::after { transition: none; }
   .logo-orbit { position: absolute; left: calc(38vw - (100vw - min(88vw, 1240px)) / 2); top: 50%; transform: translate(-50%, -50%); width: min(80vw, 110svh); aspect-ratio: 1; display: block; pointer-events: none; }
   .logo-orbit::after {
     content: ""; position: absolute; left: var(--rim-left, 21.0714%); top: var(--rim-top, 21.0714%);
@@ -337,8 +338,7 @@
     border: clamp(1px, .3vw, 4px) solid white; box-shadow: 0 0 12px rgba(255,255,255,.25);
     opacity: 0; transition: opacity .18s ease-out;
   }
-  .wordmark-ready:not(.shader-ready) .logo-orbit::after { opacity: .9; }
-  .wordmark-ready.hero-past .logo-orbit::after { opacity: 0; }
+  .wordmark-ready:not(.shader-ready) .logo-orbit::after { opacity: calc(.9 * (1 - var(--hero-fade, 0))); }
   @media (prefers-reduced-motion: reduce) {
     .shader-ready #coronal { opacity: 0; transition: none; }
   }
@@ -349,13 +349,11 @@
     .logo-orbit { width: 100vw; left: calc(37vw - max(16px, 6vw)); }
     .wordmark-text { left: calc(65.928571vw - max(16px, 6vw)); font-size: clamp(2rem, 9vw, 3.5rem); }
   }
-  .wordmark-ready .wordmark-text { visibility: visible; opacity: 1; }
-  .wordmark-ready.hero-past .wordmark-text { opacity: 0; transition-duration: .18s; }
+  .wordmark-ready .wordmark-text { visibility: visible; opacity: calc(1 - var(--hero-fade, 0)); }
   @media (prefers-reduced-motion: reduce) { .wordmark-text { transition: none; } }
   .tagline { position: fixed; z-index: 2; color: #fff; pointer-events: none; left: var(--tagline-left, 61vw); top: var(--tagline-top, calc(50svh + 96px)); width: var(--tagline-width, 34vw); visibility: hidden; opacity: 0; transition: opacity .45s ease-out; text-align: left; font-family: var(--font-display); font-weight: 500; font-size: clamp(.75rem, 1.4vw, 1.5rem); line-height: 1.5; margin: 0; max-width: none; text-wrap: balance; }
   @media (max-width: 640px) { .tagline { max-width: none; text-align: left; font-size: .875rem; } }
-  .wordmark-ready .tagline { visibility: visible; opacity: 1; }
-  .wordmark-ready.hero-past .tagline { opacity: 0; transition-duration: .18s; }
+  .wordmark-ready .tagline { visibility: visible; opacity: calc(1 - 1.6 * var(--hero-fade, 0)); }
   @media (prefers-reduced-motion: reduce) { .tagline { transition: none; } }
   .cta { display: flex; gap: 12px; flex-wrap: wrap; }
   .btn {
@@ -1016,22 +1014,27 @@ afterFirstPaint(function () {
     entries.forEach(function (e) { if (e.isIntersecting) { queue(e.target); nearby.unobserve(e.target); } });
   }, { rootMargin: "100% 0px" });
 
-  var io;
+  var io, ioFirst;
   function observeReveals() {
     if (io) io.disconnect();
+    if (ioFirst) ioFirst.disconnect();
     var height = window.innerHeight;
-    io = new IntersectionObserver(function (entries) {
+    function reveal(entries, observer) {
       entries.forEach(function (e) {
         if (e.isIntersecting) {
           var section = e.target.closest("section");
           prepare(section);
           section.classList.add("in");
-          io.unobserve(e.target);
+          observer.unobserve(e.target);
         }
       });
-    }, { rootMargin: "-" + Math.round(height * .10) + "px 0px -" + Math.round(height * .35) + "px 0px", threshold: 0 });
-    sections.forEach(function (s) {
-      if (!s.classList.contains("in")) io.observe(s.querySelector(".eyebrow, h2") || s);
+    }
+    io = new IntersectionObserver(reveal, { rootMargin: "-" + Math.round(height * .10) + "px 0px -" + Math.round(height * .35) + "px 0px", threshold: 0 });
+    // The section after the hero enters while the wordmark fades out, so it
+    // reveals as soon as it clears the bottom edge instead of leaving a gap.
+    ioFirst = new IntersectionObserver(reveal, { rootMargin: "0px 0px -" + Math.round(height * .06) + "px 0px", threshold: 0 });
+    sections.forEach(function (s, i) {
+      if (!s.classList.contains("in")) (i ? io : ioFirst).observe(s.querySelector(".eyebrow, h2") || s);
     });
   }
   sections.forEach(function (s) { nearby.observe(s); });
@@ -1223,7 +1226,7 @@ afterFirstPaint(function () {
 });
 </script>
 <script src="shader-layout.js?v=mobile-stability-alpha-20261004" defer></script>
-<script src="coronal.js?v=mobile-stability-alpha-20261005" defer></script>
+<script src="coronal.js?v=hero-scroll-fade-20261005" defer></script>
 <script src="column-scroll.js?v=20261005-chrome-resize" defer></script>
 <script src="desktop-preview.js?v=20261004-demo-tabs-only" defer></script>
 <script src="omarchy-preview.js?v=20261005-chrome-resize" defer></script>

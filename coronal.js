@@ -6,6 +6,29 @@ afterFirstPaint(async function () {
   var root = document.documentElement;
   var reduce = window.matchMedia("(prefers-reduced-motion: reduce)");
   if (!orbit || !canvas) return;
+  // The hero fades with scroll instead of flipping at a threshold, so the
+  // wordmark leaves as the next section arrives at every viewport height.
+  // Distances are fractions of a height cached across iOS chrome churn. This runs
+  // before the profile fetch so the fade works even if the shader never loads.
+  var fadeRaf = 0, lastFade = -1, fadeHeight = window.innerHeight, fadeWidth = document.documentElement.clientWidth;
+  function heroFade() {
+    fadeRaf = 0;
+    var h = fadeHeight;
+    var f = Math.min(1, Math.max(0, (window.scrollY - h * .08) / (h * .42)));
+    f = Math.round(f * 100) / 100;
+    if (f === lastFade) return;
+    if (lastFade !== -1) root.classList.add("hero-linked");
+    lastFade = f;
+    root.style.setProperty("--hero-fade", f);
+    root.classList.toggle("hero-past", f >= 1);
+  }
+  window.addEventListener("scroll", function () { if (!fadeRaf) fadeRaf = requestAnimationFrame(heroFade); }, { passive: true });
+  window.addEventListener("resize", function () {
+    var w = document.documentElement.clientWidth, h = window.innerHeight;
+    if (w === fadeWidth && Math.abs(h - fadeHeight) <= 160) return;
+    fadeWidth = w; fadeHeight = h; heroFade();
+  });
+  heroFade();
   var logoFontReady = Promise.all([
     document.fonts.load('800 140px "Lexend"', "mnix"),
     document.fonts.load('500 20px "JetBrains Mono"', "A NixOS-fork compatible with Omarchy and friends")
@@ -181,20 +204,6 @@ afterFirstPaint(async function () {
       && Math.abs(h - viewportMetrics.h) <= 160) return true;
     viewportMetrics.w = w; viewportMetrics.h = h;
     return false;
-  }
-  if ("IntersectionObserver" in window) {
-    var heroObserver;
-    function observeHero() {
-      if (heroObserver) heroObserver.disconnect();
-      // Pixel margins follow viewport height; percentage IO margins follow width.
-      var inset = Math.round(window.innerHeight * .12);
-      heroObserver = new IntersectionObserver(function (entries) {
-        root.classList.toggle("hero-past", entries[0].intersectionRatio < .65);
-      }, { rootMargin: "-" + inset + "px 0px -" + inset + "px 0px", threshold: [0, .65] });
-      heroObserver.observe(wordmark);
-    }
-    window.addEventListener("resize", function () { if (!chromeResize()) observeHero(); });
-    observeHero();
   }
   if (document.fonts) document.fonts.ready.then(resize);
   if (typeof ResizeObserver !== "undefined") new ResizeObserver(resize).observe(document.querySelector(".hero-inner"));
