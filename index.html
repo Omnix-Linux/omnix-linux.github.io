@@ -500,6 +500,31 @@
   .statement .lede { max-width: 62ch; }
   .statement .lede + .lede { margin-top: 16px; }
   .statement .cta { margin-top: 32px; gap: 14px; }
+
+  /* Vision: collapsed by default, expanding to show the detail. */
+  .vision-list { margin-top: 26px; display: grid; gap: 12px; }
+  .vision-item { border: 1px solid var(--line); border-radius: 12px; background: var(--panel); overflow: hidden; }
+  .vision-item summary {
+    display: flex; align-items: center; gap: 14px; padding: 16px 18px;
+    cursor: pointer; list-style: none; min-height: 44px;
+  }
+  .vision-item summary::-webkit-details-marker { display: none; }
+  .vision-item summary:focus-visible { outline: 2px solid var(--ice); outline-offset: -2px; }
+  .vision-icon { flex: none; display: grid; place-items: center; width: 38px; height: 38px; border-radius: 10px; border: 1px solid var(--line); color: var(--ice); }
+  .vision-icon svg { width: 20px; height: 20px; }
+  .vision-text { display: grid; gap: 2px; min-width: 0; }
+  .vision-text b { color: var(--ink); font-weight: 600; line-height: 1.3; }
+  .vision-text small { color: var(--muted); font-size: var(--step--1); }
+  .vision-item[open] .vision-icon { border-color: var(--ice); }
+  .vision-item summary::after {
+    content: ""; margin-left: auto; flex: none; width: 9px; height: 9px;
+    border-right: 2px solid var(--muted); border-bottom: 2px solid var(--muted);
+    transform: rotate(45deg) translate(-2px, -2px); transition: transform .2s ease-out;
+  }
+  .vision-item[open] summary::after { transform: rotate(-135deg) translate(-3px, -3px); }
+  .vision-item > p { margin: 0; padding: 0 18px 14px 70px; color: var(--muted); max-width: 60ch; }
+  .vision-item pre { margin: 0 18px 18px 70px; border-radius: 8px; font-size: var(--step--1); }
+  .vision-note { margin-top: 22px; }
   .cta { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 28px; }
   .lede a { color: var(--ice); text-underline-offset: 3px; }
   .faq-list { margin-top: 28px; border-bottom: 1px solid var(--line); max-width: 900px; }
@@ -541,16 +566,16 @@
 
 <nav class="rail" aria-label="Sections">
   <a href="#top" aria-label="Omnix"></a>
-  <a href="#who" aria-label="Who Omnix is for"></a>
+  <a href="#who" aria-label="Why Omnix"></a>
   <a href="#flavors" aria-label="Choose your desktop"></a>
   <a href="#atrium" aria-label="KDE Plasma - Atrium"></a>
   <a href="#rollback" aria-label="Every update can be undone"></a>
   <a href="#runs" aria-label="Linux apps working on NixOS"></a>
   <a href="#ported" aria-label="Save your configuration as a git repo"></a>
   <a href="#soldr" aria-label="A luxury experience for building Rust apps"></a>
-  <a href="#install" aria-label="Try Omnix"></a>
   <a href="#vision" aria-label="Coming next: APE support and a WebAssembly runtime"></a>
   <a href="#faq" aria-label="Frequently asked questions"></a>
+  <a href="#install" aria-label="Try Omnix"></a>
 </nav>
 
 <main>
@@ -762,46 +787,6 @@ Inter                 // interface font
     </div>
   </section>
 
-  <section id="install">
-    <div class="wide">
-      <div class="try-intro">
-        <div class="eyebrow">Try it</div>
-        <h2><em>Try Omnix!</em></h2>
-        <p class="lede try-promise">Install it on a PC, or try it in a virtual machine first.</p>
-        <p class="lede">Omnix supports 64-bit Intel and AMD PCs (x86-64). Boot the installer ISO, or run the real installer in a virtual machine with the Try Omnix Docker app.</p>
-        <div class="try-options">
-          <article class="try-card">
-            <h3>Install Omnix</h3>
-            <p>Download the installer ISO, boot it from USB and run <code>sudo omnix-install</code> to choose a disk and a desktop.</p>
-            <a class="btn primary" href="https://github.com/Omnix-Linux/Omnix/releases">Download the installer ISO</a>
-          </article>
-          <article class="try-card">
-            <h3>Try it in a VM</h3>
-            <p>The Try Omnix Docker app boots the real installer in a virtual machine so you can explore a desktop first. Requires x86-64 Linux, Docker and KVM.</p>
-            <a class="try-reference" href="https://github.com/Omnix-Linux/docker-vm/blob/feat/omnix-demo/docs/OMNIX.md">Docker app setup instructions →</a>
-            <a class="btn" href="https://github.com/Omnix-Linux/docker-vm/tree/feat/omnix-demo">Docker app source</a>
-          </article>
-        </div>
-      </div>
-      <div class="install-demo" id="install-demo" role="region" aria-label="Looping Omnix installer demonstration">
-        <div class="demo-controls" aria-label="Choose a desktop to preview">
-          <button type="button" data-demo-flavor="Hyprland - Omarchy" aria-pressed="true">Hyprland - Omarchy</button>
-          <button type="button" data-demo-flavor="KDE Plasma - Atrium" aria-pressed="false">KDE Plasma - Atrium</button>
-          <button type="button" class="demo-pause" aria-label="Pause installer demo">Pause</button>
-        </div>
-        <div class="term demo-console">
-          <div class="term-bar"><b>Omnix live ISO · tty1</b><span>console preview</span></div>
-          <div class="demo-screen" aria-live="off">
-            <p>Welcome to the Omnix installer. Run: sudo omnix-install</p>
-            <p><span class="ok">[nixos@nixos:~]$</span> <span class="demo-cursor">▌</span></p>
-          </div>
-          <div class="demo-status"><span class="demo-stage">Boot the installer</span><span class="demo-keys">↑ ↓ choose · Enter confirm</span></div>
-        </div>
-        <p class="demo-caption">Simulated from the boot ISO: terminal menus, individual prompts, then console output. Timing and log lines are illustrative. This preview uses a wired connection, btrfs and LUKS; Wi-Fi setup opens nmtui. Each loop tries the other desktop.</p>
-        <noscript><p class="lede">Run <code>sudo omnix-install</code>, choose a disk, filesystem, encryption and flavor, enter your account details, then confirm to install.</p></noscript>
-      </div>
-    </div>
-  </section>
 
   <section id="vision">
     <div class="split">
@@ -809,18 +794,48 @@ Inter                 // interface font
         <div class="eyebrow">Coming next</div>
         <h2>Portable programs <em>and a WebAssembly runtime.</em></h2>
         <p class="lede">Running prebuilt software already works out of the box: the base ships a loader, so ordinary Linux programs run unmodified. What comes next covers the two kinds that do not need a Linux binary at all.</p>
-        <p class="lede"><strong>Actually Portable Executables (APE).</strong> Built-in support for Cosmopolitan-style
-          single-file programs: one file that runs on many operating systems, treated as a first-class app beside Nix packages.</p>
-        <p class="lede"><strong>A WebAssembly runtime for micro apps.</strong> Small sandboxed WASM modules, aiming for
-          near-native speed on top of a stable kernel API — programs with no Linux build at all.</p>
+        <div class="vision-list">
+          <details class="vision-item">
+            <summary>
+              <span class="vision-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7.5 12 3l8 4.5v9L12 21l-8-4.5z"/><path d="M4 7.5 12 12l8-4.5M12 12v9"/></svg>
+              </span>
+              <span class="vision-text">
+                <b>Actually Portable Executables (APE)</b>
+                <small>One file that runs on many operating systems</small>
+              </span>
+            </summary>
+            <p>Cosmopolitan-style single-file programs, treated as a first-class app beside Nix packages: download one
+              file and it runs, whichever system you land on. No build step, no per-platform binaries to chase.</p>
+            <pre aria-label="An APE program as a first-class app"><span class="hl">app.ape</span>            <span class="c">// one file, many OSes</span>
+  <span class="ok">'--</span> first-class app  <span class="c">// runs like any app</span></pre>
+          </details>
+          <details class="vision-item">
+            <summary>
+              <span class="vision-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="4.5" width="17" height="15" rx="2.5"/><path d="M8 9.5h3M8 13h8M14 9.5h2.5"/></svg>
+              </span>
+              <span class="vision-text">
+                <b>A WebAssembly runtime for micro apps</b>
+                <small>Small, sandboxed, no Linux build needed</small>
+              </span>
+            </summary>
+            <p>Small sandboxed WASM modules, aiming for near-native speed on top of a stable kernel API — programs with no
+              Linux build at all, hosted on an interface that stays stable as the system underneath it changes.</p>
+            <pre aria-label="A WebAssembly micro app on the kernel API"><span class="hl">micro.wasm</span>          <span class="c">// no Linux build needed</span>
+  <span class="ok">'--</span> kernel-API      <span class="c">// sandboxed, stable host</span></pre>
+          </details>
+        </div>
+        <p class="lede vision-note"><strong>Planned, not shipped.</strong> Both of these are on the roadmap; the loader
+          and the desktop work above are what Omnix does today.</p>
       </div>
       <div class="term">
         <div class="term-bar"><i></i><i></i><i></i><b>status: planned</b></div>
-<pre aria-label="Planned APE and WebAssembly application model"><span class="hl">app.ape</span>               // one file, many OSes
-  '-- first-class app    // runs like any app
+<pre aria-label="Planned APE and WebAssembly application model"><span class="hl">app.ape</span>               <span class="c">// one file, many OSes</span>
+  <span class="ok">'--</span> first-class app    <span class="c">// runs like any app</span>
 
-<span class="hl">micro.wasm</span>             // no Linux build needed
-  '-- kernel-API platform // sandboxed, stable host
+<span class="hl">micro.wasm</span>             <span class="c">// no Linux build needed</span>
+  <span class="ok">'--</span> kernel-API platform <span class="c">// sandboxed, stable host</span>
 
 <span class="p">/* planned · not shipped */</span></pre>
       </div>
@@ -875,13 +890,54 @@ Inter                 // interface font
       </div>
     </div>
   </section>
+
+  <section id="install">
+    <div class="wide">
+      <div class="try-intro">
+        <div class="eyebrow">Try it</div>
+        <h2><em>Try Omnix!</em></h2>
+        <p class="lede try-promise">Install it on a PC, or try it in a virtual machine first.</p>
+        <p class="lede">Omnix supports 64-bit Intel and AMD PCs (x86-64). Boot the installer ISO, or run the real installer in a virtual machine with the Try Omnix Docker app.</p>
+        <div class="try-options">
+          <article class="try-card">
+            <h3>Install Omnix</h3>
+            <p>Download the installer ISO, boot it from USB and run <code>sudo omnix-install</code> to choose a disk and a desktop.</p>
+            <a class="btn primary" href="https://github.com/Omnix-Linux/Omnix/releases">Download the installer ISO</a>
+          </article>
+          <article class="try-card">
+            <h3>Try it in a VM</h3>
+            <p>The Try Omnix Docker app boots the real installer in a virtual machine so you can explore a desktop first. Requires x86-64 Linux, Docker and KVM.</p>
+            <a class="try-reference" href="https://github.com/Omnix-Linux/docker-vm/blob/feat/omnix-demo/docs/OMNIX.md">Docker app setup instructions →</a>
+            <a class="btn" href="https://github.com/Omnix-Linux/docker-vm/tree/feat/omnix-demo">Docker app source</a>
+          </article>
+        </div>
+      </div>
+      <div class="install-demo" id="install-demo" role="region" aria-label="Looping Omnix installer demonstration">
+        <div class="demo-controls" aria-label="Choose a desktop to preview">
+          <button type="button" data-demo-flavor="Hyprland - Omarchy" aria-pressed="true">Hyprland - Omarchy</button>
+          <button type="button" data-demo-flavor="KDE Plasma - Atrium" aria-pressed="false">KDE Plasma - Atrium</button>
+          <button type="button" class="demo-pause" aria-label="Pause installer demo">Pause</button>
+        </div>
+        <div class="term demo-console">
+          <div class="term-bar"><b>Omnix live ISO · tty1</b><span>console preview</span></div>
+          <div class="demo-screen" aria-live="off">
+            <p>Welcome to the Omnix installer. Run: sudo omnix-install</p>
+            <p><span class="ok">[nixos@nixos:~]$</span> <span class="demo-cursor">▌</span></p>
+          </div>
+          <div class="demo-status"><span class="demo-stage">Boot the installer</span><span class="demo-keys">↑ ↓ choose · Enter confirm</span></div>
+        </div>
+        <p class="demo-caption">Simulated from the boot ISO: terminal menus, individual prompts, then console output. Timing and log lines are illustrative. This preview uses a wired connection, btrfs and LUKS; Wi-Fi setup opens nmtui. Each loop tries the other desktop.</p>
+        <noscript><p class="lede">Run <code>sudo omnix-install</code>, choose a disk, filesystem, encryption and flavor, enter your account details, then confirm to install.</p></noscript>
+      </div>
+    </div>
+  </section>
 </main>
 
 <footer>
   <div class="foot">
     <div>
       <h4>Omnix</h4>
-      <p>An independent, NixOS-based Linux distribution with standard Linux paths, for Hyprland - Omarchy and KDE Plasma - Atrium. Not affiliated with or endorsed by Omarchy, 37signals, Basecamp or the NixOS Foundation.</p>
+      <p>NixOS with the standard Linux filesystem layout, for Hyprland - Omarchy and KDE Plasma - Atrium. Not affiliated with or endorsed by Omarchy, 37signals, Basecamp or the NixOS Foundation.</p>
     </div>
     <div>
       <h4>Repositories</h4>
