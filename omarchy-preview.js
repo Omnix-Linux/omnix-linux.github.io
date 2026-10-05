@@ -432,11 +432,5 @@
   hint.textContent = 'Click a desktop to use your keyboard: Enter, W, Space, 1–5, arrows, and T to cycle themes.';
   demo.querySelector('.preview-monitors').after(keys, hint);
 
-  var themeButton = document.createElement('button');
-  themeButton.type = 'button';
-  themeButton.dataset.omaTheme = '';
-  themeButton.addEventListener('click', function () { openPicker(activeDesk || desks[0]); });
-  demo.querySelector('.preview-controls').appendChild(themeButton);
-
   applyTheme(0, null);
 })();

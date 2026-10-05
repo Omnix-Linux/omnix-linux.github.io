@@ -117,7 +117,6 @@
           card.appendChild(thumbnail);
           card.addEventListener('click', function () {
             workspace.click();
-            demo.querySelector('[data-monitors]').setAttribute('aria-pressed', 'true');
             monitors.children[1].hidden = false;
             monitors.classList.add('dual');
             overview.hidden = true;
@@ -142,7 +141,6 @@
   }
   function updateDesktop() {
     var tiled = demo.dataset.desktop === 'omarchy';
-    demo.querySelector('[data-depth]').hidden = tiled;
     demo.querySelectorAll('.terminal-group').forEach(function (group, index) {
       group.hidden = tiled && index % 2 === 1;
       group.disabled = tiled;
@@ -164,19 +162,8 @@
     button.addEventListener('click', function () {
       demo.dataset.desktop = this.dataset.desktop;
       updateDesktop();
-      document.querySelectorAll('.desktop-choices button').forEach(function (item) { item.setAttribute('aria-pressed', String(item === this)); }, this);
+      document.querySelectorAll('button[data-desktop]').forEach(function (item) { item.setAttribute('aria-pressed', String(item.dataset.desktop === this.dataset.desktop)); }, this);
       demo.querySelector('.preview-caption').textContent = this.dataset.desktop === 'omarchy' ? 'Hyprland - Omarchy · interactive illustration · colors from Omarchy’s themes' : 'KDE Plasma - Atrium · interactive illustration';
     });
-  });
-  demo.querySelector('[data-monitors]').addEventListener('click', function () {
-    var active = this.getAttribute('aria-pressed') !== 'true';
-    this.setAttribute('aria-pressed', String(active));
-    monitors.children[1].hidden = !active;
-    monitors.classList.toggle('dual', active);
-  });
-  demo.querySelector('[data-depth]').addEventListener('click', function () {
-    var active = this.getAttribute('aria-pressed') !== 'true';
-    this.setAttribute('aria-pressed', String(active));
-    demo.classList.toggle('flat', !active);
   });
 })();

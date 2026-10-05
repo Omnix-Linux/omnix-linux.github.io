@@ -606,7 +606,7 @@
         <p class="lede preview-description">Hyprland tiles every window automatically. Open and close windows, switch workspaces and try Omarchy’s themes.</p>
       </div>
       <div class="desktop-demo" data-desktop="omarchy">
-        <div class="preview-controls"><button type="button" data-monitors aria-pressed="false">Two monitors</button><button type="button" data-depth aria-pressed="true" hidden>Layered view</button></div>
+        <div class="preview-controls" role="group" aria-label="Choose a desktop to preview"><button type="button" data-desktop="omarchy" aria-pressed="true">Hyprland - Omarchy</button><button type="button" data-desktop="plasma" aria-pressed="false">KDE Plasma - Atrium</button></div>
         <div class="preview-monitors"></div>
         <p class="preview-caption" aria-live="polite">Hyprland - Omarchy · interactive illustration · colors from Omarchy’s themes</p>
       </div>
@@ -1132,8 +1132,8 @@ afterFirstPaint(function () {
 <script src="coronal.js?v=mobile-stability-alpha-20261004" defer></script>
 <script src="hero-actions.js?v=mobile-stability-alpha-20261004" defer></script>
 <script src="column-scroll.js" defer></script>
-<script src="desktop-preview.js?v=20261004-omarchy-desk" defer></script>
-<script src="omarchy-preview.js?v=20261004-omarchy-desk" defer></script>
+<script src="desktop-preview.js?v=20261004-desktop-tabs" defer></script>
+<script src="omarchy-preview.js?v=20261004-desktop-tabs" defer></script>
 
 
 </body>
