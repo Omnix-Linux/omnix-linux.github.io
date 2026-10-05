@@ -645,7 +645,7 @@
       <div>
         <div class="eyebrow">Local AI</div>
         <h2>Private AI on your own GPU, <em>running in minutes.</em></h2>
-        <p class="lede">Run DeepSeek-R1, Qwen and Llama on your own hardware, with no account, no API bill and no data
+        <p class="lede">Run Qwen, Llama and Gemma on your own hardware, with no account, no API bill and no data
           leaving your machine. Omnix turns the usual afternoon of drivers, CUDA versions and install guides into a few
           lines of configuration and a single rebuild.</p>
         <p class="lede"><strong>The tools you already know, set up correctly.</strong> Ollama, LM Studio and llama.cpp
@@ -1270,18 +1270,18 @@ afterFirstPaint(function () {
         bar: "localhost:8080 · Open WebUI",
         desc: "Ollama serves models over a local API, and Open WebUI gives you a polished, ChatGPT-style chat in the browser.",
         ui: '<div class="ai-side"><small>CHATS</small><span class="on">flake.lock, explained</span><span>Rust lifetimes</span><span>Summarize meeting.txt</span></div>' +
-          '<div class="ai-chat"><span class="ai-chip">deepseek-r1:32b ▾</span>' + chat + '<div class="ai-input">Send a message</div></div>',
+          '<div class="ai-chat"><span class="ai-chip">qwen3.5:27b ▾</span>' + chat + '<div class="ai-input">Send a message</div></div>',
         cfg: [c("{ pkgs, ... }: {"), "  services.ollama = {", "    enable = true;",
           "    package = " + p("pkgs.ollama-cuda") + ";    " + c("// or ollama-rocm for AMD"),
-          "    loadModels = [ " + p('"deepseek-r1:32b"') + " " + p('"qwen3-coder:30b"') + " ];", "  };",
+          "    loadModels = [ " + p('"qwen3.5:27b"') + " " + p('"qwen3-coder:30b"') + " ];", "  };",
           "  services.open-webui.enable = true;", c("}"), "", hl("$ sudo nixos-rebuild switch"),
           ok("✓ Open WebUI at localhost:8080")]
       },
       lmstudio: {
         bar: "LM Studio",
         desc: "LM Studio is a desktop app: browse and download models, load one onto the GPU and chat, or serve it to your editor over an OpenAI-compatible API.",
-        ui: '<div class="ai-side"><small>MY MODELS</small><span class="on">DeepSeek-R1-Distill-Qwen-32B</span><span>Qwen3-Coder-30B-A3B</span><span>Llama-3.3-70B-Instruct</span><span>gemma-3-27b-it</span><small>SERVER</small><span>localhost:1234 · running</span></div>' +
-          '<div class="ai-chat"><span class="ai-chip">DeepSeek-R1-Distill-Qwen-32B · Q4_K_M · GPU</span>' + chat + '<div class="ai-input">Type a message</div></div>',
+        ui: '<div class="ai-side"><small>MY MODELS</small><span class="on">Qwen3.5-27B</span><span>Qwen3-Coder-30B-A3B</span><span>Llama-3.3-70B-Instruct</span><span>gemma-3-27b-it</span><small>SERVER</small><span>localhost:1234 · running</span></div>' +
+          '<div class="ai-chat"><span class="ai-chip">Qwen3.5-27B · Q4_K_M · GPU</span>' + chat + '<div class="ai-input">Type a message</div></div>',
         cfg: [c("{ pkgs, ... }: {"), "  nixpkgs.config.allowUnfree = true;",
           "  environment.systemPackages = [ " + p("pkgs.lmstudio") + " ];", c("}"), "",
           hl("$ sudo nixos-rebuild switch"), ok("✓ LM Studio in your app launcher"), "",
@@ -1293,7 +1293,7 @@ afterFirstPaint(function () {
         ui: '<div class="ai-term"><b>$ journalctl -u llama-cpp -f</b>\nload_tensors: offloaded 65/65 layers to GPU\nllama_context: n_ctx = 16384\nmain: model loaded\nmain: server listening on <em>http://127.0.0.1:8080</em>\nslot launch: prompt 18 tokens\nslot release: <em>42.7 tokens per second</em>\n\n<b>$ curl localhost:8080/v1/chat/completions</b> ...\n<em>200 OK</em>  "It pins the exact version of every input..."</div>',
         cfg: [c("{ pkgs, ... }: {"), "  services.llama-cpp = {", "    enable = true;",
           "    package = " + p("pkgs.llama-cpp.override { cudaSupport = true; }") + ";",
-          "    model = " + p('"/var/lib/models/DeepSeek-R1-Distill-Qwen-32B-Q4_K_M.gguf"') + ";",
+          "    model = " + p('"/var/lib/models/Qwen3.5-27B-Q4_K_M.gguf"') + ";",
           "    extraFlags = [ " + p('"-ngl" "99"') + " ];   " + c("// all layers on the GPU"), "  };", c("}"), "",
           hl("$ sudo nixos-rebuild switch"), ok("✓ llama-server at localhost:8080")]
       }
