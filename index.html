@@ -541,6 +541,7 @@
   <a href="#rollback" aria-label="Every update can be undone"></a>
   <a href="#runs" aria-label="Linux apps working on NixOS"></a>
   <a href="#ported" aria-label="Save your configuration as a git repo"></a>
+  <a href="#soldr" aria-label="Soldr: a cached, cross-compiling Rust toolchain"></a>
   <a href="#install" aria-label="Try Omnix"></a>
   <a href="#vision" aria-label="Coming next: APE support and a WebAssembly runtime"></a>
   <a href="#faq" aria-label="Frequently asked questions"></a>
@@ -729,6 +730,40 @@ Inter                 // interface font
 <span class="hl">$ git push</span>
 <span class="ok">✓ same machine, anywhere</span></pre>
       </div>
+    </div>
+  </section>
+
+  <section id="soldr">
+    <div class="split">
+      <div>
+        <div class="eyebrow">Rust, first class</div>
+        <h2>Put <em>soldr</em> in front of your build commands.</h2>
+        <p class="lede">Soldr is a wrapper for <code>cargo</code> and the Rust toolchain, built to run on Omnix. You put
+          <code>soldr</code> in front of the commands you already use. It fetches the toolchain your project asks for,
+          compiles through a cache every later build hits, and stays out of the way.</p>
+        <p class="lede"><strong>Cross-compile from your own machine.</strong> <code>soldr build --target mac-arm64</code>
+          provisions a managed SDK and builds a macOS binary from Linux, and the same surface covers
+          <code>win-x64</code> and <code>linux-x64-musl</code> — so you are not renting a Mac or a Windows runner to
+          produce a build.</p>
+        <p class="lede"><strong>It shares the cache across pull requests.</strong> The cache is content-addressed, so a
+          branch can reuse what another branch already compiled — the thing a per-branch CI cache cannot do.</p>
+      </div>
+      <div class="term">
+        <div class="term-bar"><i></i><i></i><i></i><b>soldr · the same commands</b></div>
+<pre aria-label="Soldr wrapping cargo and cross-compiling to macOS"><span class="hl">$ soldr cargo build --release</span>
+  <span class="c">// the pinned toolchain, cached</span>
+
+<span class="hl">$ soldr build --target mac-arm64</span>
+  <span class="c">// cross-compiled from Linux</span>
+  <span class="ok">✓ your-app (macOS arm64)</span>
+
+<span class="hl">$ soldr cargo test</span>
+  <span class="c">// no cache miss on a warm build</span></pre>
+      </div>
+    </div>
+    <div class="wide">
+      <p class="lede"><a href="https://github.com/zackees/soldr">Soldr</a> is developed by the same person behind Omnix and is
+        used to build its own projects. It is beta software: pin the release you use.</p>
     </div>
   </section>
 
