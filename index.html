@@ -493,9 +493,13 @@
 
 
   /* Audience cards, FAQ */
-  .who-intro { max-width: 1240px; width: 100%; }
-  .who .try-card p { margin-bottom: 0; }
-  .who .note { color: var(--muted); font-size: var(--step--1); margin: 14px 0 0; max-width: 72ch; }
+  /* Statement band: a second hero between the shader and the first section. */
+  .statement { padding-block: clamp(80px, 12svh, 150px); }
+  .statement-inner { max-width: 1240px; width: 100%; }
+  .statement h2 { max-width: 20ch; font-size: var(--step-5); margin-bottom: 26px; }
+  .statement .lede { max-width: 62ch; }
+  .statement .lede + .lede { margin-top: 16px; }
+  .statement .cta { margin-top: 32px; gap: 14px; }
   .cta { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 28px; }
   .lede a { color: var(--ice); text-underline-offset: 3px; }
   .faq-list { margin-top: 28px; border-bottom: 1px solid var(--line); max-width: 900px; }
@@ -558,38 +562,25 @@
         </div>
       </div>
       <div class="hero-actions">
-        <a class="scrollhint" href="#who">What is Omnix? ↓</a>
+        <a class="scrollhint" href="#who">Why Omnix? ↓</a>
       </div>
     </div>
   </section>
 
-  <section id="who" class="who">
-    <div class="who-intro">
-      <h2 class="eyebrow">Who it’s for</h2>
-      <p class="lede">Omnix is NixOS with the standard Linux filesystem layout. It adds that layout as a layer — no forked packages, no overlays — so Omarchy’s Hyprland desktop, KDE Plasma - Atrium and prebuilt Linux software run unmodified, with declarative configuration and boot-menu rollbacks.</p>
-      <div class="try-options">
-        <article class="try-card">
-          <h3>New to Linux?</h3>
-          <p>Coming from Windows or macOS? Pick a desktop when you install. If an update breaks something, choose the previous version from the boot menu.</p>
-        </article>
-        <article class="try-card">
-          <h3>Omarchy fan?</h3>
-          <p>Keep Omarchy’s Hyprland config, keybindings, themes and scripts. Omnix adds rollback and one configuration you can read, version and share.</p>
-        </article>
-        <article class="try-card">
-          <h3>KDE Plasma user?</h3>
-          <p>KDE Plasma - Atrium is a polished, mouse-first Plasma 6 desktop that borrows Omarchy habits like a Meta+W overview, a Nerd Font terminal and snappy key repeat.</p>
-        </article>
-        <article class="try-card">
-          <h3>NixOS user?</h3>
-          <p>Unmodified nixpkgs from <code>cache.nixos.org</code>, no overlays or patches, plus nix-ld and envfs so prebuilt binaries find <code>/usr/lib</code> and <code>/lib64</code>.</p>
-        </article>
-      </div>
+  <section id="who" class="who statement">
+    <div class="statement-inner">
+      <div class="eyebrow">Why Omnix</div>
+      <h2>A next-generation NixOS that <em>runs everything.</em></h2>
+      <p class="lede">Not a fork, not a reimplementation: NixOS itself, with the standard Linux filesystem layout laid
+        back on top. Nothing is patched and nothing is overlaid, so every package stays exactly as its maintainers
+        shipped it.</p>
+      <p class="lede">That one missing layer is what everything else follows from. Your existing Linux software runs
+        unmodified. Any desktop you want runs on it. And the whole system is one text file you can read, change, and
+        roll back.</p>
       <div class="cta">
         <a class="btn primary" href="#install">Try Omnix</a>
         <a class="btn" href="#flavors">Compare the desktops</a>
       </div>
-      <p class="note">Omnix is independent and not affiliated with or endorsed by Omarchy, 37signals, Basecamp or the NixOS Foundation.</p>
     </div>
   </section>
 
