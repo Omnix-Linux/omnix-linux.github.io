@@ -289,7 +289,6 @@
   .split.desktop-showcase { grid-template-columns: minmax(0, 0.95fr) minmax(0, 1.05fr); }
   .split.desktop-showcase > .scroll-copy-pane { order: 2; }
   .split.desktop-showcase > .desktop-demo { order: 1; }
-  .split.desktop-showcase > .ai-demo { order: 1; }
   .scroll-copy-pane { display: contents; }
   .scroll-copy { min-width: 0; }
   .split.dual-scroll { align-items: start; }
@@ -299,8 +298,7 @@
     .split, .split.desktop-showcase { grid-template-columns: minmax(0, 1fr); }
     /* Stacked, the copy has to lead again. */
     .split.desktop-showcase > .scroll-copy-pane,
-    .split.desktop-showcase > .desktop-demo,
-    .split.desktop-showcase > .ai-demo { order: 0; }
+    .split.desktop-showcase > .desktop-demo { order: 0; }
   }
 
   .eyebrow {
@@ -643,7 +641,7 @@
   </section>
 
   <section id="ml">
-    <div class="split desktop-showcase">
+    <div class="split">
       <div>
         <div class="eyebrow">Local AI · known workflows that evolve</div>
         <h2>Premium Local AI <em>Setup Experience.</em></h2>
