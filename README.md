@@ -38,6 +38,8 @@ The left column's pane clips overflow without creating a nested scroll container
 
 In the Plasma - Atrium preview, each terminal group carries a `slot-N` class fixing its seat on the desktop, and `front`/`back` marks only which group is focused. The two are separate so that focusing a group raises it with a new `z-index` and dims the other with `filter`, without moving either window; binding the transform to the focus state instead makes the two windows trade places on every click.
 
+Choosing a desktop opens a terminal in that desktop's preview showing the command that performs the switch, replayed line by line from `switchSteps` in `desktop-preview.js`; the timers are cleared and restarted on each change so a repeated switch still reads from the top. `omnix apply desktop=… theme=…` stands in for a `nixos-rebuild switch`, and the closing line repeats that the previous desktop stays in the boot menu. Hyprland tiles the terminal to fill its workspace stage, while Plasma floats it as a window inset over the desktop. Reduced motion drops the reveal animation and shows every line at once. The panel is decorative — the switch itself is performed by the tab buttons, not by the terminal.
+
 ## Desktop names
 
 Use **Hyprland - Omarchy** and **KDE Plasma - Atrium** in desktop labels.

@@ -9,7 +9,7 @@
     let screen = document.createElement('div');
     screen.className = 'preview-screen';
     screen.hidden = monitor === 1;
-    screen.innerHTML = '<div class="desktop-bar"><span>◉ Omnix</span><span>12:34 · ♫ · Wi-Fi</span></div><div class="workspace-stage"></div><div class="desktop-dock"><div class="dock-launchers"></div><button type="button" class="dock-overview" aria-label="Open multi-monitor workspace overview" aria-expanded="false"><img src="assets/desktop-icons/virtual-desktops.svg" alt=""></button><button type="button" class="dock-clock" aria-label="Open calendar" aria-expanded="false">12:34</button></div><div class="preview-calendar" hidden></div><div class="preview-overview" hidden></div><div class="app-preview-notice" role="status"></div><div class="workspace-switcher" aria-label="Monitor ' + (monitor + 1) + ' workspaces"></div>';
+    screen.innerHTML = '<div class="desktop-bar"><span>◉ Omnix</span><span>12:34 · ♫ · Wi-Fi</span></div><div class="workspace-stage"></div><div class="desktop-dock"><div class="dock-launchers"></div><button type="button" class="dock-overview" aria-label="Open multi-monitor workspace overview" aria-expanded="false"><img src="assets/desktop-icons/virtual-desktops.svg" alt=""></button><button type="button" class="dock-clock" aria-label="Open calendar" aria-expanded="false">12:34</button></div><div class="preview-calendar" hidden></div><div class="preview-overview" hidden></div><div class="app-preview-notice" role="status"></div><div class="switch-terminal" hidden><span class="switch-title">kitty · desktop switch</span><pre class="switch-log" aria-live="polite"></pre></div><div class="workspace-switcher" aria-label="Monitor ' + (monitor + 1) + ' workspaces"></div>';
     var stage = screen.querySelector('.workspace-stage');
     for (var group = 0; group < 2; group++) {
       var layer = document.createElement('button');
@@ -141,6 +141,48 @@
     });
     monitors.appendChild(screen);
   }
+  // Each desktop switch is shown as the command that performs it. The theme
+  // name is real; `omnix apply` is the stand-in for a nixos-rebuild switch.
+  var switchSteps = {
+    omarchy: [
+      { text: '$ omnix apply desktop=hyprland-omarchy theme=rose-pine', delay: 0 },
+      { text: 'building /etc/nixos#omnix-hyprland-omarchy', delay: 260 },
+      { text: 'switching theme: rose-pine-dawn', delay: 520 },
+      { text: 'reloading Hyprland config', delay: 760 },
+      { text: '✓ theme applied · previous desktop kept in boot menu', delay: 1000 }
+    ],
+    plasma: [
+      { text: '$ omnix apply desktop=kde-plasma-atrium theme=adwaita-dark', delay: 0 },
+      { text: 'building /etc/nixos#omnix-kde-plasma-atrium', delay: 260 },
+      { text: 'switching theme: adwaita-dark', delay: 520 },
+      { text: 'activating plasma-manager session', delay: 760 },
+      { text: '✓ theme applied · previous desktop kept in boot menu', delay: 1000 }
+    ]
+  };
+  var switchTimers = [];
+  function playSwitch(desktop) {
+    switchTimers.forEach(clearTimeout);
+    switchTimers = [];
+    demo.querySelectorAll('.switch-terminal').forEach(function (terminal) {
+      var log = terminal.querySelector('.switch-log');
+      log.textContent = '';
+      terminal.hidden = false;
+      terminal.classList.remove('done');
+      // Replay from the top each time so a repeated switch still reads.
+      terminal.classList.remove('enter');
+      void terminal.offsetWidth;
+      terminal.classList.add('enter');
+      switchSteps[desktop].forEach(function (step, index) {
+        var line = document.createElement('span');
+        line.className = index === 0 ? 'switch-cmd' : 'switch-out';
+        line.textContent = step.text;
+        switchTimers.push(setTimeout(function () {
+          log.appendChild(line);
+          if (index === switchSteps[desktop].length - 1) terminal.classList.add('done');
+        }, step.delay));
+      });
+    });
+  }
   function updateDesktop() {
     var tiled = demo.dataset.desktop === 'omarchy';
     demo.querySelectorAll('.terminal-group').forEach(function (group, index) {
@@ -157,6 +199,7 @@
     document.querySelector('.preview-description').textContent = tiled
       ? 'Hyprland tiles every window automatically. Open and close windows, switch workspaces and try Omarchy’s themes.'
       : 'Explore multiple monitors and layered terminal groups. Select a group to bring it forward.';
+    playSwitch(demo.dataset.desktop);
   }
   updateDesktop();
   document.querySelectorAll('[data-desktop]').forEach(function (button) {
