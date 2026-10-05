@@ -19,7 +19,7 @@
 - [Website](https://www.omnix-linux.com/)
 - [Omnix base and installer](https://github.com/Omnix-Linux/Omnix)
 - [Installer ISO releases](https://github.com/Omnix-Linux/Omnix/releases)
-- [Soldr](https://github.com/zackees/soldr): on Omnix, `cargo` is aliased to `soldr cargo`, so the usual commands drive a build that fetches and pins the right toolchain and caches every compilation. The cache is content-addressed and shared across branches and pull requests, for roughly 2x faster cross-PR builds, and one command cross-compiles a macOS binary from Linux (also `win-x64`, `linux-x64-musl`). Developed by the same person behind Omnix. Beta software; pin the release.
+- [Soldr](https://github.com/zackees/soldr): on Omnix, `cargo` is aliased to `soldr cargo`, so the usual commands drive a build that fetches and pins the right toolchain and caches every compilation. The cache is content-addressed and shared across branches and pull requests, for roughly 2x faster cross-PR builds, Cross-compilation is a first-class citizen: the tools are built in, so one command cross-compiles a macOS binary from Linux (also `win-x64`, `linux-x64-musl`) without renting a runner. Developed by the same person behind Omnix. Beta software; pin the release.
 - [Hyprland - Omarchy flavor](https://github.com/Omnix-Linux/Autarchy)
 - [KDE Plasma - Atrium flavor](https://github.com/Omnix-Linux/Atrium)
 - [Try Omnix Docker app](https://github.com/Omnix-Linux/docker-vm/blob/feat/omnix-demo/docs/OMNIX.md)
