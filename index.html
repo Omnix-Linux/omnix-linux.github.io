@@ -132,6 +132,14 @@
     },
     {
      "@type": "Question",
+     "name": "Where do I report a bug?",
+     "acceptedAnswer": {
+      "@type": "Answer",
+      "text": "Open an issue with the bug report form at https://github.com/Omnix-Linux/Omnix/issues/new?template=bug.yml. It covers the installer, the base system, both desktops and local AI, and asks for the system details needed. Known issues are listed at https://github.com/Omnix-Linux/Omnix/issues."
+     }
+    },
+    {
+     "@type": "Question",
      "name": "Can I change the look without reinstalling?",
      "acceptedAnswer": {
       "@type": "Answer",
@@ -490,6 +498,11 @@
   .site-nav { max-width: 1240px; height: 100%; margin-inline: auto; display: flex; justify-content: flex-end; align-items: center; }
   .site-nav-links { display: flex; align-items: center; gap: 12px; pointer-events: auto; }
   .site-nav a { display: inline-flex; align-items: center; justify-content: center; min-height: 44px; padding: 10px 16px; font-family: var(--font-mono); font-size: .875rem; font-weight: 700; color: #fff; text-decoration: none; }
+  .site-nav .nav-bug { gap: 8px; color: var(--muted); }
+  .nav-bug svg { width: 18px; height: 18px; fill: currentColor; }
+  .site-nav .nav-bug:hover { color: var(--ice); }
+  @media (max-width: 640px) { .site-nav .nav-bug { width: 44px; padding: 10px; } .nav-bug span { display: none; } .nav-bug svg { width: 20px; height: 20px; } }
+  .bug-options { margin-top: 24px; }
   .site-nav .nav-install { border: 1px solid var(--line); border-radius: 0; }
   .site-nav .nav-github { width: 44px; padding: 10px; color: var(--ice); }
   .nav-github svg { width: 24px; height: 24px; fill: currentColor; }
@@ -572,6 +585,7 @@
 <header class="site-header">
   <nav class="site-nav" aria-label="Main navigation">
     <div class="site-nav-links">
+      <a class="nav-bug" href="#bugs" title="Report a bug"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M9 4.5 7.6 3.1l1.1-1.1L10.4 3.7a5 5 0 0 1 3.2 0L15.3 2l1.1 1.1L15 4.5A4.9 4.9 0 0 1 16.9 8H7.1A4.9 4.9 0 0 1 9 4.5zM6 10h12v4a6 6 0 0 1-5 5.9V12h-2v7.9A6 6 0 0 1 6 14v-4zm-3 1h2v2H3v-2zm16 0h2v2h-2v-2zM3.6 17l1.6-1 1 1.7-1.6 1-1-1.7zm15.2-1 1.6 1-1 1.7-1.6-1 1-1.7zM3.6 7.3l1-1.7 1.6 1-1 1.7-1.6-1zm14.2-.7 1.6-1 1 1.7-1.6 1-1-1.7z"/></svg><span>Report a bug</span></a>
       <a class="nav-github" href="https://github.com/Omnix-Linux" aria-label="Omnix on GitHub" title="Omnix on GitHub">
         <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 .75a11.25 11.25 0 0 0-3.558 21.923c.563.104.768-.244.768-.542 0-.267-.01-.975-.015-1.914-3.13.68-3.79-1.508-3.79-1.508-.512-1.302-1.25-1.65-1.25-1.65-1.022-.699.077-.685.077-.685 1.13.08 1.725 1.16 1.725 1.16 1.005 1.722 2.638 1.225 3.28.937.102-.729.394-1.225.716-1.507-2.499-.285-5.126-1.25-5.126-5.565 0-1.23.44-2.235 1.16-3.023-.117-.285-.503-1.43.11-2.98 0 0 .945-.303 3.094 1.154A10.79 10.79 0 0 1 12 6.172c.956.005 1.92.129 2.819.378 2.147-1.457 3.09-1.154 3.09-1.154.615 1.55.23 2.695.113 2.98.723.788 1.158 1.793 1.158 3.023 0 4.327-2.631 5.277-5.138 5.556.404.349.764 1.034.764 2.084 0 1.505-.014 2.719-.014 3.088 0 .3.203.65.774.54A11.25 11.25 0 0 0 12 .75Z"/></svg>
       </a>
@@ -591,6 +605,7 @@
   <a href="#soldr" aria-label="A luxury experience for building Rust apps"></a>
   <a href="#vision" aria-label="Coming next: APE support and a WebAssembly runtime"></a>
   <a href="#faq" aria-label="Frequently asked questions"></a>
+  <a href="#bugs" aria-label="Report a bug"></a>
   <a href="#install" aria-label="Try Omnix"></a>
 </nav>
 
@@ -878,6 +893,10 @@
           <p>Yes. KDE Plasma - Atrium is a declarative KDE Plasma 6 desktop that borrows Omarchy habits such as a Meta+W overview, per-screen virtual desktops, the JetBrainsMono Nerd Font and fast key repeat, while staying a familiar, mouse-first taskbar desktop.</p>
         </details>
         <details>
+          <summary>Where do I report a bug?</summary>
+          <p>Open an issue with the <a href="https://github.com/Omnix-Linux/Omnix/issues/new?template=bug.yml">bug report form</a> on GitHub. It covers the installer, the base system, both desktops and local AI, and asks for the system details we need. You can also <a href="https://github.com/Omnix-Linux/Omnix/issues">browse known issues</a> first.</p>
+        </details>
+        <details>
           <summary>Can I change the look without reinstalling?</summary>
           <p>Yes. In Hyprland - Omarchy, press Super + Ctrl + Shift + Space and pick one of Omarchy's built-in themes; the bar, window borders, terminal and editor change immediately, with no rebuild. To change the whole desktop, change one line in your configuration and rebuild, and the previous desktop stays in the boot menu.</p>
         </details>
@@ -905,6 +924,48 @@
           <summary>Is Omnix affiliated with Omarchy or NixOS?</summary>
           <p>No. Omnix is an independent project and is not affiliated with or endorsed by Omarchy, 37signals, Basecamp or the NixOS Foundation.</p>
         </details>
+      </div>
+    </div>
+  </section>
+
+  <section id="bugs">
+    <div class="split">
+      <div>
+        <div class="eyebrow">Report a bug</div>
+        <h2>Found a bug? <em>Tell us.</em></h2>
+        <p class="lede">Omnix is in preview, and every report makes it better. If the installer stalls, a program will
+          not start, a desktop misbehaves or your GPU sits idle under a local model, open an issue. It takes about two
+          minutes.</p>
+        <p class="lede"><strong>One place for everything.</strong> The form asks where the problem is, so reports about
+          the installer, the base system, either desktop or local AI all reach the right people.</p>
+        <div class="try-options bug-options">
+          <article class="try-card">
+            <h3>Report a bug</h3>
+            <p>A short form on GitHub: what happened, how to reproduce it, and your system details.</p>
+            <a class="btn primary" href="https://github.com/Omnix-Linux/Omnix/issues/new?template=bug.yml">Open a bug report</a>
+          </article>
+          <article class="try-card">
+            <h3>Check known issues</h3>
+            <p>Someone may have found it already. A 👍 on an existing issue helps us prioritize.</p>
+            <a class="btn" href="https://github.com/Omnix-Linux/Omnix/issues">Browse open issues</a>
+          </article>
+        </div>
+      </div>
+      <div class="term">
+        <div class="term-bar"><i></i><i></i><i></i><b>what to include</b></div>
+<pre aria-label="Commands that collect system details for a bug report"><span class="c">// paste the output into the form</span>
+<span class="hl">$ nixos-version</span>
+<span class="hl">$ uname -rm</span>
+<span class="hl">$ lspci -nn | grep -Ei 'vga|3d|display'</span>
+<span class="hl">$ nix flake metadata /etc/nixos</span>
+
+<span class="c">// a service failed</span>
+<span class="hl">$ journalctl -b -u &lt;service&gt; | tail -n 100</span>
+
+<span class="c">// broke after an update? roll back first,</span>
+<span class="c">// then tell us which generation worked</span>
+<span class="hl">$ sudo nixos-rebuild switch --rollback</span>
+<span class="ok">✓ back to work while we fix it</span></pre>
       </div>
     </div>
   </section>
@@ -964,6 +1025,7 @@
         <li><a href="https://github.com/Omnix-Linux/Autarchy">Hyprland - Omarchy</a></li>
         <li><a href="https://github.com/Omnix-Linux/Atrium">KDE Plasma - Atrium</a></li>
         <li><a href="https://github.com/Omnix-Linux/docker-vm/tree/feat/omnix-demo">Try Omnix</a>: the Docker app</li>
+        <li><a href="https://github.com/Omnix-Linux/Omnix/issues/new?template=bug.yml">Report a bug</a>: one form for everything</li>
       </ul>
     </div>
     <div>
