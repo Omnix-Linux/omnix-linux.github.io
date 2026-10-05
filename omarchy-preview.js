@@ -440,22 +440,33 @@
   // Reserve the taller desktop's height so switching desktops never changes the section's
   // layout. Otherwise column-scroll.js flips between its layouts and the copy jumps for a frame.
   // Both desktops are measured synchronously, so nothing paints in between.
+  // Measure with the reservation in place: offsetHeight never falls below it, and an
+  // unchanged height is detected instead of rewriting an identical inline value.
   var reserveFrame = 0;
+  var reserveMetrics = { w: document.documentElement.clientWidth, h: window.innerHeight };
   function reserveHeight() {
     reserveFrame = 0;
     var current = demo.dataset.desktop;
-    demo.style.minHeight = '';
     var tallest = 0;
     ['omarchy', 'plasma'].forEach(function (desktop) {
       demo.dataset.desktop = desktop;
       tallest = Math.max(tallest, demo.offsetHeight);
     });
     demo.dataset.desktop = current;
-    demo.style.minHeight = tallest + 'px';
+    var next = tallest + 'px';
+    if (demo.style.minHeight !== next) demo.style.minHeight = next;
   }
   function scheduleReserve() { if (!reserveFrame) reserveFrame = requestAnimationFrame(reserveHeight); }
   reserveHeight();
-  window.addEventListener('resize', scheduleReserve);
+  // The demos' heights are width/media-query driven; a chrome-only height change
+  // (iOS URL bar/toolbars sliding during scroll) needs no re-measure.
+  window.addEventListener('resize', function () {
+    var w = document.documentElement.clientWidth, h = window.innerHeight;
+    if (w === reserveMetrics.w && h !== reserveMetrics.h
+      && Math.abs(h - reserveMetrics.h) <= 160) return;
+    reserveMetrics.w = w; reserveMetrics.h = h;
+    scheduleReserve();
+  });
   if (document.fonts) document.fonts.ready.then(scheduleReserve);
   // Two monitors changes the height of both desktops alike.
   if ('MutationObserver' in window) new MutationObserver(scheduleReserve).observe(demo.querySelector('.preview-monitors'), { attributes: true, attributeFilter: ['class'] });

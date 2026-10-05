@@ -170,6 +170,18 @@ afterFirstPaint(async function () {
     else { clearTimeout(startupTimer); if (worker) worker.terminate(); worker = null; }
   });
   window.addEventListener("pageshow", function () { suspended = false; state(); resize(); });
+  // iOS Safari slides its URL bar/toolbars in and out while scrolling: window
+  // height wobbles by up to the chrome height while width holds, and the svh
+  // layout below does not change with it. Re-running placement or rebuilding
+  // observers on that churn rewrites the fixed hero styles mid-scroll (jerk).
+  var viewportMetrics = { w: document.documentElement.clientWidth, h: window.innerHeight };
+  function chromeResize() {
+    var w = document.documentElement.clientWidth, h = window.innerHeight;
+    if (w === viewportMetrics.w && h !== viewportMetrics.h
+      && Math.abs(h - viewportMetrics.h) <= 160) return true;
+    viewportMetrics.w = w; viewportMetrics.h = h;
+    return false;
+  }
   if ("IntersectionObserver" in window) {
     var heroObserver;
     function observeHero() {
@@ -181,12 +193,12 @@ afterFirstPaint(async function () {
       }, { rootMargin: "-" + inset + "px 0px -" + inset + "px 0px", threshold: [0, .65] });
       heroObserver.observe(wordmark);
     }
-    window.addEventListener("resize", observeHero);
+    window.addEventListener("resize", function () { if (!chromeResize()) observeHero(); });
     observeHero();
   }
   if (document.fonts) document.fonts.ready.then(resize);
   if (typeof ResizeObserver !== "undefined") new ResizeObserver(resize).observe(document.querySelector(".hero-inner"));
-  window.addEventListener("resize", resize);
-  if (window.visualViewport) window.visualViewport.addEventListener("resize", resize);
+  window.addEventListener("resize", function () { if (!chromeResize()) resize(); });
+  if (window.visualViewport) window.visualViewport.addEventListener("resize", function () { if (!chromeResize()) resize(); });
   resize();
 });

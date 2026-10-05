@@ -326,7 +326,8 @@
   .hero .brand { width: 100%; }
   .hero-inner { max-width: 1240px; width: 100%; display: grid; gap: 28px; }
   .wordmark { position: relative; height: min(62svh, 620px); width: 100%; margin: 0; font-family: "Lexend", "Arial Black", system-ui, sans-serif; font-weight: 800; line-height: 1; }
-  #coronal { position: fixed; inset: 0; width: 100vw; height: 100vh; z-index: 0; pointer-events: none; opacity: 0; transition: opacity .45s ease-out; }
+  /* inset: 0 fills the viewport; 100vh would track Safari's collapsing chrome. */
+  #coronal { position: fixed; inset: 0; z-index: 0; pointer-events: none; opacity: 0; transition: opacity .45s ease-out; }
   .shader-ready #coronal { opacity: 1; }
   .shader-ready.hero-past #coronal { opacity: .08; transition-duration: .18s; }
   .logo-orbit { position: absolute; left: calc(38vw - (100vw - min(88vw, 1240px)) / 2); top: 50%; transform: translate(-50%, -50%); width: min(80vw, 110svh); aspect-ratio: 1; display: block; pointer-events: none; }
@@ -944,6 +945,16 @@ Inter                 // interface font
     function go() { requestAnimationFrame(function () { setTimeout(fn, 0); }); }
     document.readyState === "loading" ? document.addEventListener("DOMContentLoaded", go) : go();
   }
+  // iOS Safari slides its URL bar/toolbars in and out while scrolling: window
+  // height wobbles by up to the chrome height while width holds, and svh-based
+  // layout does not change with it. Returns true for that churn so resize-driven
+  // layout work can skip it; any other resize records the new metrics.
+  function chromeResize(metrics) {
+    var w = document.documentElement.clientWidth, h = window.innerHeight;
+    if (w === metrics.w && h !== metrics.h && Math.abs(h - metrics.h) <= 160) return true;
+    metrics.w = w; metrics.h = h;
+    return false;
+  }
 </script>
 <script>
 afterFirstPaint(function () {
@@ -1006,7 +1017,13 @@ afterFirstPaint(function () {
     });
   }
   sections.forEach(function (s) { nearby.observe(s); });
-  window.addEventListener("resize", observeReveals);
+  // Rebuilding the observer mid-scroll re-fires reveals; chrome-only resizes
+  // (URL bar/toolbars sliding) need no new margins.
+  var revealMetrics = { w: document.documentElement.clientWidth, h: window.innerHeight };
+  window.addEventListener("resize", function () {
+    if (chromeResize(revealMetrics)) return;
+    observeReveals();
+  });
   observeReveals();
   root.classList.add("motion-live");
 });
@@ -1166,6 +1183,7 @@ afterFirstPaint(function () {
       });
     }
     var io, viewportHeight = 0, resizeFrame = 0;
+    var centerMetrics = { w: document.documentElement.clientWidth, h: window.innerHeight };
     function observeCenter() {
       resizeFrame = 0;
       if (viewportHeight === window.innerHeight) return;
@@ -1175,7 +1193,10 @@ afterFirstPaint(function () {
       io = new IntersectionObserver(highlight, { rootMargin: "-" + inset + "px 0px -" + inset + "px 0px", threshold: 0 });
       document.querySelectorAll("main section").forEach(function (s) { io.observe(s); });
     }
+    // Chrome-only resizes (URL bar/toolbars sliding) must not tear down the
+    // rail observer; its margins only change with real layout changes.
     window.addEventListener("resize", function () {
+      if (chromeResize(centerMetrics)) return;
       if (!resizeFrame) resizeFrame = requestAnimationFrame(observeCenter);
     });
     observeCenter();
@@ -1184,10 +1205,10 @@ afterFirstPaint(function () {
 });
 </script>
 <script src="shader-layout.js?v=mobile-stability-alpha-20261004" defer></script>
-<script src="coronal.js?v=mobile-stability-alpha-20261004" defer></script>
-<script src="column-scroll.js" defer></script>
+<script src="coronal.js?v=mobile-stability-alpha-20261005" defer></script>
+<script src="column-scroll.js?v=20261005-chrome-resize" defer></script>
 <script src="desktop-preview.js?v=20261004-demo-tabs-only" defer></script>
-<script src="omarchy-preview.js?v=20261004-no-blink" defer></script>
+<script src="omarchy-preview.js?v=20261005-chrome-resize" defer></script>
 
 
 </body>

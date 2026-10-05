@@ -101,7 +101,16 @@
       });
     }
     root.addEventListener("scroll", function () { schedule(false); }, { passive: true });
-    root.addEventListener("resize", function () { schedule(true); });
+    // The column layout is width-driven; a chrome-only height change (iOS URL
+    // bar/toolbars sliding during scroll) needs no re-measure or mask rebuild.
+    var resizeMetrics = { w: document.documentElement.clientWidth, h: root.innerHeight };
+    root.addEventListener("resize", function () {
+      var w = document.documentElement.clientWidth, h = root.innerHeight;
+      if (w === resizeMetrics.w && h !== resizeMetrics.h
+        && Math.abs(h - resizeMetrics.h) <= 160) return;
+      resizeMetrics.w = w; resizeMetrics.h = h;
+      schedule(true);
+    });
     root.addEventListener("pageshow", function () { schedule(true); });
     wide.addEventListener("change", function () { schedule(true); });
     reduce.addEventListener("change", function () { schedule(true); });
