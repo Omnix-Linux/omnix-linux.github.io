@@ -588,32 +588,54 @@
   .statement .lede { max-width: 62ch; }
   .statement .lede + .lede { margin-top: 16px; }
   .statement .cta { margin-top: 32px; gap: 14px; }
-  /* #who headline: a pure-CSS scroll-driven entrance (no scroll listeners, frame-accurate on iOS).
-     The statement block enters 45svh below its place, so it rushes up much faster than the scroll,
-     then decelerates hard ("molasses") and lands exactly in place at 70svh past the section's entry.
-     The whole block moves, so the headline never overlaps its own copy. The scroll animation owns the
-     transform; the reveal transitions keep only opacity for the copy below the headline. */
-  @supports (animation-timeline: view()) {
+  /* #who statement: magnetically falls into view together, holds, then releases. Pure CSS: scroll-driven
+     animations and position: sticky, no scroll listeners (frame-accurate on iOS). The whole block
+     (eyebrow, headline, copy, buttons) moves as one unit, .statement-inner.
+     - Pin: .statement-inner is sticky at --who-pin (header + 24px). It engages D of #who's entry after
+       the section starts entering, D = 100svh - pin + section top padding. #who is a block, not a grid,
+       because a grid item's sticky box is confined to its own grid row. Paint containment on sections
+       does not create a scroll container, so sticky still resolves against #page.
+     - Rush (translate, entry 0 -> D): starts 45svh low and rises several times faster than the scroll,
+       easing out to zero extra speed exactly when the pin engages, so it is moving 1:1 at that moment.
+     - Lock (transform, entry D -> D + --who-lock): the pinned block is still --who-lock/2 low and
+       glides the rest of the way on a quadratic ease-out whose start speed is exactly 1:1. On screen
+       the block decelerates continuously to a dead stop at its pinned place: no kink, no jump.
+     - Hold, then release: ::after adds --who-lock + --who-hold of scroll beneath the copy; after the lock
+       the block stays put for --who-hold
+       of scroll, then the section's end carries it away 1:1 with the content.
+     The animations own translate and transform; the reveal transitions keep only opacity. */
+  #who {
+    --who-pin: calc(var(--header-height) + 24px);
+    --who-d: calc(100svh - var(--who-pin) + clamp(80px, 12svh, 150px));
+  }
+  @supports (animation-timeline: view()) and (position: sticky) {
     @media (prefers-reduced-motion: no-preference) {
-      #who { view-timeline: --who block; }
+      #who { --who-lock: 24svh; --who-hold: 40svh; display: block; view-timeline: --who block; }
+      #who::after { content: ""; display: block; height: calc(var(--who-lock) + var(--who-hold)); }
       #who .statement-inner {
-        animation: who-rise linear both;
-        animation-timeline: --who;
-        animation-range: entry 0% entry 70svh;
+        position: sticky; top: var(--who-pin);
+        animation: who-rush linear both, who-lock linear both;
+        animation-timeline: --who, --who;
+        animation-range: entry 0% entry var(--who-d), entry var(--who-d) entry calc(var(--who-d) + var(--who-lock));
       }
       .motion main #who :is(.eyebrow, h2) { opacity: 1; transform: none; transition: none; }
       .motion main #who .lede { transform: none; transition-property: opacity; }
-      /* Gentle snap: a scroll that stops near the statement settles it under the header. */
-      @media (min-width: 861px) {
-        .page { scroll-snap-type: y proximity; }
-        #who .statement-inner { scroll-snap-align: start; scroll-margin-top: 24px; }
-      }
+      /* The #who link lands where the lock completes (start of the hold): the section's scroll margin
+         is pulled up by its top padding and the lock length. No scroll snap: the block is now taller
+         than the screen with its hold, and Chrome's proximity snap pulled wheel scrolls back to the
+         section's edges, trapping the page; the lock curve supplies the "magnet" instead. */
+      #who { scroll-margin-top: calc(24px - clamp(80px, 12svh, 150px) - var(--who-lock)); }
+      @media (max-width: 860px) { #who { --who-lock: 16svh; --who-hold: 22svh; } }
     }
   }
-  @keyframes who-rise {
-    from { transform: translate3d(0, 45svh, 0); opacity: 0; animation-timing-function: cubic-bezier(0.08, 0.82, 0.17, 1); }
+  @keyframes who-rush {
+    from { translate: 0 45svh; opacity: 0; animation-timing-function: cubic-bezier(0.08, 0.82, 0.17, 1); }
     18% { opacity: 1; }
-    to { transform: none; opacity: 1; }
+    to { translate: none; opacity: 1; }
+  }
+  @keyframes who-lock {
+    from { transform: translate3d(0, calc(var(--who-lock) / 2), 0); animation-timing-function: cubic-bezier(0.333, 0.667, 0.667, 1); }
+    to { transform: none; }
   }
 
   /* Vision: collapsed by default, expanding to show the detail. */
