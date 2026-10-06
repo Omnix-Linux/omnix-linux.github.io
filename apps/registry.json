@@ -42,7 +42,7 @@
         "repo": "Omnix-Linux/Omnix",
         "path": "tests/fhs.nix",
         "check": "checks.x86_64-linux.fhs",
-        "url": "https://github.com/Omnix-Linux/Omnix/blob/main/tests/fhs.nix"
+        "url": "https://github.com/Omnix-Linux/Omnix/blob/3f1ce17/tests/fhs.nix"
       },
       "install": {
         "label": "Download and unpack",
@@ -51,9 +51,9 @@
       "verification": {
         "status": "passing",
         "verified_at": "2026-10-06",
-        "commit": "Omnix-Linux/Omnix@18b26e7",
+        "commit": "Omnix-Linux/Omnix@3f1ce17",
         "notes": "Fresh NixOS VM run (nix build .#checks.x86_64-linux.fhs --rebuild); test script finished in 29.3 s.",
-        "log_excerpt": "must succeed: /opt/node/bin/node -e 'require(\"zlib\").gzipSync(\"x\")'\nmust succeed: systemd-run --wait --pipe /opt/node/bin/node -e 'console.log(1)'  (0.29 s)\ntest script finished in 29.34s"
+        "log_excerpt": "must succeed: /opt/node/bin/node -e 'require(\"zlib\").gzipSync(\"x\")'\nmust succeed: systemd-run --wait --pipe /opt/node/bin/node -e 'console.log(1)'  (0.29 s)\ntest script finished in 28.14s"
       }
     },
     {
@@ -77,7 +77,7 @@
         "repo": "Omnix-Linux/Omnix",
         "path": "tests/fhs.nix",
         "check": "checks.x86_64-linux.fhs",
-        "url": "https://github.com/Omnix-Linux/Omnix/blob/4f66932/tests/fhs.nix"
+        "url": "https://github.com/Omnix-Linux/Omnix/blob/3f1ce17/tests/fhs.nix"
       },
       "install": {
         "label": "Download and unpack",
@@ -86,7 +86,7 @@
       "verification": {
         "status": "patched",
         "verified_at": "2026-10-06",
-        "commit": "Omnix-Linux/Omnix@4f66932",
+        "commit": "Omnix-Linux/Omnix@3f1ce17",
         "notes": "Fresh NixOS VM run on Omnix with its own envfs fix (proposed upstream as Mic92/envfs#233, shipped in the Omnix base by Omnix-Linux/Omnix#5). Stock envfs doesn't resolve names on readlink, so #!/usr/bin/python3 failed for this relocatable interpreter; with Omnix's envfs it runs.",
         "log_excerpt": "must succeed: /opt/python/bin/python3 -c 'import ctypes.util as c; assert c.find_library(\"z\")'\nmust succeed: /opt/python/bin/python3 -c 'import zoneinfo; zoneinfo.ZoneInfo(\"Europe/Moscow\")'\nmust succeed: PATH=/opt/python/bin:$PATH /tmp/s.py | grep -qx 1\ntest script finished in 28.14s"
       }
@@ -183,7 +183,7 @@
         "repo": "Omnix-Linux/Omnix",
         "path": "tests/apps-gui.nix",
         "check": "checks.x86_64-linux.app-filmcraft",
-        "url": "https://github.com/Omnix-Linux/Omnix/blob/bf95b0838f7473f9cc0680cbe2f5b9a731d10670/tests/apps-gui.nix"
+        "url": "https://github.com/Omnix-Linux/Omnix/blob/3f1ce17/tests/apps-gui.nix"
       },
       "install": {
         "label": "Download from GitHub and verify",
@@ -205,9 +205,9 @@
       "verification": {
         "status": "passing",
         "verified_at": "2026-10-06",
-        "commit": "Omnix-Linux/Omnix@bf95b08",
-        "notes": "Fresh NixOS VM run (nix build .#checks.x86_64-linux.app-filmcraft) on the Omnix base with its desktop library preset; the screenshot above is from this run. Test added in Omnix-Linux/Omnix#3.",
-        "log_excerpt": "must succeed: /opt/filmcraft/bin/filmcraft-cli --version | grep -q 'filmcraft-cli 0.2.0'\nmust succeed: /opt/filmcraft/bin/filmcraft --version | grep -q 'filmcraft 0.2.0'\nwindow: FilmCraft\nmust succeed: systemctl is-active filmcraft\ntest script finished in 26.68s"
+        "commit": "Omnix-Linux/Omnix@3f1ce17",
+        "notes": "Fresh NixOS VM run (nix build .#checks.x86_64-linux.app-filmcraft) on the Omnix base with its desktop library preset; the screenshot above is from this run. Test in Omnix main (Omnix-Linux/Omnix#6).",
+        "log_excerpt": "must succeed: /opt/filmcraft/bin/filmcraft-cli --version | grep -q 'filmcraft-cli 0.2.0'\nmust succeed: /opt/filmcraft/bin/filmcraft --version | grep -q 'filmcraft 0.2.0'\nwindow: FilmCraft\nmust succeed: systemctl is-active filmcraft\ntest script finished in 28.79s"
       }
     },
     {
@@ -231,7 +231,7 @@
         "repo": "Omnix-Linux/Omnix",
         "path": "tests/apps-gui.nix",
         "check": "checks.x86_64-linux.app-obs",
-        "url": "https://github.com/Omnix-Linux/Omnix/blob/bf95b0838f7473f9cc0680cbe2f5b9a731d10670/tests/apps-gui.nix"
+        "url": "https://github.com/Omnix-Linux/Omnix/blob/3f1ce17/tests/apps-gui.nix"
       },
       "install": {
         "label": "Add to your configuration",
@@ -253,9 +253,9 @@
       "verification": {
         "status": "passing",
         "verified_at": "2026-10-06",
-        "commit": "Omnix-Linux/Omnix@bf95b08",
-        "notes": "Fresh NixOS VM run (nix build .#checks.x86_64-linux.app-obs); the screenshot shows the first-run Auto-Configuration Wizard over the main window. Test added in Omnix-Linux/Omnix#3.",
-        "log_excerpt": "must succeed: obs --version\nOpenGL loaded successfully, version 4.6 (Mesa llvmpipe)\nwindow: OBS 32.2.2 - Profile: Untitled - Scenes: Untitled\nmust succeed: systemctl is-active obs\ntest script finished in 34.59s"
+        "commit": "Omnix-Linux/Omnix@3f1ce17",
+        "notes": "Fresh NixOS VM run (nix build .#checks.x86_64-linux.app-obs); the screenshot shows the first-run Auto-Configuration Wizard over the main window. Test in Omnix main (Omnix-Linux/Omnix#6).",
+        "log_excerpt": "must succeed: obs --version\nOpenGL loaded successfully, version 4.6 (Mesa llvmpipe)\nwindow: OBS 32.2.2 - Profile: Untitled - Scenes: Untitled\nmust succeed: systemctl is-active obs\ntest script finished in 33.45s"
       }
     },
     {
@@ -280,7 +280,7 @@
         "repo": "Omnix-Linux/Omnix",
         "path": "tests/apps-opencut.nix",
         "check": "checks.x86_64-linux.app-opencut",
-        "url": "https://github.com/Omnix-Linux/Omnix/blob/29659f2c683a3537893d1bf9cba0636b5d85a8cd/tests/apps-opencut.nix"
+        "url": "https://github.com/Omnix-Linux/Omnix/blob/3f1ce17/tests/apps-opencut.nix"
       },
       "install": {
         "label": "Build and run from source",
@@ -302,9 +302,9 @@
       "verification": {
         "status": "passing",
         "verified_at": "2026-10-06",
-        "commit": "Omnix-Linux/Omnix@29659f2",
-        "notes": "Fresh NixOS VM run (nix build .#checks.x86_64-linux.app-opencut) on the Omnix base with its desktop preset; the screenshot above is from this run. OpenCut publishes only the web app's source (its v0.3.0 release has no assets; nixpkgs has no package; no flake), so the test builds it from source. The editor's renderer needs WebGL2 or WebGPU: in the GPU-less VM Brave needs --use-angle=swiftshader --enable-unsafe-swiftshader, without which it shows \"Failed to load project\". The editor gates viewports under 1024 px, so the VM screen is 1280x800. Icon: OpenCut's own logo (apps/web/public/logos/opencut/icon.svg, MIT). Test on Omnix branch apps-opencut-test.",
-        "log_excerpt": "opencut-web: ✓ Ready in 507ms\nwindow: OpenCut - Brave\n\"url\": \"http://127.0.0.1:3000/editor/ca4914a0-7f1e-45bf-92a5-9ee849c17ec9\"\nscreen text: Welcome to OpenCut Beta!\nscreen text: Untitled Project\ntest script finished in 65.95s"
+        "commit": "Omnix-Linux/Omnix@3f1ce17",
+        "notes": "Fresh NixOS VM run (nix build .#checks.x86_64-linux.app-opencut) on the Omnix base with its desktop preset; the screenshot above is from this run. OpenCut publishes only the web app's source (its v0.3.0 release has no assets; nixpkgs has no package; no flake), so the test builds it from source. The editor's renderer needs WebGL2 or WebGPU: in the GPU-less VM Brave needs --use-angle=swiftshader --enable-unsafe-swiftshader, without which it shows \"Failed to load project\". The editor gates viewports under 1024 px, so the VM screen is 1280x800. Icon: OpenCut's own logo (apps/web/public/logos/opencut/icon.svg, MIT). Test in Omnix main (Omnix-Linux/Omnix#6).",
+        "log_excerpt": "opencut-web: ✓ Ready in 507ms\nwindow: OpenCut - Brave\n\"url\": \"http://127.0.0.1:3000/editor/ca4914a0-7f1e-45bf-92a5-9ee849c17ec9\"\nscreen text: Welcome to OpenCut Beta!\nscreen text: Untitled Project\ntest script finished in 57.35s"
       }
     },
     {
@@ -328,7 +328,7 @@
         "repo": "Omnix-Linux/Omnix",
         "path": "tests/apps-artcraft.nix",
         "check": "checks.x86_64-linux.app-photocraft",
-        "url": "https://github.com/Omnix-Linux/Omnix/blob/8318a4c/tests/apps-artcraft.nix"
+        "url": "https://github.com/Omnix-Linux/Omnix/blob/3f1ce17/tests/apps-artcraft.nix"
       },
       "install": {
         "label": "Download from GitHub and verify",
@@ -350,9 +350,9 @@
       "verification": {
         "status": "passing",
         "verified_at": "2026-10-06",
-        "commit": "Omnix-Linux/Omnix@8318a4c",
-        "notes": "Fresh NixOS VM run (nix build .#checks.x86_64-linux.app-photocraft); sha256 matched SHA256SUMS.txt; window “PhotoCraft”. Test added in Omnix-Linux/Omnix#3.",
-        "log_excerpt": "subtest: CLI and --version run\n(finished: subtest: CLI and --version run, in 0.29 seconds)\nsubtest: main window appears\n(finished: subtest: main window appears, in 12.80 seconds)\ntest script finished in 37.41s"
+        "commit": "Omnix-Linux/Omnix@3f1ce17",
+        "notes": "Fresh NixOS VM run (nix build .#checks.x86_64-linux.app-photocraft); sha256 matched SHA256SUMS.txt; window “PhotoCraft”. Test in Omnix main (Omnix-Linux/Omnix#6).",
+        "log_excerpt": "subtest: CLI and --version run\n(finished: subtest: CLI and --version run, in 0.29 seconds)\nsubtest: main window appears\n(finished: subtest: main window appears, in 12.80 seconds)\ntest script finished in 28.84s"
       }
     },
     {
@@ -376,7 +376,7 @@
         "repo": "Omnix-Linux/Omnix",
         "path": "tests/apps-artcraft.nix",
         "check": "checks.x86_64-linux.app-vectorcraft",
-        "url": "https://github.com/Omnix-Linux/Omnix/blob/8318a4c/tests/apps-artcraft.nix"
+        "url": "https://github.com/Omnix-Linux/Omnix/blob/3f1ce17/tests/apps-artcraft.nix"
       },
       "install": {
         "label": "Download from GitHub and verify",
@@ -398,9 +398,9 @@
       "verification": {
         "status": "passing",
         "verified_at": "2026-10-06",
-        "commit": "Omnix-Linux/Omnix@8318a4c",
-        "notes": "Fresh NixOS VM run (nix build .#checks.x86_64-linux.app-vectorcraft); sha256 matched SHA256SUMS.txt; window “VectorCraft”. Test added in Omnix-Linux/Omnix#3.",
-        "log_excerpt": "subtest: CLI and --version run\n(finished: subtest: CLI and --version run, in 0.17 seconds)\nsubtest: main window appears\n(finished: subtest: main window appears, in 12.49 seconds)\ntest script finished in 40.61s"
+        "commit": "Omnix-Linux/Omnix@3f1ce17",
+        "notes": "Fresh NixOS VM run (nix build .#checks.x86_64-linux.app-vectorcraft); sha256 matched SHA256SUMS.txt; window “VectorCraft”. Test in Omnix main (Omnix-Linux/Omnix#6).",
+        "log_excerpt": "subtest: CLI and --version run\n(finished: subtest: CLI and --version run, in 0.17 seconds)\nsubtest: main window appears\n(finished: subtest: main window appears, in 12.49 seconds)\ntest script finished in 27.65s"
       }
     },
     {
@@ -424,7 +424,7 @@
         "repo": "Omnix-Linux/Omnix",
         "path": "tests/apps-artcraft.nix",
         "check": "checks.x86_64-linux.app-lightcraft",
-        "url": "https://github.com/Omnix-Linux/Omnix/blob/8318a4c/tests/apps-artcraft.nix"
+        "url": "https://github.com/Omnix-Linux/Omnix/blob/3f1ce17/tests/apps-artcraft.nix"
       },
       "install": {
         "label": "Download from GitHub and verify",
@@ -446,9 +446,9 @@
       "verification": {
         "status": "passing",
         "verified_at": "2026-10-06",
-        "commit": "Omnix-Linux/Omnix@8318a4c",
-        "notes": "Fresh NixOS VM run (nix build .#checks.x86_64-linux.app-lightcraft); sha256 matched SHA256SUMS.txt; window “LightCraft”. Test added in Omnix-Linux/Omnix#3.",
-        "log_excerpt": "subtest: CLI and --version run\n(finished: subtest: CLI and --version run, in 0.18 seconds)\nsubtest: main window appears\n(finished: subtest: main window appears, in 12.90 seconds)\ntest script finished in 49.82s"
+        "commit": "Omnix-Linux/Omnix@3f1ce17",
+        "notes": "Fresh NixOS VM run (nix build .#checks.x86_64-linux.app-lightcraft); sha256 matched SHA256SUMS.txt; window “LightCraft”. Test in Omnix main (Omnix-Linux/Omnix#6).",
+        "log_excerpt": "subtest: CLI and --version run\n(finished: subtest: CLI and --version run, in 0.18 seconds)\nsubtest: main window appears\n(finished: subtest: main window appears, in 12.90 seconds)\ntest script finished in 27.68s"
       }
     },
     {
@@ -472,7 +472,7 @@
         "repo": "Omnix-Linux/Omnix",
         "path": "tests/apps-artcraft.nix",
         "check": "checks.x86_64-linux.app-printcraft",
-        "url": "https://github.com/Omnix-Linux/Omnix/blob/8318a4c/tests/apps-artcraft.nix"
+        "url": "https://github.com/Omnix-Linux/Omnix/blob/3f1ce17/tests/apps-artcraft.nix"
       },
       "install": {
         "label": "Download from GitHub and verify",
@@ -494,9 +494,9 @@
       "verification": {
         "status": "passing",
         "verified_at": "2026-10-06",
-        "commit": "Omnix-Linux/Omnix@8318a4c",
-        "notes": "Fresh NixOS VM run (nix build .#checks.x86_64-linux.app-printcraft); sha256 matched SHA256SUMS.txt; window “PrintCraft”. Test added in Omnix-Linux/Omnix#3.",
-        "log_excerpt": "subtest: CLI and --version run\n(finished: subtest: CLI and --version run, in 0.09 seconds)\nsubtest: main window appears\n(finished: subtest: main window appears, in 11.32 seconds)\ntest script finished in 34.73s"
+        "commit": "Omnix-Linux/Omnix@3f1ce17",
+        "notes": "Fresh NixOS VM run (nix build .#checks.x86_64-linux.app-printcraft); sha256 matched SHA256SUMS.txt; window “PrintCraft”. Test in Omnix main (Omnix-Linux/Omnix#6).",
+        "log_excerpt": "subtest: CLI and --version run\n(finished: subtest: CLI and --version run, in 0.09 seconds)\nsubtest: main window appears\n(finished: subtest: main window appears, in 11.32 seconds)\ntest script finished in 29.18s"
       }
     },
     {
@@ -520,7 +520,7 @@
         "repo": "Omnix-Linux/Omnix",
         "path": "tests/apps-artcraft.nix",
         "check": "checks.x86_64-linux.app-effectcraft",
-        "url": "https://github.com/Omnix-Linux/Omnix/blob/8318a4c/tests/apps-artcraft.nix"
+        "url": "https://github.com/Omnix-Linux/Omnix/blob/3f1ce17/tests/apps-artcraft.nix"
       },
       "install": {
         "label": "Download from GitHub and verify",
@@ -542,9 +542,9 @@
       "verification": {
         "status": "passing",
         "verified_at": "2026-10-06",
-        "commit": "Omnix-Linux/Omnix@8318a4c",
-        "notes": "Fresh NixOS VM run (nix build .#checks.x86_64-linux.app-effectcraft); sha256 matched SHA256SUMS.txt; window “EffectCraft - Untitled Project.ecproj”. Test added in Omnix-Linux/Omnix#3.",
-        "log_excerpt": "subtest: CLI and --version run\n(finished: subtest: CLI and --version run, in 0.06 seconds)\nsubtest: main window appears\n(finished: subtest: main window appears, in 16.62 seconds)\ntest script finished in 37.74s"
+        "commit": "Omnix-Linux/Omnix@3f1ce17",
+        "notes": "Fresh NixOS VM run (nix build .#checks.x86_64-linux.app-effectcraft); sha256 matched SHA256SUMS.txt; window “EffectCraft - Untitled Project.ecproj”. Test in Omnix main (Omnix-Linux/Omnix#6).",
+        "log_excerpt": "subtest: CLI and --version run\n(finished: subtest: CLI and --version run, in 0.06 seconds)\nsubtest: main window appears\n(finished: subtest: main window appears, in 16.62 seconds)\ntest script finished in 31.65s"
       }
     },
     {
@@ -568,7 +568,7 @@
         "repo": "Omnix-Linux/Omnix",
         "path": "tests/apps-artcraft.nix",
         "check": "checks.x86_64-linux.app-designcraft",
-        "url": "https://github.com/Omnix-Linux/Omnix/blob/8318a4c/tests/apps-artcraft.nix"
+        "url": "https://github.com/Omnix-Linux/Omnix/blob/3f1ce17/tests/apps-artcraft.nix"
       },
       "install": {
         "label": "Download from GitHub and verify",
@@ -590,9 +590,9 @@
       "verification": {
         "status": "passing",
         "verified_at": "2026-10-06",
-        "commit": "Omnix-Linux/Omnix@8318a4c",
-        "notes": "Fresh NixOS VM run (nix build .#checks.x86_64-linux.app-designcraft); sha256 matched SHA256SUMS.txt; window “DesignCraft”. Test added in Omnix-Linux/Omnix#3.",
-        "log_excerpt": "subtest: CLI and --version run\n(finished: subtest: CLI and --version run, in 0.08 seconds)\nsubtest: main window appears\n(finished: subtest: main window appears, in 11.24 seconds)\ntest script finished in 34.74s"
+        "commit": "Omnix-Linux/Omnix@3f1ce17",
+        "notes": "Fresh NixOS VM run (nix build .#checks.x86_64-linux.app-designcraft); sha256 matched SHA256SUMS.txt; window “DesignCraft”. Test in Omnix main (Omnix-Linux/Omnix#6).",
+        "log_excerpt": "subtest: CLI and --version run\n(finished: subtest: CLI and --version run, in 0.08 seconds)\nsubtest: main window appears\n(finished: subtest: main window appears, in 11.24 seconds)\ntest script finished in 29.02s"
       }
     },
     {
@@ -616,7 +616,7 @@
         "repo": "Omnix-Linux/Omnix",
         "path": "tests/apps-desktop.nix",
         "check": "checks.x86_64-linux.app-brave",
-        "url": "https://github.com/Omnix-Linux/Omnix/blob/85489ab/tests/apps-desktop.nix"
+        "url": "https://github.com/Omnix-Linux/Omnix/blob/3f1ce17/tests/apps-desktop.nix"
       },
       "install": {
         "label": "Download from GitHub and verify",
@@ -638,9 +638,9 @@
       "verification": {
         "status": "passing",
         "verified_at": "2026-10-06",
-        "commit": "Omnix-Linux/Omnix@85489ab",
-        "notes": "Fresh NixOS VM run; sha256 matched the release's .sha256 file. Test added on Omnix branch apps-desktop-tests.",
-        "log_excerpt": "Brave Browser 154.1.96.61\nwindow: about:blank - Brave\ntest script finished in 59.75s"
+        "commit": "Omnix-Linux/Omnix@3f1ce17",
+        "notes": "Fresh NixOS VM run; sha256 matched the release's .sha256 file. Test in Omnix main (Omnix-Linux/Omnix#6).",
+        "log_excerpt": "Brave Browser 154.1.96.61\nwindow: about:blank - Brave\ntest script finished in 41.12s"
       }
     },
     {
@@ -663,7 +663,7 @@
         "repo": "Omnix-Linux/Omnix",
         "path": "tests/apps-desktop.nix",
         "check": "checks.x86_64-linux.app-telegram",
-        "url": "https://github.com/Omnix-Linux/Omnix/blob/85489ab/tests/apps-desktop.nix"
+        "url": "https://github.com/Omnix-Linux/Omnix/blob/3f1ce17/tests/apps-desktop.nix"
       },
       "install": {
         "label": "Download from GitHub",
@@ -685,9 +685,9 @@
       "verification": {
         "status": "passing",
         "verified_at": "2026-10-06",
-        "commit": "Omnix-Linux/Omnix@85489ab",
-        "notes": "Fresh NixOS VM run; no flags or workarounds needed. Test added on Omnix branch apps-desktop-tests.",
-        "log_excerpt": "window: Telegram (welcome screen)\ntest script finished in 44.07s"
+        "commit": "Omnix-Linux/Omnix@3f1ce17",
+        "notes": "Fresh NixOS VM run; no flags or workarounds needed. Test in Omnix main (Omnix-Linux/Omnix#6).",
+        "log_excerpt": "window: Telegram (welcome screen)\ntest script finished in 42.36s"
       }
     },
     {
@@ -703,18 +703,16 @@
       "workflow": [
         "Fetch kitty-0.49.2-x86_64.txz from the GitHub release, pinned by sha256",
         "kitty --version reports kitty 0.49.2",
-        "Start kitty in an X11 session: as shipped it stops because /usr/share/X11/xkb is missing (the documented gap)",
-        "With XKB_CONFIG_ROOT pointed at xkeyboard-config it opens, OpenGL 4.6 (Mesa llvmpipe) loads, and it runs uname -a",
+        "Check the standard X11 data paths exist: /usr/share/X11/xkb and /usr/share/X11/locale (the Omnix desktop preset provides them)",
+        "Start the unmodified kitty in an X11 session through the Omnix FHS layer; OpenGL 4.6 (Mesa llvmpipe) loads",
+        "It opens a window and runs a shell (uname -a)",
         "Take a screenshot"
-      ],
-      "known_gaps": [
-        "Omnix doesn't provide /usr/share/X11/xkb yet, so kitty's bundled xkbcommon can't find a keyboard layout and exits. Setting XKB_CONFIG_ROOT works around it; the fix is for the Omnix desktop preset to provide xkeyboard-config's share/X11 at /usr/share/X11."
       ],
       "test": {
         "repo": "Omnix-Linux/Omnix",
         "path": "tests/apps-desktop.nix",
         "check": "checks.x86_64-linux.app-kitty",
-        "url": "https://github.com/Omnix-Linux/Omnix/blob/85489ab/tests/apps-desktop.nix"
+        "url": "https://github.com/Omnix-Linux/Omnix/blob/3f1ce17/tests/apps-desktop.nix"
       },
       "install": {
         "label": "Download from GitHub",
@@ -734,11 +732,11 @@
         "checked_at": "2026-10-06"
       },
       "verification": {
-        "status": "known-gap",
+        "status": "passing",
         "verified_at": "2026-10-06",
-        "commit": "Omnix-Linux/Omnix@85489ab",
-        "notes": "Fresh NixOS VM run. As shipped, kitty fails at startup on Omnix because /usr/share/X11/xkb is missing; with XKB_CONFIG_ROOT set it runs normally. Test added on Omnix branch apps-desktop-tests.",
-        "log_excerpt": "xkbcommon: ERROR: failed to add default include path /usr/share/X11/xkb\n[glfw error 65544]: Failed to initialize XKB context\nGLFW initialization failed\n(with XKB_CONFIG_ROOT) kitty 0.49.2, window opened, ran uname -a\ntest script finished in 42.15s"
+        "commit": "Omnix-Linux/Omnix@3f1ce17",
+        "notes": "Fresh NixOS VM run of the unmodified kitty. It used to exit at startup because /usr/share/X11/xkb was missing; the Omnix desktop preset now provides /usr/share/X11/xkb and /usr/share/X11/locale (Omnix-Linux/Omnix#6, fixing #4), with no workaround in the test.",
+        "log_excerpt": "must succeed: test -e /usr/share/X11/xkb/rules/evdev\nmust succeed: test -d /usr/share/X11/locale/en_US.UTF-8\nkitty 0.49.2 opened a window and ran uname -a (OMNIX-KITTY-OK)\ntest script finished in 39.77s"
       }
     },
     {
@@ -761,7 +759,7 @@
         "repo": "Omnix-Linux/Omnix",
         "path": "tests/apps-desktop.nix",
         "check": "checks.x86_64-linux.app-signal",
-        "url": "https://github.com/Omnix-Linux/Omnix/blob/85489ab/tests/apps-desktop.nix"
+        "url": "https://github.com/Omnix-Linux/Omnix/blob/3f1ce17/tests/apps-desktop.nix"
       },
       "install": {
         "label": "Add to your configuration",
@@ -783,9 +781,9 @@
       "verification": {
         "status": "passing",
         "verified_at": "2026-10-06",
-        "commit": "Omnix-Linux/Omnix@85489ab",
-        "notes": "Fresh NixOS VM run. The test VM has no network, so the screenshot shows Signal's “Failed to connect to server” page rather than the link-device screen. Test added on Omnix branch apps-desktop-tests.",
-        "log_excerpt": "window: Signal\ntest script finished in 63.47s"
+        "commit": "Omnix-Linux/Omnix@3f1ce17",
+        "notes": "Fresh NixOS VM run. The test VM has no network, so the screenshot shows Signal's “Failed to connect to server” page rather than the link-device screen. Test in Omnix main (Omnix-Linux/Omnix#6).",
+        "log_excerpt": "window: Signal\ntest script finished in 40.05s"
       }
     },
     {
@@ -808,7 +806,7 @@
         "repo": "Omnix-Linux/Omnix",
         "path": "tests/apps-desktop.nix",
         "check": "checks.x86_64-linux.app-slack",
-        "url": "https://github.com/Omnix-Linux/Omnix/blob/85489ab/tests/apps-desktop.nix"
+        "url": "https://github.com/Omnix-Linux/Omnix/blob/3f1ce17/tests/apps-desktop.nix"
       },
       "install": {
         "label": "Add to your configuration",
@@ -830,9 +828,9 @@
       "verification": {
         "status": "passing",
         "verified_at": "2026-10-06",
-        "commit": "Omnix-Linux/Omnix@85489ab",
-        "notes": "Fresh NixOS VM run as a normal user with the sandbox on. The test VM has no network, so the screenshot shows Slack's “cannot connect” page. Test added on Omnix branch apps-desktop-tests.",
-        "log_excerpt": "Slack 4.51.180, linux 6.18.54 on x64\nwindow: Slack\ntest script finished in 51.77s"
+        "commit": "Omnix-Linux/Omnix@3f1ce17",
+        "notes": "Fresh NixOS VM run as a normal user with the sandbox on. The test VM has no network, so the screenshot shows Slack's “cannot connect” page. Test in Omnix main (Omnix-Linux/Omnix#6).",
+        "log_excerpt": "Slack 4.51.180, linux 6.18.54 on x64\nwindow: Slack\ntest script finished in 39.02s"
       }
     }
   ],
