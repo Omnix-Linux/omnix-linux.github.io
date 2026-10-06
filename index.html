@@ -344,6 +344,7 @@
   .lede code { color: var(--ink); background: rgba(126, 186, 228, 0.1); padding: 1px 6px; border-radius: 4px; }
 
   /* Hero */
+  .hero-dim-trigger { position: absolute; top: 20svh; left: 0; width: 1px; height: 1px; pointer-events: none; }
   .hero { position: relative; align-items: center; justify-items: center; text-align: center; }
   .hero .hero-inner { justify-items: center; }
   .hero .brand { width: 100%; }
@@ -353,7 +354,10 @@
   /* Hero layers: position comes only from position: fixed and opacity only from the
      scroll timeline below, so nothing on the scroll path runs JavaScript. One-time
      ready states fade with filter: opacity(), leaving opacity to the scroll fade. */
-  #coronal { position: fixed; inset: 0; z-index: 0; pointer-events: none; filter: opacity(0); transition: filter .45s ease-out; }
+  #coronal { position: fixed; inset: 0; z-index: 0; pointer-events: none; filter: opacity(0); opacity: 1; transition: filter .45s ease-out, opacity .5s ease-in-out; }
+  /* The shader dims on a trigger, not with the scroll position: past the marker in the hero
+     it fades over a fixed half second, so a fast flick can't skip the fade. */
+  .hero-dimmed #coronal { opacity: .08; }
   .shader-ready #coronal { filter: none; }
   .logo-orbit { position: absolute; left: calc(38vw - (100vw - min(88vw, 1240px)) / 2); top: 50%; transform: translate(-50%, -50%); width: min(80vw, 110svh); aspect-ratio: 1; display: block; pointer-events: none; }
   .logo-orbit::after {
@@ -365,6 +369,7 @@
   .wordmark-ready:not(.shader-ready) .logo-orbit::after { filter: none; }
   @media (prefers-reduced-motion: reduce) {
     .shader-ready #coronal { filter: opacity(0); transition: none; }
+    #coronal { transition: none; }
   }
   .wordmark-text { visibility: hidden; filter: opacity(0); transition: filter .45s ease-out; position: fixed; z-index: 2; pointer-events: none; font-family: "Lexend", "Arial Black", system-ui, sans-serif; font-weight: 800; line-height: 1; left: calc(38vw + min(23.142857vw, 31.821429svh) - (100vw - min(88vw, 1240px)) / 2); top: 50%; transform: translateY(-50%); font-size: clamp(3.5rem, 10vw, 8.75rem); letter-spacing: -.045em; color: #fff; }
   @media (max-width: 640px) {
@@ -383,21 +388,18 @@
      animation is computed from the scroll offset in the same frame the page moves,
      where a scroll listener would trail by a frame. svh keeps the range fixed while
      iOS toolbars slide. The tagline clears first so it never overlaps the heading. */
-  @keyframes hero-fade-shader { from { opacity: 1; } to { opacity: .08; } }
   @keyframes hero-fade-text { from { opacity: 1; } to { opacity: 0; } }
   @keyframes hero-fade-tagline { from { opacity: 1; } 62.5%, to { opacity: 0; } }
   @keyframes hero-fade-rim { from { opacity: .9; } to { opacity: 0; } }
   @supports (animation-timeline: --page) and (timeline-scope: --page) {
-    #coronal, .wordmark-text, .tagline, .logo-orbit::after {
+    .wordmark-text, .tagline, .logo-orbit::after {
       animation: hero-fade-text linear both; animation-timeline: --page; animation-range: 8svh 50svh;
     }
-    #coronal { animation-name: hero-fade-shader; }
     .tagline { animation-name: hero-fade-tagline; }
     .logo-orbit::after { animation-name: hero-fade-rim; }
   }
   /* Browsers without scroll timelines fall back to coronal.js setting --hero-fade. */
   @supports not ((animation-timeline: --page) and (timeline-scope: --page)) {
-    #coronal { opacity: calc(1 - .92 * var(--hero-fade, 0)); }
     .wordmark-text { opacity: calc(1 - var(--hero-fade, 0)); }
     .tagline { opacity: calc(1 - 1.6 * var(--hero-fade, 0)); }
     .logo-orbit::after { opacity: calc(.9 * (1 - var(--hero-fade, 0))); }
@@ -721,6 +723,7 @@
 <div class="page" id="page" tabindex="-1">
 <main>
   <section class="hero" id="top">
+    <div class="hero-dim-trigger" aria-hidden="true"></div>
     <div class="hero-inner">
       <div class="brand">
         <div class="wordmark" role="img" aria-label="Omnix">
@@ -1428,7 +1431,7 @@ afterFirstPaint(function () {
 });
 </script>
 <script src="shader-layout.js?v=mobile-stability-alpha-20261004" defer></script>
-<script src="coronal.js?v=20261005-pinned-shader" defer></script>
+<script src="coronal.js?v=20261006-shader-dim-trigger" defer></script>
 <script src="column-scroll.js?v=20261005-pinned-shader" defer></script>
 <script src="desktop-preview.js?v=20261004-demo-tabs-only" defer></script>
 <script src="omarchy-preview.js?v=20261005-toolbar-shader" defer></script>
