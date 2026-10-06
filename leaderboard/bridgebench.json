@@ -1,0 +1,13 @@
+{
+  "_schema": {
+    "about": "Hand-maintained transcription of https://www.bridgebench.ai/leaderboard. A maintainer copies it from the site in a normal browser; scripts/build_leaderboard.py only reads this file and never contacts bridgebench.ai. Leave models empty until the data source and attribution terms are settled (issue #5).",
+    "source": "URL the scores were read from",
+    "transcribed_at": "ISO 8601 UTC time the scores were copied, e.g. 2026-10-05T12:00:00Z",
+    "version": "BridgeBench version label, e.g. V3",
+    "models": "[{rank: int (1 = best), name: BridgeBench display name, slug: BridgeBench URL slug, overall: number, axes: {axis_name: number, ...}}]"
+  },
+  "source": "https://www.bridgebench.ai/leaderboard",
+  "transcribed_at": null,
+  "version": null,
+  "models": []
+}

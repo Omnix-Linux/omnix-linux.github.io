@@ -1,0 +1,3 @@
+{
+  "_about": "BridgeBench display name (or slug) -> OpenRouter model id, for names the automatic normalization cannot match or matches ambiguously. build_leaderboard.py prints unmatched names to add here."
+}
