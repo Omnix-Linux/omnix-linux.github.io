@@ -133,3 +133,37 @@ class Render(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class Distribution(unittest.TestCase):
+    def cand(self, **dist):
+        base = {"via": "GitHub releases", "repo": "o/r", "release": "v1", "artifact": "r-1.AppImage",
+                "url": "https://github.com/o/r/releases/tag/v1", "license": "Apache-2.0",
+                "checksums": "SHA256SUMS.txt", "attestation": "none", "checked_at": "2026-10-06"}
+        base.update(dist)
+        return {"apps": [], "candidates": [{"id": "c", "name": "C", "icon": "grid", "category": "x",
+                                            "description": "y", "distribution": base}]}
+
+    def test_valid_distribution(self):
+        ba.validate(self.cand())
+
+    def test_attestation_must_be_known_value(self):
+        with self.assertRaises(ba.RegistryError):
+            ba.validate(self.cand(attestation="probably"))
+
+    def test_url_must_be_https(self):
+        with self.assertRaises(ba.RegistryError):
+            ba.validate(self.cand(url="http://example.com"))
+
+    def test_line_says_not_attested_unless_verified(self):
+        html = ba.dist_html(self.cand()["candidates"][0]["distribution"])
+        self.assertIn("Not attested", html)
+        self.assertIn("SHA-256 checksums", html)
+        self.assertNotIn(">Attested<", html)
+
+    def test_committed_registry_marks_nothing_attested(self):
+        # Checked 2026-10-06: GitHub's attestations API had none for these artifacts.
+        for c in REGISTRY["candidates"] + REGISTRY["apps"]:
+            dist = c.get("distribution")
+            if dist:
+                self.assertEqual(dist["attestation"], "none", c["id"])

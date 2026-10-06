@@ -117,3 +117,7 @@ git add apps && git commit -m "Apps: verify <app>"
 ```
 
 Re-run the tests and update `verification` whenever Omnix, nixpkgs or an app changes. Tests: `tests/test_build_apps.py` covers validation and rendering and that the committed page is current; `tests/apps-data.test.cjs` checks the registry and page shape and the nav on all three pages.
+
+Candidates and apps can carry a `distribution` block: where the app is published (`GitHub releases`, `nixpkgs`, ...), the release, artifact, license, checksum file and attestation status, plus the date it was checked. A card shows **Attested** only when GitHub's attestations API (or `gh attestation verify`) confirms the artifact's digest; otherwise it says **Not attested**. As of 2026-10-06, none of the listed GitHub artifacts have attestations.
+
+App icons in `assets/app-icons/` come from each app's source repository: the ArtCraft apps (PhotoCraft, VectorCraft, FilmCraft, LightCraft, PrintCraft, EffectCraft, DesignCraft) from [github.com/storytold](https://github.com/storytold) under Apache-2.0. They're downscaled to 128 px WebP.

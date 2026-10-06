@@ -62,6 +62,43 @@ def validate_icon(icon, where):
         raise RegistryError(f"{where}: icon file {icon} does not exist")
 
 
+ATTESTATIONS = ("none", "verified")
+
+
+def validate_distribution(dist, where):
+    if dist is None:
+        return
+    if not isinstance(dist, dict):
+        raise RegistryError(f"{where}: distribution must be an object")
+    for k in ("via", "release", "url", "license", "attestation", "checked_at"):
+        _str(dist, k, f"{where}.distribution")
+    if dist["attestation"] not in ATTESTATIONS:
+        raise RegistryError(f"{where}: distribution.attestation must be one of {ATTESTATIONS}")
+    if not DATE_RE.match(dist["checked_at"]):
+        raise RegistryError(f"{where}: distribution.checked_at must be YYYY-MM-DD")
+    if not dist["url"].startswith("https://"):
+        raise RegistryError(f"{where}: distribution.url must be https")
+
+
+def dist_html(dist, homepage=None):
+    """One line saying where the app comes from and how far its artifact can be trusted."""
+    if not dist:
+        return ""
+    parts = []
+    if dist["via"] == "GitHub releases":
+        parts.append(f'<a href="{e(dist["url"])}">GitHub release {e(dist["release"])}</a>')
+        parts.append('<span class="dist-ok">SHA-256 checksums</span>' if dist.get("checksums")
+                     else '<span class="dist-warn">No checksums</span>')
+        parts.append('<span class="dist-ok">Attested</span>' if dist["attestation"] == "verified"
+                     else '<span class="dist-warn">Not attested</span>')
+    else:
+        parts.append(f'<a href="{e(dist["url"])}">{e(dist["via"])} · {e(dist["release"])}</a>')
+    parts.append(f'<span>{e(dist["license"])}</span>')
+    if homepage:
+        parts.append(f'<a href="{e(homepage)}">Website</a>')
+    return f'<p class="dist" title="Checked {e(dist["checked_at"])}">{" · ".join(parts)}</p>'
+
+
 def status_of(app):
     v = app.get("verification")
     return v["status"] if v else None
@@ -130,6 +167,9 @@ def validate(reg):
         for k in ("id", "name", "icon", "category", "description"):
             _str(c, k, where)
         validate_icon(c["icon"], where)
+        validate_distribution(c.get("distribution"), where)
+        if c.get("homepage") is not None and not str(c["homepage"]).startswith("https://"):
+            raise RegistryError(f"{where}: homepage must be https")
         if c["id"] in seen:
             raise RegistryError(f"{where}: duplicate id {c['id']}")
         seen.add(c["id"])
@@ -208,6 +248,7 @@ def render_candidate(c):
     {badge_html(None)}
   </header>
   <p class="app-desc">{e(c["description"])}</p>
+  {dist_html(c.get("distribution"), c.get("homepage"))}
 </li>'''
 
 

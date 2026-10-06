@@ -16,7 +16,8 @@
       "known_gaps": "optional list of documented gaps from the test file (shown on the card; not a status)"
     },
     "candidates[]": "apps not tested yet: {id, name, icon, category, description}. Always rendered as untested.",
-    "statuses": "passing | known-gap | failing | untested. passing, known-gap and failing require test.path and verification.verified_at, or the build fails."
+    "statuses": "passing | known-gap | failing | untested. passing, known-gap and failing require test.path and verification.verified_at, or the build fails.",
+    "distribution": "optional on apps and candidates: {via: 'GitHub releases' | 'nixpkgs' | ..., repo: 'owner/name', release: tag, artifact: file name, url: download or project URL, license: SPDX id, checksums: checksum file name or null, attestation: 'none' | 'verified' (from GitHub's attestations API for the artifact's digest), checked_at: YYYY-MM-DD}. Never mark attestation 'verified' without the API or `gh attestation verify` confirming it."
   },
   "apps": [
     {
@@ -163,6 +164,158 @@
   ],
   "candidates": [
     {
+      "id": "photocraft",
+      "name": "PhotoCraft",
+      "icon": "assets/app-icons/photocraft.webp",
+      "category": "Image editor",
+      "description": "Layered raster editing in a native Rust app.",
+      "homepage": "https://getartcraft.com/apps/photocraft",
+      "distribution": {
+        "via": "GitHub releases",
+        "repo": "storytold/photocraft",
+        "release": "v0.2.0",
+        "artifact": "photocraft-0.2.0-linux-x86_64.AppImage",
+        "url": "https://github.com/storytold/photocraft/releases/tag/v0.2.0",
+        "license": "Apache-2.0",
+        "checksums": "SHA256SUMS.txt",
+        "attestation": "none",
+        "checked_at": "2026-10-06"
+      }
+    },
+    {
+      "id": "vectorcraft",
+      "name": "VectorCraft",
+      "icon": "assets/app-icons/vectorcraft.webp",
+      "category": "Vector illustration",
+      "description": "Paths, shapes and type for illustration and logos.",
+      "homepage": "https://getartcraft.com/apps/vectorcraft",
+      "distribution": {
+        "via": "GitHub releases",
+        "repo": "storytold/vectorcraft",
+        "release": "v0.3.0",
+        "artifact": "vectorcraft-0.3.0-linux-x86_64.AppImage",
+        "url": "https://github.com/storytold/vectorcraft/releases/tag/v0.3.0",
+        "license": "Apache-2.0",
+        "checksums": "SHA256SUMS.txt",
+        "attestation": "none",
+        "checked_at": "2026-10-06"
+      }
+    },
+    {
+      "id": "filmcraft",
+      "name": "FilmCraft",
+      "icon": "assets/app-icons/filmcraft.webp",
+      "category": "Video editor",
+      "description": "A real timeline with every trim mode and its own codecs, in pure Rust.",
+      "homepage": "https://getartcraft.com/apps/filmcraft",
+      "distribution": {
+        "via": "GitHub releases",
+        "repo": "storytold/filmcraft",
+        "release": "v0.2.0",
+        "artifact": "filmcraft-0.2.0-linux-x86_64.AppImage",
+        "url": "https://github.com/storytold/filmcraft/releases/tag/v0.2.0",
+        "license": "Apache-2.0",
+        "checksums": "SHA256SUMS.txt",
+        "attestation": "none",
+        "checked_at": "2026-10-06"
+      }
+    },
+    {
+      "id": "lightcraft",
+      "name": "LightCraft",
+      "icon": "assets/app-icons/lightcraft.webp",
+      "category": "Photo library and raw developer",
+      "description": "Catalogue and develop raw photos.",
+      "homepage": "https://getartcraft.com/apps/lightcraft",
+      "distribution": {
+        "via": "GitHub releases",
+        "repo": "storytold/lightcraft",
+        "release": "v0.2.0",
+        "artifact": "lightcraft-0.2.0-linux-x86_64.AppImage",
+        "url": "https://github.com/storytold/lightcraft/releases/tag/v0.2.0",
+        "license": "Apache-2.0",
+        "checksums": "SHA256SUMS.txt",
+        "attestation": "none",
+        "checked_at": "2026-10-06"
+      }
+    },
+    {
+      "id": "printcraft",
+      "name": "PrintCraft",
+      "icon": "assets/app-icons/printcraft.webp",
+      "category": "PDF workbench",
+      "description": "Read, edit and assemble PDFs.",
+      "homepage": "https://getartcraft.com/apps/printcraft",
+      "distribution": {
+        "via": "GitHub releases",
+        "repo": "storytold/printcraft",
+        "release": "v0.2.0",
+        "artifact": "printcraft-0.2.0-linux-x86_64.AppImage",
+        "url": "https://github.com/storytold/printcraft/releases/tag/v0.2.0",
+        "license": "Apache-2.0",
+        "checksums": "SHA256SUMS.txt",
+        "attestation": "none",
+        "checked_at": "2026-10-06"
+      }
+    },
+    {
+      "id": "effectcraft",
+      "name": "EffectCraft",
+      "icon": "assets/app-icons/effectcraft.webp",
+      "category": "Motion graphics and VFX",
+      "description": "Compositing, motion graphics and visual effects.",
+      "homepage": "https://getartcraft.com/apps/effectcraft",
+      "distribution": {
+        "via": "GitHub releases",
+        "repo": "storytold/effectcraft",
+        "release": "v0.3.0",
+        "artifact": "effectcraft-0.3.0-linux-x86_64.AppImage",
+        "url": "https://github.com/storytold/effectcraft/releases/tag/v0.3.0",
+        "license": "Apache-2.0",
+        "checksums": "SHA256SUMS.txt",
+        "attestation": "none",
+        "checked_at": "2026-10-06"
+      }
+    },
+    {
+      "id": "designcraft",
+      "name": "DesignCraft",
+      "icon": "assets/app-icons/designcraft.webp",
+      "category": "Page layout and publishing",
+      "description": "Lay out pages for print and screen.",
+      "homepage": "https://getartcraft.com/apps/designcraft",
+      "distribution": {
+        "via": "GitHub releases",
+        "repo": "storytold/designcraft",
+        "release": "v0.2.0",
+        "artifact": "designcraft-0.2.0-linux-x86_64.AppImage",
+        "url": "https://github.com/storytold/designcraft/releases/tag/v0.2.0",
+        "license": "Apache-2.0",
+        "checksums": "SHA256SUMS.txt",
+        "attestation": "none",
+        "checked_at": "2026-10-06"
+      }
+    },
+    {
+      "id": "obs-studio",
+      "name": "OBS Studio",
+      "icon": "assets/desktop-icons/com.obsproject.Studio.svg",
+      "category": "Video",
+      "description": "Screen recording and live streaming.",
+      "homepage": "https://obsproject.com",
+      "distribution": {
+        "via": "nixpkgs",
+        "repo": "obsproject/obs-studio",
+        "release": "obs-studio",
+        "artifact": "obs-studio",
+        "url": "https://search.nixos.org/packages?channel=unstable&query=obs-studio",
+        "license": "GPL-2.0",
+        "checksums": null,
+        "attestation": "none",
+        "checked_at": "2026-10-06"
+      }
+    },
+    {
       "id": "brave",
       "name": "Brave",
       "icon": "assets/desktop-icons/brave-browser.png",
@@ -196,13 +349,6 @@
       "icon": "assets/desktop-icons/kitty.svg",
       "category": "Terminal",
       "description": "GPU-accelerated terminal emulator."
-    },
-    {
-      "id": "obs-studio",
-      "name": "OBS Studio",
-      "icon": "assets/desktop-icons/com.obsproject.Studio.svg",
-      "category": "Video",
-      "description": "Screen recording and live streaming."
     }
   ]
 }

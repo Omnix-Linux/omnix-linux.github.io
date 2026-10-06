@@ -159,6 +159,12 @@
   .copy[data-state="failed"] { color: var(--bad); }
 
   .cand { border-style: dashed; border-left-style: solid; }
+  .dist { margin: 0; font: .74rem/1.6 var(--font-mono); color: var(--muted); }
+  .dist a { color: var(--ink); text-decoration-color: var(--nix); text-underline-offset: 3px; }
+  .dist a:hover { color: var(--ice); }
+  .dist a, .dist span { white-space: nowrap; }
+  .dist .dist-ok { color: var(--ok); }
+  .dist .dist-warn { color: var(--amber); }
 
   /* Principles */
   .principles { list-style: none; counter-reset: p; padding: 0; margin: 28px 0 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 340px), 1fr)); gap: 0 32px; }
@@ -210,7 +216,7 @@
     <section aria-labelledby="next">
       <div class="eyebrow">Candidates</div>
       <h2 id="next">Next up for testing</h2>
-      <p class="lede">These apps appear in the desktop previews but have no test yet, so their status is unknown until one is written and run.</p>
+      <p class="lede">No test has run for these yet, so their status is unknown. <a href="https://getartcraft.com/apps">ArtCraft</a>’s seven open-source Rust apps show the model this page is built for: each one is released straight from GitHub with Linux AppImages and SHA-256 checksums, though not yet with signed attestations.</p>
       <ul class="cands">
 <!--__CANDIDATES__-->
       </ul>
