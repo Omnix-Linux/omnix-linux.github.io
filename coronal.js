@@ -10,10 +10,10 @@ afterFirstPaint(async function () {
   // wordmark leaves as the next section arrives at every viewport height.
   // Distances are fractions of a height cached across iOS chrome churn. This runs
   // before the profile fetch so the fade works even if the shader never loads.
-  var fadeRaf = 0, lastFade = -1, fadeHeight = window.innerHeight, fadeWidth = document.documentElement.clientWidth;
+  var fadeRaf = 0, lastFade = -1, fadeMetrics = ViewportChrome.current();
   function heroFade() {
     fadeRaf = 0;
-    var h = fadeHeight;
+    var h = fadeMetrics.h;
     var f = Math.min(1, Math.max(0, (window.scrollY - h * .08) / (h * .42)));
     f = Math.round(f * 100) / 100;
     if (f === lastFade) return;
@@ -23,11 +23,7 @@ afterFirstPaint(async function () {
     root.classList.toggle("hero-past", f >= 1);
   }
   window.addEventListener("scroll", function () { if (!fadeRaf) fadeRaf = requestAnimationFrame(heroFade); }, { passive: true });
-  window.addEventListener("resize", function () {
-    var w = document.documentElement.clientWidth, h = window.innerHeight;
-    if (w === fadeWidth && Math.abs(h - fadeHeight) <= 160) return;
-    fadeWidth = w; fadeHeight = h; heroFade();
-  });
+  window.addEventListener("resize", function () { if (!ViewportChrome.chromeResize(fadeMetrics)) heroFade(); });
   heroFade();
   var logoFontReady = Promise.all([
     document.fonts.load('800 140px "Lexend"', "mnix"),
@@ -51,6 +47,13 @@ afterFirstPaint(async function () {
   suffix.textContent = registry.layout.suffix.text;
   var suffixWidthPerPixel = null;
   var hero = document.getElementById("top");
+  // Document offset from layout, not getBoundingClientRect() + scrollY: iOS can
+  // report those out of step while its toolbars animate, which moved the shader.
+  function documentTop(el) {
+    var top = 0;
+    for (; el; el = el.offsetParent) top += el.offsetTop;
+    return top;
+  }
   function placeLogo() {
     var W = document.documentElement.clientWidth;
     // Browser chrome changes innerHeight during mobile scrolling; svh stays stable.
@@ -76,12 +79,13 @@ afterFirstPaint(async function () {
     var groupWidth = ringRadius * 2 + mode.suffixGapToArtworkSize * size + suffixWidth;
     var groupLeft = Math.max(16, Math.min((W - groupWidth) / 2, W - groupWidth - rightGutter));
     var centerX = groupLeft + ringRadius;
-    var centerY = box.top + window.scrollY + box.height / 2;
+    var wordmarkTop = documentTop(wordmark);
+    var centerY = wordmarkTop + wordmark.offsetHeight / 2;
     var left = centerX - geometry.ring.center.x * size;
     var top = centerY - geometry.ring.center.y * size;
     orbit.style.transform = "none";
     orbit.style.left = (left - box.left) + "px";
-    orbit.style.top = (top - box.top - window.scrollY) + "px";
+    orbit.style.top = (top - wordmarkTop) + "px";
     orbit.style.width = orbit.style.height = size + "px";
     orbit.style.setProperty("--rim-left", ((geometry.ring.center.x - geometry.ring.radius) * 100) + "%");
     orbit.style.setProperty("--rim-top", ((geometry.ring.center.y - geometry.ring.radius) * 100) + "%");
@@ -197,14 +201,8 @@ afterFirstPaint(async function () {
   // height wobbles by up to the chrome height while width holds, and the svh
   // layout below does not change with it. Re-running placement or rebuilding
   // observers on that churn rewrites the fixed hero styles mid-scroll (jerk).
-  var viewportMetrics = { w: document.documentElement.clientWidth, h: window.innerHeight };
-  function chromeResize() {
-    var w = document.documentElement.clientWidth, h = window.innerHeight;
-    if (w === viewportMetrics.w && h !== viewportMetrics.h
-      && Math.abs(h - viewportMetrics.h) <= 160) return true;
-    viewportMetrics.w = w; viewportMetrics.h = h;
-    return false;
-  }
+  var viewportMetrics = ViewportChrome.current();
+  function chromeResize() { return ViewportChrome.chromeResize(viewportMetrics); }
   if (document.fonts) document.fonts.ready.then(resize);
   if (typeof ResizeObserver !== "undefined") new ResizeObserver(resize).observe(document.querySelector(".hero-inner"));
   window.addEventListener("resize", function () { if (!chromeResize()) resize(); });

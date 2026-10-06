@@ -103,13 +103,9 @@
     root.addEventListener("scroll", function () { schedule(false); }, { passive: true });
     // The column layout is width-driven; a chrome-only height change (iOS URL
     // bar/toolbars sliding during scroll) needs no re-measure or mask rebuild.
-    var resizeMetrics = { w: document.documentElement.clientWidth, h: root.innerHeight };
+    var resizeMetrics = root.ViewportChrome.current();
     root.addEventListener("resize", function () {
-      var w = document.documentElement.clientWidth, h = root.innerHeight;
-      if (w === resizeMetrics.w && h !== resizeMetrics.h
-        && Math.abs(h - resizeMetrics.h) <= 160) return;
-      resizeMetrics.w = w; resizeMetrics.h = h;
-      schedule(true);
+      if (!root.ViewportChrome.chromeResize(resizeMetrics)) schedule(true);
     });
     root.addEventListener("pageshow", function () { schedule(true); });
     wide.addEventListener("change", function () { schedule(true); });

@@ -443,7 +443,7 @@
   // Measure with the reservation in place: offsetHeight never falls below it, and an
   // unchanged height is detected instead of rewriting an identical inline value.
   var reserveFrame = 0;
-  var reserveMetrics = { w: document.documentElement.clientWidth, h: window.innerHeight };
+  var reserveMetrics = ViewportChrome.current();
   function reserveHeight() {
     reserveFrame = 0;
     var current = demo.dataset.desktop;
@@ -461,11 +461,7 @@
   // The demos' heights are width/media-query driven; a chrome-only height change
   // (iOS URL bar/toolbars sliding during scroll) needs no re-measure.
   window.addEventListener('resize', function () {
-    var w = document.documentElement.clientWidth, h = window.innerHeight;
-    if (w === reserveMetrics.w && h !== reserveMetrics.h
-      && Math.abs(h - reserveMetrics.h) <= 160) return;
-    reserveMetrics.w = w; reserveMetrics.h = h;
-    scheduleReserve();
+    if (!ViewportChrome.chromeResize(reserveMetrics)) scheduleReserve();
   });
   if (document.fonts) document.fonts.ready.then(scheduleReserve);
   // Two monitors changes the height of both desktops alike.

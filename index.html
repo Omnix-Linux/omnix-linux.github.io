@@ -1041,6 +1041,7 @@
 </footer>
 
 
+<script src="viewport-chrome.js?v=20261005-toolbar-shader"></script>
 <script>
   // Let the page paint before compiling shaders.
   function afterFirstPaint(fn) {
@@ -1051,12 +1052,8 @@
   // height wobbles by up to the chrome height while width holds, and svh-based
   // layout does not change with it. Returns true for that churn so resize-driven
   // layout work can skip it; any other resize records the new metrics.
-  function chromeResize(metrics) {
-    var w = document.documentElement.clientWidth, h = window.innerHeight;
-    if (w === metrics.w && h !== metrics.h && Math.abs(h - metrics.h) <= 160) return true;
-    metrics.w = w; metrics.h = h;
-    return false;
-  }
+  function chromeResize(metrics) { return ViewportChrome.chromeResize(metrics); }
+
 </script>
 <script>
 afterFirstPaint(function () {
@@ -1312,10 +1309,10 @@ afterFirstPaint(function () {
 });
 </script>
 <script src="shader-layout.js?v=mobile-stability-alpha-20261004" defer></script>
-<script src="coronal.js?v=hero-scroll-fade-20261005" defer></script>
-<script src="column-scroll.js?v=20261005-chrome-resize" defer></script>
+<script src="coronal.js?v=20261005-toolbar-shader" defer></script>
+<script src="column-scroll.js?v=20261005-toolbar-shader" defer></script>
 <script src="desktop-preview.js?v=20261004-demo-tabs-only" defer></script>
-<script src="omarchy-preview.js?v=20261005-chrome-resize" defer></script>
+<script src="omarchy-preview.js?v=20261005-toolbar-shader" defer></script>
 
 
 <script>
