@@ -99,9 +99,9 @@ Tests: `python3 -m unittest discover -s tests -p 'test_*.py'` covers normalizati
 
 Status rules:
 
-- Every card shows one status colour: green **Passing**, yellow **Known gap**, red **Failing**, gray **Unknown** (`verification` is `null` because the test hasn't been run yet, or the app is a candidate with no test). The workflow, test, last run, log excerpt and install snippet sit in an expandable **Details** section.
-- `verification.status` must be `passing`, `known-gap`, `failing` or `untested`; anything else fails the build.
-- `passing`, `known-gap` and `failing` need `test.path` and `verification.verified_at`, or the build fails and writes nothing.
+- Every card shows one status colour: green **Passing** or **Patched** (works because Omnix carries a fix of its own, cited in the card), yellow **Known gap**, red **Failing**, gray **Unknown** (`verification` is `null` because the test hasn't been run yet, or the app is a candidate with no test). The workflow, test, last run, log excerpt and install snippet sit in an expandable **Details** section.
+- `verification.status` must be `passing`, `patched`, `known-gap`, `failing` or `untested`; anything else fails the build.
+- `passing`, `patched`, `known-gap` and `failing` need `test.path` and `verification.verified_at`, or the build fails and writes nothing.
 - `candidates` are apps with no test yet. They always render as **Untested** and cannot carry a status.
 - A status is never set by hand without a test run behind it.
 

@@ -101,6 +101,7 @@
   .badge { display: inline-flex; align-items: center; gap: 6px; padding: 2px 10px; border: 1px solid; border-radius: 999px; font: 700 .7rem/1.6 var(--font-mono); letter-spacing: .06em; text-transform: uppercase; white-space: nowrap; }
   .badge::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: currentColor; }
   .badge-passing { color: var(--ok); border-color: rgba(134, 239, 172, .45); background: rgba(134, 239, 172, .08); }
+  .badge-patched { color: var(--ok); border-color: rgba(134, 239, 172, .45); background: rgba(134, 239, 172, .08); }
   .badge-known-gap { color: var(--amber); border-color: rgba(252, 211, 77, .45); background: rgba(252, 211, 77, .08); }
   .badge-failing { color: var(--bad); border-color: rgba(252, 165, 165, .45); background: rgba(252, 165, 165, .08); }
   .badge-unknown { color: #8a96ad; border-color: rgba(138, 150, 173, .4); background: rgba(138, 150, 173, .06); }
@@ -110,6 +111,7 @@
   /* A card is identity plus one status colour; a stripe on the left repeats it at a glance. */
   .app { display: flex; flex-direction: column; gap: 12px; min-width: 0; padding: 18px 20px; border: 1px solid var(--line); border-left: 4px solid var(--status, var(--line)); border-radius: 14px; background: var(--panel); }
   .status-passing { --status: var(--ok); }
+  .status-patched { --status: var(--ok); }
   .status-known-gap { --status: var(--amber); }
   .status-failing { --status: var(--bad); }
   .status-unknown { --status: #5d6880; }
@@ -206,7 +208,7 @@
     <h1>Decentralized <em>app distribution.</em></h1>
     <p class="lede">Attestation and signing allow apps to be distributed through GitHub. A release carries a signed attestation that ties each binary to the source and the build that produced it, so you can verify an app without a central app store.</p>
     <p class="lede">Every app here also comes with a workflow an agent runs in a booted NixOS VM: the real binary, the real commands, the real session. A status only appears after that test has run, and each card shows when it last ran and against which commit. Re-run the test after an update and the card tells you whether your workflow survived it.</p>
-    <p class="meta"><span>Registry: <a href="https://github.com/Omnix-Linux/omnix-linux.github.io/blob/main/apps/registry.json">apps/registry.json</a></span><span class="legend">Status: <span class="badge badge-passing">Passing</span> <span class="badge badge-known-gap">Known gap</span> <span class="badge badge-failing">Failing</span> <span class="badge badge-unknown">Unknown</span></span></p>
+    <p class="meta"><span>Registry: <a href="https://github.com/Omnix-Linux/omnix-linux.github.io/blob/main/apps/registry.json">apps/registry.json</a></span><span class="legend">Status: <span class="badge badge-passing">Passing</span> <span class="badge badge-patched">Patched</span> <span class="badge badge-known-gap">Known gap</span> <span class="badge badge-failing">Failing</span> <span class="badge badge-unknown">Unknown</span></span></p>
 
     <section aria-labelledby="lineup">
       <div class="eyebrow">The lineup</div>
@@ -232,7 +234,7 @@
       <h2 id="principles">How an app <em>earns its place</em></h2>
       <ol class="principles">
         <li><strong>Tested, not claimed</strong><p>An app is listed for the workflow a test runs, not for a line in a feature list.</p></li>
-        <li><strong>Every status links to a test</strong><p>Passing, known gap and failing all point at the NixOS test file and the commit it ran against. The page build refuses a status without one.</p></li>
+        <li><strong>Every status links to a test</strong><p>Passing, patched, known gap and failing all point at the NixOS test file and the commit it ran against. The page build refuses a status without one.</p></li>
         <li><strong>Re-run after every update</strong><p>When Omnix, nixpkgs or the app changes, an agent re-runs the test and records the new result, so you can see whether a workflow that worked yesterday still works after the upgrade.</p></li>
         <li><strong>Rollback when an update breaks one</strong><p>A failing workflow is a reason to stay on, or boot back to, the previous generation until it is fixed.</p></li>
         <li><strong>Agent-maintained</strong><p>An agent adds an app by writing a test and a registry entry, running it, and recording the result. No hand-edited badges.</p></li>

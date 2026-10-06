@@ -843,8 +843,9 @@
         <p class="lede">Python wheels, rustup, AppImages, Electron apps and vendor SDKs expect standard Linux folders such as
           <code>/bin/bash</code>, <code>/usr/lib</code> and <code>/lib64</code>. Omnix adds them to NixOS.</p>
         <p class="lede"><strong>Add, never relocate.</strong> Packages stay unmodified in <code>/nix/store</code> and download
-          from the same <code>cache.nixos.org</code> as NixOS. Omnix uses no overlays or patches, so it asks nothing
-          special of nixpkgs maintainers.</p>
+          from the same <code>cache.nixos.org</code> as NixOS. Omnix uses no overlays, and patches only what it has to fix
+          itself, sending each fix upstream: today, one envfs patch that lets relocatable interpreters run through
+          <code>#!/usr/bin/python3</code>.</p>
       </div>
       <div class="term" role="img" aria-label="Package sources and compatibility paths: unmodified nixpkgs packages, NixOS binary cache, local builds when needed, and standard Linux paths">
         <div class="term-bar"><i></i><i></i><i></i><b>Nix packages. Linux compatibility.</b></div>

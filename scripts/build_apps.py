@@ -21,13 +21,13 @@ REGISTRY = REPO / "apps" / "registry.json"
 OUT = REPO / "apps" / "index.html"
 TEMPLATE = Path(__file__).resolve().parent / "apps_template.html"
 
-STATUSES = ("passing", "known-gap", "failing", "untested")
-TESTED_STATUSES = ("passing", "known-gap", "failing")
-# Four colours, nothing else: green passing, yellow known gap, red failing, gray unknown
-# (no recorded run yet, or explicitly untested).
-STATUS_LABELS = {"passing": "Passing", "known-gap": "Known gap", "failing": "Failing",
+STATUSES = ("passing", "patched", "known-gap", "failing", "untested")
+TESTED_STATUSES = ("passing", "patched", "known-gap", "failing")
+# Four colours, nothing else: green passing (or patched: works because Omnix carries a
+# fix of its own), yellow known gap, red failing, gray unknown (no recorded run yet).
+STATUS_LABELS = {"passing": "Passing", "patched": "Patched", "known-gap": "Known gap", "failing": "Failing",
                  "untested": "Unknown", None: "Unknown"}
-STATUS_CLASS = {"passing": "passing", "known-gap": "known-gap", "failing": "failing",
+STATUS_CLASS = {"passing": "passing", "patched": "patched", "known-gap": "known-gap", "failing": "failing",
                 "untested": "unknown", None: "unknown"}
 APP_FIELDS = ("id", "name", "icon", "category", "kind", "description", "platforms", "workflow", "test", "install")
 TEST_FIELDS = ("repo", "path", "check", "url")

@@ -7,7 +7,7 @@ const path = require('node:path');
 const root = path.join(__dirname, '..');
 const reg = JSON.parse(fs.readFileSync(path.join(root, 'apps', 'registry.json'), 'utf8'));
 const html = fs.readFileSync(path.join(root, 'apps', 'index.html'), 'utf8');
-const STATUSES = ['passing', 'known-gap', 'failing', 'untested'];
+const STATUSES = ['passing', 'patched', 'known-gap', 'failing', 'untested'];
 
 test('registry documents its schema and has apps', () => {
   assert.equal(typeof reg._schema, 'object');
@@ -56,7 +56,7 @@ test('page renders one card per app, inlines the registry and links each test', 
   assert.equal((html.match(/<details class="more">/g) || []).length, reg.apps.length);
   // Status colours: green, yellow, red, gray only.
   const used = new Set([...html.matchAll(/class="app status-([a-z-]+)/g)].map(m => m[1]));
-  for (const s of used) assert.ok(['passing', 'known-gap', 'failing', 'unknown'].includes(s), s);
+  for (const s of used) assert.ok(['passing', 'patched', 'known-gap', 'failing', 'unknown'].includes(s), s);
   for (const a of reg.apps) if (a.test) assert.ok(html.includes(`href="${a.test.url}"`), a.id);
   const unverified = reg.apps.filter(a => !a.verification).length;
   assert.equal((html.match(/<article class="app status-unknown"/g) || []).length, unverified);

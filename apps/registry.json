@@ -19,7 +19,7 @@
       "homepage": "optional https URL"
     },
     "candidates[]": "apps not tested yet: {id, name, icon, category, description}. Always rendered as untested.",
-    "statuses": "passing | known-gap | failing | untested. passing, known-gap and failing require test.path and verification.verified_at, or the build fails.",
+    "statuses": "passing | patched | known-gap | failing | untested. patched means it works on Omnix because Omnix carries a fix of its own (cite it in notes). passing, patched, known-gap and failing require test.path and verification.verified_at, or the build fails.",
     "distribution": "optional on apps and candidates: {via: 'GitHub releases' | 'nixpkgs' | ..., repo: 'owner/name', release: tag, artifact: file name, url: download or project URL, license: SPDX id, checksums: checksum file name or null, attestation: 'none' | 'verified' (from GitHub's attestations API for the artifact's digest), checked_at: YYYY-MM-DD}. Never mark attestation 'verified' without the API or `gh attestation verify` confirming it."
   },
   "apps": [
@@ -70,27 +70,25 @@
         "Unpack cpython-3.12.8+20241206-x86_64-unknown-linux-gnu-install_only.tar.gz into /opt/python",
         "/opt/python/bin/python3 -c 'import ssl, sqlite3, ctypes'",
         "ctypes.util.find_library(\"z\") resolves through ldconfig",
-        "python3 -c 'import zoneinfo; zoneinfo.ZoneInfo(\"Europe/Moscow\")'"
-      ],
-      "known_gaps": [
-        "A script with #!/usr/bin/python3 resolved through envfs fails for relocatable interpreters like this one; the test expects that failure until Mic92/envfs#233 ships in nixpkgs."
+        "python3 -c 'import zoneinfo; zoneinfo.ZoneInfo(\"Europe/Moscow\")'",
+        "Run a script through #!/usr/bin/python3 with this interpreter on PATH: it prints 1 (needs Omnix's envfs readlink fix)"
       ],
       "test": {
         "repo": "Omnix-Linux/Omnix",
         "path": "tests/fhs.nix",
         "check": "checks.x86_64-linux.fhs",
-        "url": "https://github.com/Omnix-Linux/Omnix/blob/main/tests/fhs.nix"
+        "url": "https://github.com/Omnix-Linux/Omnix/blob/4f66932/tests/fhs.nix"
       },
       "install": {
         "label": "Download and unpack",
         "snippet": "sudo mkdir -p /opt/python\ncurl -fsSL https://github.com/astral-sh/python-build-standalone/releases/download/20241206/cpython-3.12.8%2B20241206-x86_64-unknown-linux-gnu-install_only.tar.gz \\\n  | sudo tar -xz -C /opt/python --strip-components=1\n/opt/python/bin/python3 --version"
       },
       "verification": {
-        "status": "known-gap",
+        "status": "patched",
         "verified_at": "2026-10-06",
-        "commit": "Omnix-Linux/Omnix@18b26e7",
-        "notes": "Fresh NixOS VM run; imports, find_library and time zones pass. Running a script by its #!/usr/bin/python3 line under this relocatable interpreter fails as documented, until Mic92/envfs#233 reaches nixpkgs.",
-        "log_excerpt": "must succeed: /opt/python/bin/python3 -c 'import ctypes.util as c; assert c.find_library(\"z\")'\nmust succeed: /opt/python/bin/python3 -c 'import zoneinfo; zoneinfo.ZoneInfo(\"Europe/Moscow\")'\nmust fail: PATH=/opt/python/bin:$PATH /tmp/s.py\n  Fatal Python error: init_fs_encoding: failed to get the Python codec of the filesystem encoding\ntest script finished in 29.34s"
+        "commit": "Omnix-Linux/Omnix@4f66932",
+        "notes": "Fresh NixOS VM run on Omnix with its own envfs fix (proposed upstream as Mic92/envfs#233, shipped in the Omnix base by Omnix-Linux/Omnix#5). Stock envfs doesn't resolve names on readlink, so #!/usr/bin/python3 failed for this relocatable interpreter; with Omnix's envfs it runs.",
+        "log_excerpt": "must succeed: /opt/python/bin/python3 -c 'import ctypes.util as c; assert c.find_library(\"z\")'\nmust succeed: /opt/python/bin/python3 -c 'import zoneinfo; zoneinfo.ZoneInfo(\"Europe/Moscow\")'\nmust succeed: PATH=/opt/python/bin:$PATH /tmp/s.py | grep -qx 1\ntest script finished in 28.14s"
       }
     },
     {
