@@ -31,6 +31,8 @@
   root.afterFirstPaint(function () {
     var wide = root.matchMedia("(min-width: 861px)");
     var reduce = root.matchMedia("(prefers-reduced-motion: reduce)");
+    // The page scrolls inside #page, not the document (see index.html).
+    var scroller = document.getElementById("page") || document.scrollingElement;
     var entries = [];
     var frame = 0, needsMeasure = true, viewportHeight = 0, inset = 0;
     document.querySelectorAll("main section:not(.hero) > .split").forEach(function (split) {
@@ -66,13 +68,13 @@
       });
       // Geometry is cached only on layout changes; scroll frames read no DOM bounds.
       entries.forEach(function (entry) {
-        if (entry.enabled) entry.top = entry.pane.getBoundingClientRect().top + root.scrollY;
+        if (entry.enabled) entry.top = entry.pane.getBoundingClientRect().top + scroller.scrollTop;
       });
     }
     function update() {
       frame = 0;
       if (needsMeasure) measure();
-      var scrollY = root.scrollY;
+      var scrollY = scroller.scrollTop;
       entries.forEach(function (entry) {
         var transform = "", mask = "";
         if (entry.enabled) {
@@ -100,7 +102,7 @@
         }
       });
     }
-    root.addEventListener("scroll", function () { schedule(false); }, { passive: true });
+    scroller.addEventListener("scroll", function () { schedule(false); }, { passive: true });
     // The column layout is width-driven; a chrome-only height change (iOS URL
     // bar/toolbars sliding during scroll) needs no re-measure or mask rebuild.
     var resizeMetrics = root.ViewportChrome.current();
