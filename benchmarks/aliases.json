@@ -1,0 +1,3 @@
+{
+  "_comment": "BridgeBench model name -> OpenRouter model id, for names the automatic matching misses. Only add an alias when the two are certainly the same model: a wrong id routes people's requests to a different model. Left unmatched on 2026-10-06: 'Step 5 Preview' (not on OpenRouter), 'Qwen3.8 Max' (OpenRouter lists qwen3.8-max-0902 and qwen3.8-max-prime; which one BridgeBench rated is not stated), 'Qwen3.8-Flash-Next' (not the same model as qwen3.8-flash)."
+}
