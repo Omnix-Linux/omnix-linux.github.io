@@ -19,3 +19,23 @@ for (const selector of ["body::before", ".scrim"]) {
     assert.doesNotMatch(rule, /inset:\s*0\s*;/, "inset: 0 resizes with the toolbars");
   });
 }
+
+// The shader is pinned by living outside the scroller. As a fixed layer of a
+// scrolling document, iOS repositioned the canvas a frame late whenever the worker
+// drew mid-scroll, so the shader jittered vertically during touch scrolling.
+test('the shader canvas sits outside the #page scroller', () => {
+  const canvas = html.indexOf('<canvas id="coronal"');
+  const page = html.indexOf('<div class="page" id="page"');
+  const main = html.indexOf('<main>');
+  assert.ok(canvas !== -1 && page !== -1 && main !== -1);
+  assert.ok(canvas < page, 'canvas must come before #page, not inside it');
+  assert.ok(page < main, 'main content must scroll inside #page');
+});
+
+test('the document itself never scrolls', () => {
+  assert.match(html, /html, body \{ height: 100%; overflow: hidden;/);
+  const start = html.indexOf('  .page {');
+  const rule = html.slice(start, html.indexOf('}', start));
+  assert.match(rule, /overflow-y: auto/);
+  assert.match(rule, /scroll-timeline: --page block/);
+});

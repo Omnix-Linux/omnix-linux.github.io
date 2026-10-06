@@ -252,8 +252,21 @@
     --step-5: clamp(3.4rem, 2rem + 7vw, 7.5rem);
     color-scheme: dark;
   }
-  html { scroll-behavior: smooth; scroll-padding-top: var(--header-height, 76px); }
-  @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+  /* The document never scrolls; .page does. The shader canvas and the other fixed
+     layers sit outside the scroller, so the browser never moves them during a scroll.
+     As a fixed layer of a scrolling document, iOS repositioned the canvas a frame late
+     each time the worker drew a new frame mid-scroll, so the shader jittered. */
+  html, body { height: 100%; overflow: hidden; overscroll-behavior: none; }
+  .page {
+    position: fixed; inset: 0; z-index: 3; overflow-x: hidden; overflow-y: auto;
+    overscroll-behavior-y: contain; -webkit-overflow-scrolling: touch;
+    scroll-behavior: smooth; scroll-padding-top: var(--header-height, 76px);
+    scroll-timeline: --page block;
+  }
+  .page:focus { outline: none; }
+  /* Fixed layers outside .page animate on its scroll timeline. */
+  body { timeline-scope: --page; }
+  @media (prefers-reduced-motion: reduce) { .page { scroll-behavior: auto; } }
   body {
     background: var(--void);
     color: var(--ink);
@@ -337,34 +350,58 @@
   .hero-inner { max-width: 1240px; width: 100%; display: grid; gap: 28px; }
   .wordmark { position: relative; height: min(62svh, 620px); width: 100%; margin: 0; font-family: "Lexend", "Arial Black", system-ui, sans-serif; font-weight: 800; line-height: 1; }
   /* inset: 0 fills the viewport; 100vh would track Safari's collapsing chrome. */
-  #coronal { position: fixed; inset: 0; z-index: 0; pointer-events: none; opacity: 0; transition: opacity .45s ease-out; }
-  .shader-ready #coronal { opacity: calc(1 - .92 * var(--hero-fade, 0)); }
-  /* Once scrolling drives the fade, opacity must track the scroll position without lag. */
-  .hero-linked :is(#coronal, .wordmark-text, .tagline), .hero-linked .logo-orbit::after { transition: none; }
+  /* Hero layers: position comes only from position: fixed and opacity only from the
+     scroll timeline below, so nothing on the scroll path runs JavaScript. One-time
+     ready states fade with filter: opacity(), leaving opacity to the scroll fade. */
+  #coronal { position: fixed; inset: 0; z-index: 0; pointer-events: none; filter: opacity(0); transition: filter .45s ease-out; }
+  .shader-ready #coronal { filter: none; }
   .logo-orbit { position: absolute; left: calc(38vw - (100vw - min(88vw, 1240px)) / 2); top: 50%; transform: translate(-50%, -50%); width: min(80vw, 110svh); aspect-ratio: 1; display: block; pointer-events: none; }
   .logo-orbit::after {
     content: ""; position: absolute; left: var(--rim-left, 21.0714%); top: var(--rim-top, 21.0714%);
     width: var(--rim-size, 57.8571%); height: var(--rim-size, 57.8571%); border-radius: 50%;
     border: clamp(1px, .3vw, 4px) solid white; box-shadow: 0 0 12px rgba(255,255,255,.25);
-    opacity: 0; transition: opacity .18s ease-out;
+    opacity: .9; filter: opacity(0); transition: filter .18s ease-out;
   }
-  .wordmark-ready:not(.shader-ready) .logo-orbit::after { opacity: calc(.9 * (1 - var(--hero-fade, 0))); }
+  .wordmark-ready:not(.shader-ready) .logo-orbit::after { filter: none; }
   @media (prefers-reduced-motion: reduce) {
-    .shader-ready #coronal { opacity: 0; transition: none; }
+    .shader-ready #coronal { filter: opacity(0); transition: none; }
   }
-  .wordmark-text { visibility: hidden; opacity: 0; transition: opacity .45s ease-out; position: fixed; z-index: 2; pointer-events: none; font-family: "Lexend", "Arial Black", system-ui, sans-serif; font-weight: 800; line-height: 1; left: calc(38vw + min(23.142857vw, 31.821429svh) - (100vw - min(88vw, 1240px)) / 2); top: 50%; transform: translateY(-50%); font-size: clamp(3.5rem, 10vw, 8.75rem); letter-spacing: -.045em; color: #fff; }
+  .wordmark-text { visibility: hidden; filter: opacity(0); transition: filter .45s ease-out; position: fixed; z-index: 2; pointer-events: none; font-family: "Lexend", "Arial Black", system-ui, sans-serif; font-weight: 800; line-height: 1; left: calc(38vw + min(23.142857vw, 31.821429svh) - (100vw - min(88vw, 1240px)) / 2); top: 50%; transform: translateY(-50%); font-size: clamp(3.5rem, 10vw, 8.75rem); letter-spacing: -.045em; color: #fff; }
   @media (max-width: 640px) {
     .hero-inner { gap: 24px; }
     .wordmark { height: 44svh; }
     .logo-orbit { width: 100vw; left: calc(37vw - max(16px, 6vw)); }
     .wordmark-text { left: calc(65.928571vw - max(16px, 6vw)); font-size: clamp(2rem, 9vw, 3.5rem); }
   }
-  .wordmark-ready .wordmark-text { visibility: visible; opacity: calc(1 - var(--hero-fade, 0)); }
+  .wordmark-ready .wordmark-text { visibility: visible; filter: none; }
   @media (prefers-reduced-motion: reduce) { .wordmark-text { transition: none; } }
-  .tagline { position: fixed; z-index: 2; color: #fff; pointer-events: none; left: var(--tagline-left, 61vw); top: var(--tagline-top, calc(50svh + 96px)); width: var(--tagline-width, 34vw); visibility: hidden; opacity: 0; transition: opacity .45s ease-out; text-align: left; font-family: var(--font-display); font-weight: 500; font-size: clamp(.75rem, 1.4vw, 1.5rem); line-height: 1.5; margin: 0; max-width: none; text-wrap: balance; }
+  .tagline { position: fixed; z-index: 2; color: #fff; pointer-events: none; left: var(--tagline-left, 61vw); top: var(--tagline-top, calc(50svh + 96px)); width: var(--tagline-width, 34vw); visibility: hidden; filter: opacity(0); transition: filter .45s ease-out; text-align: left; font-family: var(--font-display); font-weight: 500; font-size: clamp(.75rem, 1.4vw, 1.5rem); line-height: 1.5; margin: 0; max-width: none; text-wrap: balance; }
   @media (max-width: 640px) { .tagline { max-width: none; text-align: left; font-size: .875rem; } }
-  .wordmark-ready .tagline { visibility: visible; opacity: calc(1 - 1.6 * var(--hero-fade, 0)); }
+  .wordmark-ready .tagline { visibility: visible; filter: none; }
   @media (prefers-reduced-motion: reduce) { .tagline { transition: none; } }
+  /* Scroll fade: the wordmark leaves as the next section arrives. A scroll-driven
+     animation is computed from the scroll offset in the same frame the page moves,
+     where a scroll listener would trail by a frame. svh keeps the range fixed while
+     iOS toolbars slide. The tagline clears first so it never overlaps the heading. */
+  @keyframes hero-fade-shader { from { opacity: 1; } to { opacity: .08; } }
+  @keyframes hero-fade-text { from { opacity: 1; } to { opacity: 0; } }
+  @keyframes hero-fade-tagline { from { opacity: 1; } 62.5%, to { opacity: 0; } }
+  @keyframes hero-fade-rim { from { opacity: .9; } to { opacity: 0; } }
+  @supports (animation-timeline: --page) and (timeline-scope: --page) {
+    #coronal, .wordmark-text, .tagline, .logo-orbit::after {
+      animation: hero-fade-text linear both; animation-timeline: --page; animation-range: 8svh 50svh;
+    }
+    #coronal { animation-name: hero-fade-shader; }
+    .tagline { animation-name: hero-fade-tagline; }
+    .logo-orbit::after { animation-name: hero-fade-rim; }
+  }
+  /* Browsers without scroll timelines fall back to coronal.js setting --hero-fade. */
+  @supports not ((animation-timeline: --page) and (timeline-scope: --page)) {
+    #coronal { opacity: calc(1 - .92 * var(--hero-fade, 0)); }
+    .wordmark-text { opacity: calc(1 - var(--hero-fade, 0)); }
+    .tagline { opacity: calc(1 - 1.6 * var(--hero-fade, 0)); }
+    .logo-orbit::after { opacity: calc(.9 * (1 - var(--hero-fade, 0))); }
+  }
   .cta { display: flex; gap: 12px; flex-wrap: wrap; }
   .btn {
     font-family: var(--font-mono); font-size: var(--step--1); font-weight: 700; letter-spacing: 0.04em;
@@ -613,6 +650,7 @@
   <a href="#install" aria-label="Try Omnix"></a>
 </nav>
 
+<div class="page" id="page" tabindex="-1">
 <main>
   <section class="hero" id="top">
     <div class="hero-inner">
@@ -1039,6 +1077,7 @@
     </div>
   </div>
 </footer>
+</div>
 
 
 <script src="viewport-chrome.js?v=20261005-toolbar-shader"></script>
@@ -1053,6 +1092,18 @@
   // layout does not change with it. Returns true for that churn so resize-driven
   // layout work can skip it; any other resize records the new metrics.
   function chromeResize(metrics) { return ViewportChrome.chromeResize(metrics); }
+  // The page scrolls inside #page; focus it so arrow keys, Page Down and space scroll
+  // it immediately, as they would scroll the document.
+  document.addEventListener("DOMContentLoaded", function () {
+    var page = document.getElementById("page");
+    if (page && document.activeElement === document.body) page.focus({ preventScroll: true });
+    // In-page links in the fixed header and rail sit outside #page; hand focus back
+    // after they navigate so the keyboard keeps scrolling the page.
+    document.addEventListener("click", function (event) {
+      var link = event.target.closest && event.target.closest('a[href^="#"]');
+      if (page && link && !page.contains(link)) setTimeout(function () { page.focus({ preventScroll: true }); }, 0);
+    });
+  });
 
 </script>
 <script>
@@ -1309,8 +1360,8 @@ afterFirstPaint(function () {
 });
 </script>
 <script src="shader-layout.js?v=mobile-stability-alpha-20261004" defer></script>
-<script src="coronal.js?v=20261005-toolbar-shader" defer></script>
-<script src="column-scroll.js?v=20261005-toolbar-shader" defer></script>
+<script src="coronal.js?v=20261005-pinned-shader" defer></script>
+<script src="column-scroll.js?v=20261005-pinned-shader" defer></script>
 <script src="desktop-preview.js?v=20261004-demo-tabs-only" defer></script>
 <script src="omarchy-preview.js?v=20261005-toolbar-shader" defer></script>
 

@@ -10,21 +10,26 @@ afterFirstPaint(async function () {
   // wordmark leaves as the next section arrives at every viewport height.
   // Distances are fractions of a height cached across iOS chrome churn. This runs
   // before the profile fetch so the fade works even if the shader never loads.
+  var scroller = document.getElementById("page") || document.scrollingElement;
   var fadeRaf = 0, lastFade = -1, fadeMetrics = ViewportChrome.current();
   function heroFade() {
     fadeRaf = 0;
     var h = fadeMetrics.h;
-    var f = Math.min(1, Math.max(0, (window.scrollY - h * .08) / (h * .42)));
+    var f = Math.min(1, Math.max(0, (scroller.scrollTop - h * .08) / (h * .42)));
     f = Math.round(f * 100) / 100;
     if (f === lastFade) return;
-    if (lastFade !== -1) root.classList.add("hero-linked");
     lastFade = f;
     root.style.setProperty("--hero-fade", f);
-    root.classList.toggle("hero-past", f >= 1);
   }
-  window.addEventListener("scroll", function () { if (!fadeRaf) fadeRaf = requestAnimationFrame(heroFade); }, { passive: true });
-  window.addEventListener("resize", function () { if (!ViewportChrome.chromeResize(fadeMetrics)) heroFade(); });
-  heroFade();
+  // Browsers with scroll-driven animations fade the hero in CSS, in the same frame
+  // as the scroll; a listener here would trail it by a frame.
+  var cssScrollFade = window.CSS && CSS.supports && CSS.supports("animation-timeline: --page")
+    && CSS.supports("timeline-scope: --page");
+  if (!cssScrollFade) {
+    scroller.addEventListener("scroll", function () { if (!fadeRaf) fadeRaf = requestAnimationFrame(heroFade); }, { passive: true });
+    window.addEventListener("resize", function () { if (!ViewportChrome.chromeResize(fadeMetrics)) heroFade(); });
+    heroFade();
+  }
   var logoFontReady = Promise.all([
     document.fonts.load('800 140px "Lexend"', "mnix"),
     document.fonts.load('500 20px "JetBrains Mono"', "A NixOS-fork compatible with Omarchy and friends")

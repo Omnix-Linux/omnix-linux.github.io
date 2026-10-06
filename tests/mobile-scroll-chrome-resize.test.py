@@ -94,7 +94,7 @@ SNAP_JS = r"""
   var sels = ["#coronal", ".logo-orbit", ".wordmark-text", ".tagline",
     ".site-header", ".rail", "#install-demo", ".desktop-demo"];
   var out = {
-    scrollY: window.scrollY,
+    scrollY: document.getElementById('page').scrollTop,
     resize: probe.resize,
     vvResize: probe.vvResize,
     io: probe.io,
@@ -162,11 +162,11 @@ class MobileChromeResizeTest(unittest.TestCase):
         cls.page.evaluate("() => document.fonts && document.fonts.ready")
         cls.page.wait_for_timeout(800)
         # Requirement 1: phone-width viewport, page scrolled at least partially.
-        cls.page.evaluate("() => window.scrollTo({ top: 520, behavior: 'instant' })")
+        cls.page.evaluate("() => document.getElementById('page').scrollTo({ top: 520, behavior: 'instant' })")
         cls.page.wait_for_timeout(1200)  # let reveals/observers settle
         cls.page.evaluate(PIN_JS)
         cls.page.wait_for_timeout(100)
-        cls.scroll_y = cls.page.evaluate("() => window.scrollY")
+        cls.scroll_y = cls.page.evaluate("() => document.getElementById('page').scrollTop")
         cls.baseline = cls.page.evaluate(SNAP_JS)
         # Requirement 2: slide-out of BOTH panes — top URL bar, then bottom
         # toolbar. Width constant, height grows (750 -> 797 -> 844).
