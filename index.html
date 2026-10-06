@@ -543,9 +543,19 @@
   .nav-bug svg { width: 18px; height: 18px; fill: currentColor; }
   .site-nav .nav-bug:hover { color: var(--ice); }
   /* Models sits on the left, flush with the content edge; the rest stay on the right. */
-  .site-nav .nav-leaderboard { gap: 8px; color: var(--muted); padding-left: 0; pointer-events: auto; }
-  .nav-leaderboard svg { width: 18px; height: 18px; fill: currentColor; }
-  .site-nav .nav-leaderboard:hover, .site-nav .nav-leaderboard[aria-current="page"] { color: var(--ice); }
+  .site-nav-start { display: flex; align-items: center; gap: 4px; pointer-events: auto; }
+  .site-nav .nav-leaderboard, .site-nav .nav-apps { gap: 8px; color: var(--muted); }
+  .site-nav .nav-leaderboard { padding-left: 0; }
+  .nav-leaderboard svg, .nav-apps svg { width: 18px; height: 18px; fill: currentColor; flex: none; }
+  .site-nav .nav-leaderboard:hover, .site-nav .nav-leaderboard[aria-current="page"], .site-nav .nav-apps:hover, .site-nav .nav-apps[aria-current="page"] { color: var(--ice); }
+  /* Below 440px Models and Apps collapse to 44px icon buttons; Models stays flush with the content edge. */
+  @media (max-width: 440px) {
+    .site-nav-start { gap: 0; }
+    .site-nav .nav-leaderboard, .site-nav .nav-apps { width: 44px; padding: 10px; }
+    .site-nav .nav-leaderboard { padding-left: 0; justify-content: flex-start; }
+    .nav-leaderboard span, .nav-apps span { display: none; }
+    .nav-leaderboard svg, .nav-apps svg { width: 20px; height: 20px; }
+  }
   @media (max-width: 640px) { .site-nav .nav-bug { width: 44px; padding: 10px; } .nav-bug span { display: none; } .nav-bug svg { width: 20px; height: 20px; } }
   @media (max-width: 360px) { .site-nav .nav-install { padding-inline: 10px; } }
   .bug-options { margin-top: 24px; }
@@ -630,7 +640,10 @@
 
 <header class="site-header">
   <nav class="site-nav" aria-label="Main navigation">
-    <a class="nav-leaderboard" href="benchmarks/" title="AI models, benchmarks and routing"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M7 3h10v2h3v3a4 4 0 0 1-3.6 4A5 5 0 0 1 13 15.9V18h3v3H8v-3h3v-2.1A5 5 0 0 1 7.6 12 4 4 0 0 1 4 8V5h3V3zm0 4H6v1a2 2 0 0 0 1 1.7V7zm10 0v2.7A2 2 0 0 0 18 8V7h-1z"/></svg><span>Models</span></a>
+    <div class="site-nav-start">
+      <a class="nav-leaderboard" href="benchmarks/" title="AI models, benchmarks and routing" aria-label="Models"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M7 3h10v2h3v3a4 4 0 0 1-3.6 4A5 5 0 0 1 13 15.9V18h3v3H8v-3h3v-2.1A5 5 0 0 1 7.6 12 4 4 0 0 1 4 8V5h3V3zm0 4H6v1a2 2 0 0 0 1 1.7V7zm10 0v2.7A2 2 0 0 0 18 8V7h-1z"/></svg><span>Models</span></a>
+      <a class="nav-apps" href="apps/" title="Apps tested on Omnix" aria-label="Apps"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M4 4h7v7H4zm9 0h7v7h-7zM4 13h7v7H4zm9 0h7v7h-7z"/></svg><span>Apps</span></a>
+    </div>
     <div class="site-nav-links">
       <a class="nav-bug" href="#bugs" title="Report a bug"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M9 4.5 7.6 3.1l1.1-1.1L10.4 3.7a5 5 0 0 1 3.2 0L15.3 2l1.1 1.1L15 4.5A4.9 4.9 0 0 1 16.9 8H7.1A4.9 4.9 0 0 1 9 4.5zM6 10h12v4a6 6 0 0 1-5 5.9V12h-2v7.9A6 6 0 0 1 6 14v-4zm-3 1h2v2H3v-2zm16 0h2v2h-2v-2zM3.6 17l1.6-1 1 1.7-1.6 1-1-1.7zm15.2-1 1.6 1-1 1.7-1.6-1 1-1.7zM3.6 7.3l1-1.7 1.6 1-1 1.7-1.6-1zm14.2-.7 1.6-1 1 1.7-1.6 1-1-1.7z"/></svg><span>Report a bug</span></a>
       <a class="nav-github" href="https://github.com/Omnix-Linux" aria-label="Omnix on GitHub" title="Omnix on GitHub">

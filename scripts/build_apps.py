@@ -1,0 +1,233 @@
+#!/usr/bin/env python3
+"""Build the Apps page from the app registry.
+
+Reads   apps/registry.json        (hand/agent-maintained source of truth, schema in its _schema)
+        scripts/apps_template.html
+Writes  apps/index.html           (static page: cards rendered here, registry inlined as JSON)
+
+Stdlib only. Run from anywhere: python3 scripts/build_apps.py
+Exits non-zero, writing nothing, when the registry is invalid. In particular a status of
+passing, known-gap or failing needs a test path and a verified_at date: a status is never
+claimed without a test run behind it.
+"""
+import html
+import json
+import re
+import sys
+from pathlib import Path
+
+REPO = Path(__file__).resolve().parent.parent
+REGISTRY = REPO / "apps" / "registry.json"
+OUT = REPO / "apps" / "index.html"
+TEMPLATE = Path(__file__).resolve().parent / "apps_template.html"
+
+STATUSES = ("passing", "known-gap", "failing", "untested")
+TESTED_STATUSES = ("passing", "known-gap", "failing")
+STATUS_LABELS = {"passing": "Passing", "known-gap": "Known gap", "failing": "Failing",
+                 "untested": "Untested", None: "Awaiting verification"}
+APP_FIELDS = ("id", "name", "icon", "category", "kind", "description", "platforms", "workflow", "test", "install")
+TEST_FIELDS = ("repo", "path", "check", "url")
+DATE_RE = re.compile(r"^\d{4}-\d\d-\d\d(T[\d:]+Z?)?$")
+
+# Simple generic glyphs, not official logos.
+INLINE_ICONS = {
+    "node": '<svg viewBox="0 0 48 48" aria-hidden="true" focusable="false"><path d="M24 4 41 14v20L24 44 7 34V14z" fill="none" stroke="currentColor" stroke-width="3" stroke-linejoin="round"/><text x="24" y="29.5" text-anchor="middle" font-family="JetBrains Mono, monospace" font-weight="800" font-size="13" fill="currentColor">JS</text></svg>',
+    "python": '<svg viewBox="0 0 48 48" aria-hidden="true" focusable="false"><rect x="5" y="5" width="38" height="38" rx="10" fill="none" stroke="currentColor" stroke-width="3"/><text x="24" y="29.5" text-anchor="middle" font-family="JetBrains Mono, monospace" font-weight="800" font-size="13" fill="currentColor">py</text></svg>',
+    "terminal": '<svg viewBox="0 0 48 48" aria-hidden="true" focusable="false"><rect x="5" y="8" width="38" height="32" rx="6" fill="none" stroke="currentColor" stroke-width="3"/><path d="m13 19 6 5-6 5M23 30h11" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+    "grid": '<svg viewBox="0 0 48 48" aria-hidden="true" focusable="false"><path d="M8 8h13v13H8zM27 8h13v13H27zM8 27h13v13H8zM27 27h13v13H27z" fill="currentColor"/></svg>',
+}
+
+
+class RegistryError(ValueError):
+    pass
+
+
+def _str(obj, key, where):
+    v = obj.get(key)
+    if not isinstance(v, str) or not v.strip():
+        raise RegistryError(f"{where}: '{key}' must be a non-empty string")
+    return v
+
+
+def validate_icon(icon, where):
+    if icon in INLINE_ICONS:
+        return
+    if not icon.startswith("assets/") or ".." in icon:
+        raise RegistryError(f"{where}: icon must be one of {sorted(INLINE_ICONS)} or a path under assets/")
+    if not (REPO / icon).is_file():
+        raise RegistryError(f"{where}: icon file {icon} does not exist")
+
+
+def status_of(app):
+    v = app.get("verification")
+    return v["status"] if v else None
+
+
+def validate(reg):
+    """Raise RegistryError on any schema problem; return the registry unchanged."""
+    if not isinstance(reg, dict) or not isinstance(reg.get("apps"), list):
+        raise RegistryError("registry must be an object with an 'apps' array")
+    seen = set()
+    for i, app in enumerate(reg["apps"]):
+        where = f"apps[{i}]"
+        if not isinstance(app, dict):
+            raise RegistryError(f"{where}: must be an object")
+        for k in APP_FIELDS:
+            if k not in app:
+                raise RegistryError(f"{where}: missing '{k}'")
+        aid = _str(app, "id", where)
+        where = f"app '{aid}'"
+        if not re.fullmatch(r"[a-z0-9][a-z0-9-]*", aid):
+            raise RegistryError(f"{where}: id must be kebab-case")
+        if aid in seen:
+            raise RegistryError(f"{where}: duplicate id")
+        seen.add(aid)
+        for k in ("name", "icon", "category", "kind", "description"):
+            _str(app, k, where)
+        validate_icon(app["icon"], where)
+        for k in ("platforms", "workflow"):
+            if not isinstance(app[k], list) or not all(isinstance(s, str) and s for s in app[k]):
+                raise RegistryError(f"{where}: '{k}' must be a list of strings")
+        test = app["test"]
+        if test is not None:
+            if not isinstance(test, dict):
+                raise RegistryError(f"{where}: 'test' must be an object or null")
+            for k in TEST_FIELDS:
+                _str(test, k, f"{where} test")
+            if not test["url"].startswith("https://github.com/"):
+                raise RegistryError(f"{where}: test.url must link to the test on GitHub")
+        inst = app["install"]
+        if not isinstance(inst, dict):
+            raise RegistryError(f"{where}: 'install' must be an object")
+        _str(inst, "label", f"{where} install")
+        _str(inst, "snippet", f"{where} install")
+        gaps = app.get("known_gaps", [])
+        if not isinstance(gaps, list) or not all(isinstance(g, str) for g in gaps):
+            raise RegistryError(f"{where}: 'known_gaps' must be a list of strings")
+        ver = app.get("verification")
+        if ver is None:
+            continue
+        if not isinstance(ver, dict):
+            raise RegistryError(f"{where}: 'verification' must be an object or null")
+        status = ver.get("status")
+        if status not in STATUSES:
+            raise RegistryError(f"{where}: status {status!r} is not one of {', '.join(STATUSES)}")
+        if status in TESTED_STATUSES:
+            if not test or not test.get("path"):
+                raise RegistryError(f"{where}: status '{status}' needs a test with a path")
+            va = ver.get("verified_at")
+            if not isinstance(va, str) or not DATE_RE.match(va):
+                raise RegistryError(f"{where}: status '{status}' needs verified_at (YYYY-MM-DD)")
+        for k in ("commit", "notes", "log_excerpt"):
+            if ver.get(k) is not None and not isinstance(ver[k], str):
+                raise RegistryError(f"{where}: verification.{k} must be a string or null")
+    for i, c in enumerate(reg.get("candidates", [])):
+        where = f"candidates[{i}]"
+        for k in ("id", "name", "icon", "category", "description"):
+            _str(c, k, where)
+        validate_icon(c["icon"], where)
+        if c["id"] in seen:
+            raise RegistryError(f"{where}: duplicate id {c['id']}")
+        seen.add(c["id"])
+        if c.get("verification") or c.get("status"):
+            raise RegistryError(f"{where}: candidates are untested and carry no status")
+    return reg
+
+
+e = html.escape
+
+
+def icon_html(icon, name):
+    if icon in INLINE_ICONS:
+        return f'<span class="app-icon app-icon-svg">{INLINE_ICONS[icon]}</span>'
+    return f'<img class="app-icon" src="../{e(icon)}" alt="" width="48" height="48" loading="lazy" decoding="async">'
+
+
+def badge_html(status):
+    cls = status or "awaiting"
+    return f'<span class="badge badge-{cls}">{e(STATUS_LABELS[status])}</span>'
+
+
+def render_app(app):
+    status = status_of(app)
+    ver = app.get("verification") or {}
+    test = app["test"]
+    steps = "".join(f"<li><code>{e(s)}</code></li>" for s in app["workflow"])
+    gaps = "".join(f'<p class="gap"><strong>Documented gap</strong>{e(g)}</p>' for g in app.get("known_gaps", []))
+    if test:
+        test_line = (f'<a href="{e(test["url"])}">{e(test["repo"])}/{e(test["path"])}</a>'
+                     f'<code class="check">nix build github:{e(test["repo"])}#{e(test["check"])}</code>')
+    else:
+        test_line = "<span>No test yet</span>"
+    if status:
+        commit = ver.get("commit")
+        commit_html = f'<code>{e(commit[:12])}</code>' if commit else "unknown commit"
+        last = f'{badge_html(status)} on {e(ver["verified_at"]) if ver.get("verified_at") else "unknown date"} at {commit_html}'
+        if ver.get("notes"):
+            last += f'<span class="notes">{e(ver["notes"])}</span>'
+        if ver.get("log_excerpt"):
+            last += f'<pre class="log">{e(ver["log_excerpt"])}</pre>'
+    else:
+        last = "Not run for this page yet. The status appears once a maintainer or agent runs the test and records the result."
+    snippet_id = f"snip-{app['id']}"
+    return f'''<article class="app" id="{e(app["id"])}">
+  <header class="app-head">
+    {icon_html(app["icon"], app["name"])}
+    <div class="app-title"><h3>{e(app["name"])}</h3><p class="app-cat">{e(app["category"])} · {e(app["kind"])}</p></div>
+    {badge_html(status)}
+  </header>
+  <p class="app-desc">{e(app["description"])}</p>
+  <div class="term"><div class="term-bar"><i></i><i></i><i></i><b>workflow an agent verifies</b></div><ol class="steps">{steps}</ol></div>
+  {gaps}
+  <dl class="evidence">
+    <div><dt>Test</dt><dd>{test_line}</dd></div>
+    <div><dt>Last verification</dt><dd>{last}</dd></div>
+    <div><dt>Platforms</dt><dd>{e(", ".join(app["platforms"]))}</dd></div>
+  </dl>
+  <div class="snip">
+    <div class="snip-head"><span>{e(app["install"]["label"])}</span><button class="copy" type="button" data-copy="{snippet_id}">Copy</button></div>
+    <pre id="{snippet_id}">{e(app["install"]["snippet"])}</pre>
+  </div>
+</article>'''
+
+
+def render_candidate(c):
+    return f'''<li class="cand">{icon_html(c["icon"], c["name"])}<div><strong>{e(c["name"])}</strong><span>{e(c["category"])} · {e(c["description"])}</span></div><span class="badge badge-untested">Untested</span></li>'''
+
+
+def render(reg, template):
+    apps = reg["apps"]
+    n = len(apps)
+    count = f"{n} app" if n == 1 else f"{n} apps"
+    blob = json.dumps({k: v for k, v in reg.items() if k != "_schema"}, separators=(",", ":"),
+                      ensure_ascii=False).replace("</", "<\\/")
+    out = template
+    for key, val in {
+        "<!--__APP_COUNT__-->": e(count),
+        "<!--__APP_CARDS__-->": "\n".join(render_app(a) for a in apps),
+        "<!--__CANDIDATES__-->": "\n".join(render_candidate(c) for c in reg.get("candidates", [])),
+        "/*__APPS_DATA__*/null": blob,
+    }.items():
+        if key not in out:
+            raise RegistryError(f"template is missing placeholder {key}")
+        out = out.replace(key, val)
+    return out
+
+
+def build(registry=REGISTRY, out=OUT, template=TEMPLATE, log=print):
+    try:
+        reg = validate(json.loads(Path(registry).read_text(encoding="utf-8")))
+        page = render(reg, Path(template).read_text(encoding="utf-8"))
+    except (RegistryError, json.JSONDecodeError) as exc:
+        log(f"error: {exc}")
+        return 1
+    Path(out).write_text(page, encoding="utf-8")
+    counts = {}
+    for a in reg["apps"]:
+        counts[STATUS_LABELS[status_of(a)]] = counts.get(STATUS_LABELS[status_of(a)], 0) + 1
+    log(f"wrote {out} ({len(reg['apps'])} apps: {counts}; {len(reg.get('candidates', []))} candidates)")
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(build())
