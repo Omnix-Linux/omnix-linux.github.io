@@ -124,6 +124,25 @@
   td { color: var(--muted); font-family: var(--font-mono); font-size: .82rem; }
   td.model { font-family: var(--font-body); color: var(--ink); white-space: normal; min-width: 220px; max-width: 360px; }
   td.model .id { display: block; font-family: var(--font-mono); font-size: .74rem; color: var(--muted); word-break: break-all; }
+  /* Model id reveal: the line keeps its space so rows never change height; hovering or
+     focusing a row fades it in as a chip with a copy button. Touch screens always show it. */
+  td.model .mid { display: flex; align-items: center; gap: 4px; margin-top: 3px; width: fit-content; max-width: 100%; padding: 1px 2px 1px 8px;
+    border: 1px solid transparent; border-radius: 999px; font: .74rem/1.5 var(--font-mono); color: var(--ice);
+    opacity: 0; transform: translateY(-3px); transition: opacity .18s ease-out, transform .18s ease-out, border-color .18s, background .18s; }
+  td.model .mid code { font: inherit; word-break: break-all; }
+  tbody tr:hover .mid, tbody tr:focus-within .mid { opacity: 1; transform: none; border-color: rgba(126, 186, 228, .28); background: rgba(82, 119, 195, .12); }
+  @media (hover: none) { td.model .mid { opacity: 1; transform: none; } }
+  @media (prefers-reduced-motion: reduce) { td.model .mid { transition: none; } }
+  .id-copy { flex: none; display: inline-grid; place-items: center; width: 26px; height: 26px; padding: 0; border: 0; border-radius: 50%; background: transparent; color: var(--muted); cursor: pointer; }
+  .id-copy:hover { color: var(--ice); background: rgba(126, 186, 228, .12); }
+  .id-copy:focus-visible { outline: 2px solid var(--ice); outline-offset: 1px; }
+  .id-copy svg { width: 14px; height: 14px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+  .id-copy .done { display: none; }
+  .id-copy[data-state="copied"] { color: var(--ok); }
+  .id-copy[data-state="copied"] .todo { display: none; }
+  .id-copy[data-state="copied"] .done { display: block; }
+  .mid .copied-note { font-size: .68rem; color: var(--ok); opacity: 0; transition: opacity .18s; }
+  .mid:has(.id-copy[data-state="copied"]) .copied-note { opacity: 1; }
   td.model .tag { display: inline-block; margin-left: 6px; padding: 0 6px; border: 1px solid var(--line); border-radius: 999px; font: .68rem var(--font-mono); color: var(--violet); vertical-align: 1px; }
   td.rank { color: var(--violet); font-weight: 700; }
   td.score { color: var(--ink); }
@@ -343,9 +362,17 @@
         if (c.key === "name") {
           td.append(r.name || r.bbName);
           if (r.variants && r.variants.some(v => v.endsWith(":free"))) { const t = document.createElement("span"); t.className = "tag"; t.textContent = "free tier"; td.append(t); }
-          const id = document.createElement("span"); id.className = "id";
-          id.textContent = r.id || "Not on OpenRouter";
-          td.append(id);
+          if (r.id) {
+            const mid = document.createElement("span"); mid.className = "mid";
+            const code = document.createElement("code"); code.textContent = r.id;
+            const cb = document.createElement("button"); cb.type = "button"; cb.className = "id-copy"; cb.dataset.copyId = r.id;
+            cb.setAttribute("aria-label", "Copy model id " + r.id); cb.title = "Copy model id";
+            cb.innerHTML = '<svg class="todo" viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h8"/></svg><svg class="done" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>';
+            const note = document.createElement("span"); note.className = "copied-note"; note.setAttribute("aria-live", "polite");
+            mid.append(code, cb, note); td.append(mid);
+          } else {
+            const id = document.createElement("span"); id.className = "id"; id.textContent = "Not on OpenRouter"; td.append(id);
+          }
         } else {
           const v = c.get(r);
           const text = v == null ? null : c.fmt ? c.fmt(v) : (c.key === "provider" ? r.provider : String(v));
@@ -423,7 +450,17 @@
     else vnote.hidden = true;
     dlg.showModal();
   }
-  $("rows").addEventListener("click", e => { const b = e.target.closest("button.route"); if (b && !b.disabled) openRoute(b); });
+  $("rows").addEventListener("click", async e => {
+    const cp = e.target.closest("button.id-copy");
+    if (cp) {
+      const ok = await copyText(cp.dataset.copyId);
+      cp.dataset.state = ok ? "copied" : "failed";
+      const note = cp.parentElement.querySelector(".copied-note"); if (note) note.textContent = ok ? "Copied" : "";
+      clearTimeout(cp._t); cp._t = setTimeout(() => { delete cp.dataset.state; if (note) note.textContent = ""; }, 1400);
+      return;
+    }
+    const b = e.target.closest("button.route"); if (b && !b.disabled) openRoute(b);
+  });
   $("route-close").addEventListener("click", () => dlg.close());
   dlg.addEventListener("click", e => { if (e.target === dlg) dlg.close(); }); // backdrop
   dlg.addEventListener("close", () => { if (opener && opener.isConnected) opener.focus(); opener = null; });

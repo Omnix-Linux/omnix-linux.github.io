@@ -47,3 +47,12 @@ test('Models page groups the home link and Models on the left', () => {
   assert.ok(html.indexOf('class="nav-leaderboard"') < html.indexOf('<div class="site-nav-links">'));
   assert.match(html, /class="nav-install" href="\.\.\/#install">Install<\/a>/);
 });
+
+test('model ids reveal on row hover/focus with a copy button, always shown on touch', () => {
+  const tpl = fs.readFileSync(path.join(__dirname, '..', 'scripts', 'leaderboard_template.html'), 'utf8');
+  assert.match(tpl, /td\.model \.mid \{[^}]*opacity: 0;/);
+  assert.match(tpl, /tbody tr:hover \.mid, tbody tr:focus-within \.mid \{[^}]*opacity: 1;/);
+  assert.match(tpl, /@media \(hover: none\) \{ td\.model \.mid \{ opacity: 1;/);
+  assert.match(tpl, /cb\.className = "id-copy"; cb\.dataset\.copyId = r\.id;/);
+  assert.match(tpl, /copyText\(cp\.dataset\.copyId\)/);
+});
