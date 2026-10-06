@@ -259,15 +259,35 @@
         "notes": "Fresh NixOS VM run (nix build .#checks.x86_64-linux.app-obs); the screenshot shows the first-run Auto-Configuration Wizard over the main window. Test added in Omnix-Linux/Omnix#3.",
         "log_excerpt": "must succeed: obs --version\nOpenGL loaded successfully, version 4.6 (Mesa llvmpipe)\nwindow: OBS 32.2.2 - Profile: Untitled - Scenes: Untitled\nmust succeed: systemctl is-active obs\ntest script finished in 34.59s"
       }
-    }
-  ],
-  "candidates": [
+    },
     {
       "id": "photocraft",
-      "name": "PhotoCraft",
+      "name": "PhotoCraft 0.2.0",
       "icon": "assets/app-icons/photocraft.webp",
       "category": "Image editor",
-      "description": "Layered raster editing in a native Rust app.",
+      "kind": "Prebuilt binary",
+      "description": "Layered raster editing in a native Rust app. Run from its unmodified GitHub release.",
+      "platforms": [
+        "x86_64-linux"
+      ],
+      "workflow": [
+        "Fetch photocraft-0.2.0-linux-x86_64.tar.gz from the GitHub release, pinned to the sha256 in its SHA256SUMS.txt",
+        "photocraft --version and photocraft-cli --version report 0.2.0",
+        "Start PhotoCraft in an X11 session through the Omnix FHS layer (no repackaging)",
+        "Its main window maps and the app is still running 10 s later",
+        "Take a screenshot"
+      ],
+      "test": {
+        "repo": "Omnix-Linux/Omnix",
+        "path": "tests/apps-artcraft.nix",
+        "check": "checks.x86_64-linux.app-photocraft",
+        "url": "https://github.com/Omnix-Linux/Omnix/blob/8318a4c/tests/apps-artcraft.nix"
+      },
+      "install": {
+        "label": "Download from GitHub and verify",
+        "snippet": "curl -fsSLO https://github.com/storytold/photocraft/releases/download/v0.2.0/photocraft-0.2.0-linux-x86_64.tar.gz\ncurl -fsSL https://github.com/storytold/photocraft/releases/download/v0.2.0/SHA256SUMS.txt \\\n  | grep linux-x86_64.tar.gz | sha256sum -c -\nsudo mkdir -p /opt/photocraft && sudo tar -xzf photocraft-0.2.0-linux-x86_64.tar.gz -C /opt/photocraft --strip-components=1"
+      },
+      "screenshot": "assets/app-shots/photocraft.webp",
       "homepage": "https://getartcraft.com/apps/photocraft",
       "distribution": {
         "via": "GitHub releases",
@@ -279,14 +299,43 @@
         "checksums": "SHA256SUMS.txt",
         "attestation": "none",
         "checked_at": "2026-10-06"
+      },
+      "verification": {
+        "status": "passing",
+        "verified_at": "2026-10-06",
+        "commit": "Omnix-Linux/Omnix@8318a4c",
+        "notes": "Fresh NixOS VM run (nix build .#checks.x86_64-linux.app-photocraft); sha256 matched SHA256SUMS.txt; window “PhotoCraft”. Test added in Omnix-Linux/Omnix#3.",
+        "log_excerpt": "subtest: CLI and --version run\n(finished: subtest: CLI and --version run, in 0.29 seconds)\nsubtest: main window appears\n(finished: subtest: main window appears, in 12.80 seconds)\ntest script finished in 37.41s"
       }
     },
     {
       "id": "vectorcraft",
-      "name": "VectorCraft",
+      "name": "VectorCraft 0.3.0",
       "icon": "assets/app-icons/vectorcraft.webp",
       "category": "Vector illustration",
-      "description": "Paths, shapes and type for illustration and logos.",
+      "kind": "Prebuilt binary",
+      "description": "Paths, shapes and type for illustration and logos. Run from its unmodified GitHub release.",
+      "platforms": [
+        "x86_64-linux"
+      ],
+      "workflow": [
+        "Fetch vectorcraft-0.3.0-linux-x86_64.tar.gz from the GitHub release, pinned to the sha256 in its SHA256SUMS.txt",
+        "vectorcraft --version and vectorcraft-cli --version report 0.3.0",
+        "Start VectorCraft in an X11 session through the Omnix FHS layer (no repackaging)",
+        "Its main window maps and the app is still running 10 s later",
+        "Take a screenshot"
+      ],
+      "test": {
+        "repo": "Omnix-Linux/Omnix",
+        "path": "tests/apps-artcraft.nix",
+        "check": "checks.x86_64-linux.app-vectorcraft",
+        "url": "https://github.com/Omnix-Linux/Omnix/blob/8318a4c/tests/apps-artcraft.nix"
+      },
+      "install": {
+        "label": "Download from GitHub and verify",
+        "snippet": "curl -fsSLO https://github.com/storytold/vectorcraft/releases/download/v0.3.0/vectorcraft-0.3.0-linux-x86_64.tar.gz\ncurl -fsSL https://github.com/storytold/vectorcraft/releases/download/v0.3.0/SHA256SUMS.txt \\\n  | grep linux-x86_64.tar.gz | sha256sum -c -\nsudo mkdir -p /opt/vectorcraft && sudo tar -xzf vectorcraft-0.3.0-linux-x86_64.tar.gz -C /opt/vectorcraft --strip-components=1"
+      },
+      "screenshot": "assets/app-shots/vectorcraft.webp",
       "homepage": "https://getartcraft.com/apps/vectorcraft",
       "distribution": {
         "via": "GitHub releases",
@@ -298,14 +347,43 @@
         "checksums": "SHA256SUMS.txt",
         "attestation": "none",
         "checked_at": "2026-10-06"
+      },
+      "verification": {
+        "status": "passing",
+        "verified_at": "2026-10-06",
+        "commit": "Omnix-Linux/Omnix@8318a4c",
+        "notes": "Fresh NixOS VM run (nix build .#checks.x86_64-linux.app-vectorcraft); sha256 matched SHA256SUMS.txt; window “VectorCraft”. Test added in Omnix-Linux/Omnix#3.",
+        "log_excerpt": "subtest: CLI and --version run\n(finished: subtest: CLI and --version run, in 0.17 seconds)\nsubtest: main window appears\n(finished: subtest: main window appears, in 12.49 seconds)\ntest script finished in 40.61s"
       }
     },
     {
       "id": "lightcraft",
-      "name": "LightCraft",
+      "name": "LightCraft 0.2.0",
       "icon": "assets/app-icons/lightcraft.webp",
       "category": "Photo library and raw developer",
-      "description": "Catalogue and develop raw photos.",
+      "kind": "Prebuilt binary",
+      "description": "Catalogue and develop raw photos. Run from its unmodified GitHub release.",
+      "platforms": [
+        "x86_64-linux"
+      ],
+      "workflow": [
+        "Fetch lightcraft-0.2.0-linux-x86_64.tar.gz from the GitHub release, pinned to the sha256 in its SHA256SUMS.txt",
+        "lightcraft --version and lightcraft-cli --version report 0.2.0",
+        "Start LightCraft in an X11 session through the Omnix FHS layer (no repackaging)",
+        "Its main window maps and the app is still running 10 s later",
+        "Take a screenshot"
+      ],
+      "test": {
+        "repo": "Omnix-Linux/Omnix",
+        "path": "tests/apps-artcraft.nix",
+        "check": "checks.x86_64-linux.app-lightcraft",
+        "url": "https://github.com/Omnix-Linux/Omnix/blob/8318a4c/tests/apps-artcraft.nix"
+      },
+      "install": {
+        "label": "Download from GitHub and verify",
+        "snippet": "curl -fsSLO https://github.com/storytold/lightcraft/releases/download/v0.2.0/lightcraft-0.2.0-linux-x86_64.tar.gz\ncurl -fsSL https://github.com/storytold/lightcraft/releases/download/v0.2.0/SHA256SUMS.txt \\\n  | grep linux-x86_64.tar.gz | sha256sum -c -\nsudo mkdir -p /opt/lightcraft && sudo tar -xzf lightcraft-0.2.0-linux-x86_64.tar.gz -C /opt/lightcraft --strip-components=1"
+      },
+      "screenshot": "assets/app-shots/lightcraft.webp",
       "homepage": "https://getartcraft.com/apps/lightcraft",
       "distribution": {
         "via": "GitHub releases",
@@ -317,14 +395,43 @@
         "checksums": "SHA256SUMS.txt",
         "attestation": "none",
         "checked_at": "2026-10-06"
+      },
+      "verification": {
+        "status": "passing",
+        "verified_at": "2026-10-06",
+        "commit": "Omnix-Linux/Omnix@8318a4c",
+        "notes": "Fresh NixOS VM run (nix build .#checks.x86_64-linux.app-lightcraft); sha256 matched SHA256SUMS.txt; window “LightCraft”. Test added in Omnix-Linux/Omnix#3.",
+        "log_excerpt": "subtest: CLI and --version run\n(finished: subtest: CLI and --version run, in 0.18 seconds)\nsubtest: main window appears\n(finished: subtest: main window appears, in 12.90 seconds)\ntest script finished in 49.82s"
       }
     },
     {
       "id": "printcraft",
-      "name": "PrintCraft",
+      "name": "PrintCraft 0.2.0",
       "icon": "assets/app-icons/printcraft.webp",
       "category": "PDF workbench",
-      "description": "Read, edit and assemble PDFs.",
+      "kind": "Prebuilt binary",
+      "description": "Read, edit and assemble PDFs. Run from its unmodified GitHub release.",
+      "platforms": [
+        "x86_64-linux"
+      ],
+      "workflow": [
+        "Fetch printcraft-0.2.0-linux-x86_64.tar.gz from the GitHub release, pinned to the sha256 in its SHA256SUMS.txt",
+        "printcraft --version and printcraft-cli --version report 0.2.0",
+        "Start PrintCraft in an X11 session through the Omnix FHS layer (no repackaging)",
+        "Its main window maps and the app is still running 10 s later",
+        "Take a screenshot"
+      ],
+      "test": {
+        "repo": "Omnix-Linux/Omnix",
+        "path": "tests/apps-artcraft.nix",
+        "check": "checks.x86_64-linux.app-printcraft",
+        "url": "https://github.com/Omnix-Linux/Omnix/blob/8318a4c/tests/apps-artcraft.nix"
+      },
+      "install": {
+        "label": "Download from GitHub and verify",
+        "snippet": "curl -fsSLO https://github.com/storytold/printcraft/releases/download/v0.2.0/printcraft-0.2.0-linux-x86_64.tar.gz\ncurl -fsSL https://github.com/storytold/printcraft/releases/download/v0.2.0/SHA256SUMS.txt \\\n  | grep linux-x86_64.tar.gz | sha256sum -c -\nsudo mkdir -p /opt/printcraft && sudo tar -xzf printcraft-0.2.0-linux-x86_64.tar.gz -C /opt/printcraft --strip-components=1"
+      },
+      "screenshot": "assets/app-shots/printcraft.webp",
       "homepage": "https://getartcraft.com/apps/printcraft",
       "distribution": {
         "via": "GitHub releases",
@@ -336,14 +443,43 @@
         "checksums": "SHA256SUMS.txt",
         "attestation": "none",
         "checked_at": "2026-10-06"
+      },
+      "verification": {
+        "status": "passing",
+        "verified_at": "2026-10-06",
+        "commit": "Omnix-Linux/Omnix@8318a4c",
+        "notes": "Fresh NixOS VM run (nix build .#checks.x86_64-linux.app-printcraft); sha256 matched SHA256SUMS.txt; window “PrintCraft”. Test added in Omnix-Linux/Omnix#3.",
+        "log_excerpt": "subtest: CLI and --version run\n(finished: subtest: CLI and --version run, in 0.09 seconds)\nsubtest: main window appears\n(finished: subtest: main window appears, in 11.32 seconds)\ntest script finished in 34.73s"
       }
     },
     {
       "id": "effectcraft",
-      "name": "EffectCraft",
+      "name": "EffectCraft 0.3.0",
       "icon": "assets/app-icons/effectcraft.webp",
       "category": "Motion graphics and VFX",
-      "description": "Compositing, motion graphics and visual effects.",
+      "kind": "Prebuilt binary",
+      "description": "Compositing, motion graphics and visual effects. Run from its unmodified GitHub release.",
+      "platforms": [
+        "x86_64-linux"
+      ],
+      "workflow": [
+        "Fetch effectcraft-0.3.0-linux-x86_64.tar.gz from the GitHub release, pinned to the sha256 in its SHA256SUMS.txt",
+        "effectcraft --version and effectcraft-cli --version report 0.3.0",
+        "Start EffectCraft in an X11 session through the Omnix FHS layer (no repackaging)",
+        "Its main window maps and the app is still running 10 s later",
+        "Take a screenshot"
+      ],
+      "test": {
+        "repo": "Omnix-Linux/Omnix",
+        "path": "tests/apps-artcraft.nix",
+        "check": "checks.x86_64-linux.app-effectcraft",
+        "url": "https://github.com/Omnix-Linux/Omnix/blob/8318a4c/tests/apps-artcraft.nix"
+      },
+      "install": {
+        "label": "Download from GitHub and verify",
+        "snippet": "curl -fsSLO https://github.com/storytold/effectcraft/releases/download/v0.3.0/effectcraft-0.3.0-linux-x86_64.tar.gz\ncurl -fsSL https://github.com/storytold/effectcraft/releases/download/v0.3.0/SHA256SUMS.txt \\\n  | grep linux-x86_64.tar.gz | sha256sum -c -\nsudo mkdir -p /opt/effectcraft && sudo tar -xzf effectcraft-0.3.0-linux-x86_64.tar.gz -C /opt/effectcraft --strip-components=1"
+      },
+      "screenshot": "assets/app-shots/effectcraft.webp",
       "homepage": "https://getartcraft.com/apps/effectcraft",
       "distribution": {
         "via": "GitHub releases",
@@ -355,14 +491,43 @@
         "checksums": "SHA256SUMS.txt",
         "attestation": "none",
         "checked_at": "2026-10-06"
+      },
+      "verification": {
+        "status": "passing",
+        "verified_at": "2026-10-06",
+        "commit": "Omnix-Linux/Omnix@8318a4c",
+        "notes": "Fresh NixOS VM run (nix build .#checks.x86_64-linux.app-effectcraft); sha256 matched SHA256SUMS.txt; window “EffectCraft - Untitled Project.ecproj”. Test added in Omnix-Linux/Omnix#3.",
+        "log_excerpt": "subtest: CLI and --version run\n(finished: subtest: CLI and --version run, in 0.06 seconds)\nsubtest: main window appears\n(finished: subtest: main window appears, in 16.62 seconds)\ntest script finished in 37.74s"
       }
     },
     {
       "id": "designcraft",
-      "name": "DesignCraft",
+      "name": "DesignCraft 0.2.0",
       "icon": "assets/app-icons/designcraft.webp",
       "category": "Page layout and publishing",
-      "description": "Lay out pages for print and screen.",
+      "kind": "Prebuilt binary",
+      "description": "Lay out pages for print and screen. Run from its unmodified GitHub release.",
+      "platforms": [
+        "x86_64-linux"
+      ],
+      "workflow": [
+        "Fetch designcraft-0.2.0-linux-x86_64.tar.gz from the GitHub release, pinned to the sha256 in its SHA256SUMS.txt",
+        "designcraft --version and designcraft-cli --version report 0.2.0",
+        "Start DesignCraft in an X11 session through the Omnix FHS layer (no repackaging)",
+        "Its main window maps and the app is still running 10 s later",
+        "Take a screenshot"
+      ],
+      "test": {
+        "repo": "Omnix-Linux/Omnix",
+        "path": "tests/apps-artcraft.nix",
+        "check": "checks.x86_64-linux.app-designcraft",
+        "url": "https://github.com/Omnix-Linux/Omnix/blob/8318a4c/tests/apps-artcraft.nix"
+      },
+      "install": {
+        "label": "Download from GitHub and verify",
+        "snippet": "curl -fsSLO https://github.com/storytold/designcraft/releases/download/v0.2.0/designcraft-0.2.0-linux-x86_64.tar.gz\ncurl -fsSL https://github.com/storytold/designcraft/releases/download/v0.2.0/SHA256SUMS.txt \\\n  | grep linux-x86_64.tar.gz | sha256sum -c -\nsudo mkdir -p /opt/designcraft && sudo tar -xzf designcraft-0.2.0-linux-x86_64.tar.gz -C /opt/designcraft --strip-components=1"
+      },
+      "screenshot": "assets/app-shots/designcraft.webp",
       "homepage": "https://getartcraft.com/apps/designcraft",
       "distribution": {
         "via": "GitHub releases",
@@ -374,8 +539,17 @@
         "checksums": "SHA256SUMS.txt",
         "attestation": "none",
         "checked_at": "2026-10-06"
+      },
+      "verification": {
+        "status": "passing",
+        "verified_at": "2026-10-06",
+        "commit": "Omnix-Linux/Omnix@8318a4c",
+        "notes": "Fresh NixOS VM run (nix build .#checks.x86_64-linux.app-designcraft); sha256 matched SHA256SUMS.txt; window “DesignCraft”. Test added in Omnix-Linux/Omnix#3.",
+        "log_excerpt": "subtest: CLI and --version run\n(finished: subtest: CLI and --version run, in 0.08 seconds)\nsubtest: main window appears\n(finished: subtest: main window appears, in 11.24 seconds)\ntest script finished in 34.74s"
       }
-    },
+    }
+  ],
+  "candidates": [
     {
       "id": "brave",
       "name": "Brave",
