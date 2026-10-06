@@ -32,8 +32,18 @@ test('page inlines the data and marks the leaderboard nav item current', () => {
   assert.match(html, /class="nav-leaderboard" href="\.\/" aria-current="page"/);
 });
 
-test('home nav links the leaderboard before the bug report button', () => {
+test('home nav puts Models on the left, outside the right-hand link group', () => {
   const home = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
-  const lb = home.indexOf('class="nav-leaderboard" href="benchmarks/"');
-  assert.ok(lb !== -1 && lb < home.indexOf('class="nav-bug"'));
+  const models = home.indexOf('class="nav-leaderboard" href="benchmarks/"');
+  const group = home.indexOf('<div class="site-nav-links">');
+  assert.ok(models !== -1 && models < group, 'Models must come before the right-hand group');
+  assert.match(home, /<span>Models<\/span>/);
+  assert.match(home, /class="nav-install" href="#install">Install<\/a>/);
+});
+
+test('Models page groups the home link and Models on the left', () => {
+  const start = html.indexOf('<div class="site-nav-start">');
+  assert.ok(start !== -1 && start < html.indexOf('class="nav-leaderboard"'));
+  assert.ok(html.indexOf('class="nav-leaderboard"') < html.indexOf('<div class="site-nav-links">'));
+  assert.match(html, /class="nav-install" href="\.\.\/#install">Install<\/a>/);
 });
