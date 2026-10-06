@@ -167,3 +167,21 @@ class Distribution(unittest.TestCase):
             dist = c.get("distribution")
             if dist:
                 self.assertEqual(dist["attestation"], "none", c["id"])
+
+
+class Screenshots(unittest.TestCase):
+    def test_screenshot_requires_a_recorded_run(self):
+        a = app(screenshot="assets/app-shots/filmcraft.webp")
+        with self.assertRaises(ba.RegistryError):
+            ba.validate({"apps": [a]})
+
+    def test_screenshot_must_exist(self):
+        a = app(screenshot="assets/app-shots/missing.webp", verification=ver("passing"))
+        with self.assertRaises(ba.RegistryError):
+            ba.validate({"apps": [a]})
+
+    def test_committed_screenshots_belong_to_verified_apps(self):
+        for a in REGISTRY["apps"]:
+            if a.get("screenshot"):
+                self.assertIsNotNone(a["verification"], a["id"])
+                self.assertTrue(a["screenshot"].startswith("assets/app-shots/"), a["id"])

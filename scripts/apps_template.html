@@ -159,6 +159,9 @@
   .copy[data-state="failed"] { color: var(--bad); }
 
   .cand { border-style: dashed; border-left-style: solid; }
+  .app-shot { margin: 0; border: 1px solid var(--line); border-radius: 10px; overflow: hidden; background: #000; }
+  .app-shot img { display: block; width: 100%; height: auto; }
+  .app-shot figcaption { padding: 6px 10px; font: .7rem var(--font-mono); color: var(--muted); background: rgba(4, 5, 12, .7); border-top: 1px solid var(--line); }
   .dist { margin: 0; font: .74rem/1.6 var(--font-mono); color: var(--muted); }
   .dist a { color: var(--ink); text-decoration-color: var(--nix); text-underline-offset: 3px; }
   .dist a:hover { color: var(--ice); }
@@ -216,7 +219,7 @@
     <section aria-labelledby="next">
       <div class="eyebrow">Candidates</div>
       <h2 id="next">Next up for testing</h2>
-      <p class="lede">No test has run for these yet, so their status is unknown. <a href="https://getartcraft.com/apps">ArtCraft</a>’s seven open-source Rust apps show the model this page is built for: each one is released straight from GitHub with Linux AppImages and SHA-256 checksums, though not yet with signed attestations.</p>
+      <p class="lede">No test has run for these yet, so their status is unknown. <a href="https://getartcraft.com/apps">ArtCraft</a>’s open-source Rust apps show the model this page is built for: each one is released straight from GitHub with Linux AppImages and SHA-256 checksums, though not yet with signed attestations. FilmCraft, above, already passes; the rest are next.</p>
       <ul class="cands">
 <!--__CANDIDATES__-->
       </ul>

@@ -126,6 +126,15 @@ def validate(reg):
         for k in ("name", "icon", "category", "kind", "description"):
             _str(app, k, where)
         validate_icon(app["icon"], where)
+        validate_distribution(app.get("distribution"), where)
+        if app.get("homepage") is not None and not str(app["homepage"]).startswith("https://"):
+            raise RegistryError(f"{where}: homepage must be https")
+        shot = app.get("screenshot")
+        if shot is not None:
+            if not isinstance(shot, str) or not shot.startswith("assets/") or ".." in shot or not (REPO / shot).is_file():
+                raise RegistryError(f"{where}: screenshot must be an existing file under assets/")
+            if not app.get("verification"):
+                raise RegistryError(f"{where}: a screenshot comes from a test run, so it needs a recorded verification")
         for k in ("platforms", "workflow"):
             if not isinstance(app[k], list) or not all(isinstance(s, str) and s for s in app[k]):
                 raise RegistryError(f"{where}: '{k}' must be a list of strings")
@@ -191,6 +200,16 @@ def badge_html(status):
     return f'<span class="badge badge-{STATUS_CLASS[status]}">{e(STATUS_LABELS[status])}</span>'
 
 
+def shot_html(app):
+    shot = app.get("screenshot")
+    if not shot:
+        return ""
+    when = (app.get("verification") or {}).get("verified_at", "")
+    return (f'<figure class="app-shot"><img src="../{e(shot)}" alt="{e(app["name"])} running on Omnix in the test VM" '
+            f'width="1024" height="768" loading="lazy" decoding="async">'
+            f'<figcaption>Screenshot from the test run on {e(when)}</figcaption></figure>')
+
+
 def render_app(app):
     status = status_of(app)
     ver = app.get("verification") or {}
@@ -220,7 +239,9 @@ def render_app(app):
     <div class="app-title"><h3>{e(app["name"])}</h3><p class="app-cat">{e(app["category"])}</p></div>
     {badge_html(status)}
   </header>
+  {shot_html(app)}
   <p class="app-desc">{e(app["description"])}</p>
+  {dist_html(app.get("distribution"), app.get("homepage"))}
   <details class="more">
     <summary>Details</summary>
     <div class="more-body">

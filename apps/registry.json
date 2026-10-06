@@ -13,7 +13,10 @@
       "test": "{repo: 'Owner/Repo', path: 'tests/x.nix', check: 'checks.x86_64-linux.x', url: 'https://github.com/...'}",
       "install": "{label, snippet}: a copy-ready way to get it on Omnix",
       "verification": "null until a maintainer or agent runs the test; then {status, verified_at (YYYY-MM-DD), commit (tested repo commit), notes, log_excerpt}",
-      "known_gaps": "optional list of documented gaps from the test file (shown on the card; not a status)"
+      "known_gaps": "optional list of documented gaps from the test file (shown on the card; not a status)",
+      "screenshot": "optional path under assets/: a screenshot taken by the app's own test run (never a vendor's marketing image)",
+      "distribution": "optional, same shape as on candidates",
+      "homepage": "optional https URL"
     },
     "candidates[]": "apps not tested yet: {id, name, icon, category, description}. Always rendered as untested.",
     "statuses": "passing | known-gap | failing | untested. passing, known-gap and failing require test.path and verification.verified_at, or the build fails.",
@@ -160,6 +163,102 @@
         "notes": "Fresh NixOS VM run (nix build .#checks.x86_64-linux.stable); Hyprland 0.56.2 running Omarchy v4.0.4's config; test script finished in 70.9 s.",
         "log_excerpt": "must succeed: grep -q OMARCHY_PATH /home/alice/.config/hypr/hyprland.lua\nmust succeed: su - alice -c 'command -v omarchy-theme-set'\nhyprctl version: Hyprland 0.56.2 built from branch v0.56.2-b\ntest script finished in 70.94s"
       }
+    },
+    {
+      "id": "filmcraft",
+      "name": "FilmCraft 0.2.0",
+      "icon": "assets/app-icons/filmcraft.webp",
+      "category": "Video editor",
+      "kind": "Prebuilt binary",
+      "description": "ArtCraft's native Rust video editor, run from its unmodified GitHub release.",
+      "platforms": [
+        "x86_64-linux"
+      ],
+      "workflow": [
+        "Fetch filmcraft-0.2.0-linux-x86_64.tar.gz from the GitHub release, pinned to the sha256 in its SHA256SUMS.txt",
+        "filmcraft-cli --version and filmcraft --version report 0.2.0",
+        "Start FilmCraft in an X11 session through the Omnix FHS layer (no repackaging)",
+        "Its main window maps and the app is still running 10 s later",
+        "Take a screenshot of the editor"
+      ],
+      "test": {
+        "repo": "Omnix-Linux/Omnix",
+        "path": "tests/apps-gui.nix",
+        "check": "checks.x86_64-linux.app-filmcraft",
+        "url": "https://github.com/Omnix-Linux/Omnix/blob/bf95b0838f7473f9cc0680cbe2f5b9a731d10670/tests/apps-gui.nix"
+      },
+      "install": {
+        "label": "Download from GitHub and verify",
+        "snippet": "curl -fsSLO https://github.com/storytold/filmcraft/releases/download/v0.2.0/filmcraft-0.2.0-linux-x86_64.tar.gz\ncurl -fsSL https://github.com/storytold/filmcraft/releases/download/v0.2.0/SHA256SUMS.txt \\\n  | grep linux-x86_64.tar.gz | sha256sum -c -\nsudo mkdir -p /opt/filmcraft && sudo tar -xzf filmcraft-0.2.0-linux-x86_64.tar.gz -C /opt/filmcraft --strip-components=1"
+      },
+      "screenshot": "assets/app-shots/filmcraft.webp",
+      "homepage": "https://getartcraft.com/apps/filmcraft",
+      "distribution": {
+        "via": "GitHub releases",
+        "repo": "storytold/filmcraft",
+        "release": "v0.2.0",
+        "artifact": "filmcraft-0.2.0-linux-x86_64.AppImage",
+        "url": "https://github.com/storytold/filmcraft/releases/tag/v0.2.0",
+        "license": "Apache-2.0",
+        "checksums": "SHA256SUMS.txt",
+        "attestation": "none",
+        "checked_at": "2026-10-06"
+      },
+      "verification": {
+        "status": "passing",
+        "verified_at": "2026-10-06",
+        "commit": "Omnix-Linux/Omnix@bf95b08",
+        "notes": "Fresh NixOS VM run (nix build .#checks.x86_64-linux.app-filmcraft) on the Omnix base with its desktop library preset; the screenshot above is from this run. Test added in Omnix-Linux/Omnix#3.",
+        "log_excerpt": "must succeed: /opt/filmcraft/bin/filmcraft-cli --version | grep -q 'filmcraft-cli 0.2.0'\nmust succeed: /opt/filmcraft/bin/filmcraft --version | grep -q 'filmcraft 0.2.0'\nwindow: FilmCraft\nmust succeed: systemctl is-active filmcraft\ntest script finished in 26.68s"
+      }
+    },
+    {
+      "id": "obs-studio",
+      "name": "OBS Studio 32.2.2",
+      "icon": "assets/desktop-icons/com.obsproject.Studio.svg",
+      "category": "Recording and streaming",
+      "kind": "nixpkgs package",
+      "description": "Screen recording and live streaming, from nixpkgs (OBS publishes only Ubuntu .debs on GitHub).",
+      "platforms": [
+        "x86_64-linux"
+      ],
+      "workflow": [
+        "Install nixpkgs obs-studio on the Omnix base",
+        "obs --version runs",
+        "Start OBS in an X11 session; OpenGL loads (Mesa llvmpipe in the VM)",
+        "The main window maps and OBS is still running 15 s later",
+        "Take a screenshot"
+      ],
+      "test": {
+        "repo": "Omnix-Linux/Omnix",
+        "path": "tests/apps-gui.nix",
+        "check": "checks.x86_64-linux.app-obs",
+        "url": "https://github.com/Omnix-Linux/Omnix/blob/bf95b0838f7473f9cc0680cbe2f5b9a731d10670/tests/apps-gui.nix"
+      },
+      "install": {
+        "label": "Add to your configuration",
+        "snippet": "environment.systemPackages = [ pkgs.obs-studio ];"
+      },
+      "screenshot": "assets/app-shots/obs.webp",
+      "homepage": "https://obsproject.com",
+      "distribution": {
+        "via": "nixpkgs",
+        "repo": "obsproject/obs-studio",
+        "release": "obs-studio",
+        "artifact": "obs-studio",
+        "url": "https://search.nixos.org/packages?channel=unstable&query=obs-studio",
+        "license": "GPL-2.0",
+        "checksums": null,
+        "attestation": "none",
+        "checked_at": "2026-10-06"
+      },
+      "verification": {
+        "status": "passing",
+        "verified_at": "2026-10-06",
+        "commit": "Omnix-Linux/Omnix@bf95b08",
+        "notes": "Fresh NixOS VM run (nix build .#checks.x86_64-linux.app-obs); the screenshot shows the first-run Auto-Configuration Wizard over the main window. Test added in Omnix-Linux/Omnix#3.",
+        "log_excerpt": "must succeed: obs --version\nOpenGL loaded successfully, version 4.6 (Mesa llvmpipe)\nwindow: OBS 32.2.2 - Profile: Untitled - Scenes: Untitled\nmust succeed: systemctl is-active obs\ntest script finished in 34.59s"
+      }
     }
   ],
   "candidates": [
@@ -195,25 +294,6 @@
         "release": "v0.3.0",
         "artifact": "vectorcraft-0.3.0-linux-x86_64.AppImage",
         "url": "https://github.com/storytold/vectorcraft/releases/tag/v0.3.0",
-        "license": "Apache-2.0",
-        "checksums": "SHA256SUMS.txt",
-        "attestation": "none",
-        "checked_at": "2026-10-06"
-      }
-    },
-    {
-      "id": "filmcraft",
-      "name": "FilmCraft",
-      "icon": "assets/app-icons/filmcraft.webp",
-      "category": "Video editor",
-      "description": "A real timeline with every trim mode and its own codecs, in pure Rust.",
-      "homepage": "https://getartcraft.com/apps/filmcraft",
-      "distribution": {
-        "via": "GitHub releases",
-        "repo": "storytold/filmcraft",
-        "release": "v0.2.0",
-        "artifact": "filmcraft-0.2.0-linux-x86_64.AppImage",
-        "url": "https://github.com/storytold/filmcraft/releases/tag/v0.2.0",
         "license": "Apache-2.0",
         "checksums": "SHA256SUMS.txt",
         "attestation": "none",
@@ -292,25 +372,6 @@
         "url": "https://github.com/storytold/designcraft/releases/tag/v0.2.0",
         "license": "Apache-2.0",
         "checksums": "SHA256SUMS.txt",
-        "attestation": "none",
-        "checked_at": "2026-10-06"
-      }
-    },
-    {
-      "id": "obs-studio",
-      "name": "OBS Studio",
-      "icon": "assets/desktop-icons/com.obsproject.Studio.svg",
-      "category": "Video",
-      "description": "Screen recording and live streaming.",
-      "homepage": "https://obsproject.com",
-      "distribution": {
-        "via": "nixpkgs",
-        "repo": "obsproject/obs-studio",
-        "release": "obs-studio",
-        "artifact": "obs-studio",
-        "url": "https://search.nixos.org/packages?channel=unstable&query=obs-studio",
-        "license": "GPL-2.0",
-        "checksums": null,
         "attestation": "none",
         "checked_at": "2026-10-06"
       }
