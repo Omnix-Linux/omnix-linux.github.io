@@ -90,3 +90,30 @@ Edit `scripts/leaderboard_template.html`, not the generated page. The script (st
 If BenchLM can't be fetched, the script falls back to `benchmarks/bridgebench.json`, a hand-maintained copy (schema in the file), and then to the previous snapshot marked stale. The OpenRouter source works the same way. The script exits non-zero only when both sources fail. Names are matched after normalization (`GPT-6.1 Sol` and `openai/gpt-6.1-sol` both become `gpt-6-1-sol`). The script prints BridgeBench models it couldn't match; add an alias to `benchmarks/aliases.json` only when the two are certainly the same model, since a wrong id routes requests to a different model.
 
 Tests: `python3 -m unittest discover -s tests -p 'test_*.py'` covers normalization, variant collapsing, joining, the BenchLM parser and tie ranks, source precedence and the stale fallback; `tests/leaderboard-data.test.cjs` checks the committed snapshot's shape.
+
+## Apps
+
+`apps/index.html`, linked from the **Apps** button next to **Models** in the top nav, lists apps with the workflow an agent verifies on Omnix, a link to the NixOS test that runs it, the last verification (date, commit, result) and a copy-ready install snippet. It is generated from `apps/registry.json`, the source of truth (its `_schema` documents every field), by `scripts/build_apps.py` (stdlib) and `scripts/apps_template.html`. Edit the registry or the template, never the generated page.
+
+Status rules:
+
+- `verification` is `null` until the test has actually been run; the card then shows a neutral **Awaiting verification** badge.
+- `verification.status` must be `passing`, `known-gap`, `failing` or `untested`; anything else fails the build.
+- `passing`, `known-gap` and `failing` need `test.path` and `verification.verified_at`, or the build fails and writes nothing.
+- `candidates` are apps with no test yet. They always render as **Untested** and cannot carry a status.
+- A status is never set by hand without a test run behind it.
+
+How an agent adds an app:
+
+1. Write a NixOS test (`pkgs.testers.runNixOSTest`) in the repo that owns the app, e.g. `Omnix/tests/fhs.nix`, wired into the flake's `checks`.
+2. Add a registry entry: id, name, icon, category, kind, description, platforms, the workflow steps the test performs, `test` (repo, path, check, url) and `install`.
+3. Run the test, e.g. `nix build github:Omnix-Linux/Omnix#checks.x86_64-linux.fhs -L`.
+4. Record the result in `verification`: status, `verified_at`, the tested commit, notes and a short log excerpt.
+5. Rebuild and commit:
+
+```sh
+python3 scripts/build_apps.py
+git add apps && git commit -m "Apps: verify <app>"
+```
+
+Re-run the tests and update `verification` whenever Omnix, nixpkgs or an app changes. Tests: `tests/test_build_apps.py` covers validation and rendering and that the committed page is current; `tests/apps-data.test.cjs` checks the registry and page shape and the nav on all three pages.

@@ -48,16 +48,16 @@
   }
   [hidden] { display: none !important; }
 
-  /* Header: same nav as the home page, plus a home link. The page scrolls under it, so it fades to the void. */
+  /* Header: same nav on the home, Models and Apps pages. The page scrolls under it, so it fades to the void. */
   .site-header { position: fixed; inset: 0 0 auto; z-index: 6; height: var(--header-height); padding-inline: max(16px, 6vw); background: linear-gradient(var(--void) 55%, rgba(4, 5, 12, 0)); }
   .site-nav { max-width: 1240px; height: 100%; margin-inline: auto; display: flex; justify-content: space-between; align-items: center; gap: 8px; }
   .site-nav-links, .site-nav-start { display: flex; align-items: center; gap: 12px; }
-  .site-nav a { display: inline-flex; align-items: center; justify-content: center; min-height: 44px; padding: 10px 16px; font-family: var(--font-mono); font-size: .875rem; font-weight: 700; color: #fff; text-decoration: none; }
+  .site-nav-start { gap: 4px; }
+  .site-nav a { display: inline-flex; align-items: center; justify-content: center; min-height: 44px; padding: 10px 16px; font-family: var(--font-mono); font-size: .875rem; font-weight: 700; color: #fff; text-decoration: none; white-space: nowrap; }
   .site-nav .nav-home { padding-left: 0; font-family: var(--font-display); font-weight: 800; font-size: 1.15rem; letter-spacing: -0.03em; }
-  .site-nav .nav-leaderboard, .site-nav .nav-bug { gap: 8px; color: var(--muted); }
-  .nav-leaderboard svg, .nav-bug svg { width: 18px; height: 18px; fill: currentColor; }
-  .site-nav .nav-leaderboard[aria-current="page"] { color: var(--ice); }
-  .site-nav .nav-bug:hover, .site-nav .nav-leaderboard:hover { color: var(--ice); }
+  .site-nav .nav-leaderboard, .site-nav .nav-apps, .site-nav .nav-bug { gap: 8px; color: var(--muted); }
+  .nav-leaderboard svg, .nav-apps svg, .nav-bug svg { width: 18px; height: 18px; fill: currentColor; flex: none; }
+  .site-nav .nav-leaderboard[aria-current="page"], .site-nav .nav-apps[aria-current="page"] { color: var(--ice); }
   .site-nav .nav-install { border: 1px solid var(--line); border-radius: 0; }
   .site-nav .nav-github { width: 44px; padding: 10px; color: var(--ice); }
   .nav-github svg { width: 24px; height: 24px; fill: currentColor; }
@@ -65,17 +65,23 @@
   .site-nav .nav-github:hover { color: var(--violet); }
   .site-nav .nav-install:hover { border-color: var(--ice); }
   .site-nav a:focus-visible { outline: 2px solid var(--ice); outline-offset: 3px; }
+  /* Narrow screens: Models, Apps and Report a bug collapse to 44px icon buttons. */
   @media (max-width: 640px) {
     :root { --header-height: 64px; }
     .site-nav-links { gap: 4px; }
     .site-nav-start { gap: 0; }
-    .site-nav .nav-bug { width: 44px; padding: 10px; }
-    .nav-bug span { display: none; }
-    .nav-bug svg { width: 20px; height: 20px; }
+    .site-nav .nav-home { padding-right: 8px; }
+    .site-nav .nav-bug, .site-nav .nav-leaderboard, .site-nav .nav-apps { width: 44px; padding: 10px; }
+    .nav-bug span, .nav-leaderboard span, .nav-apps span { display: none; }
+    .nav-bug svg, .nav-leaderboard svg, .nav-apps svg { width: 20px; height: 20px; }
   }
   @media (max-width: 400px) { .site-nav .nav-home { font-size: 1rem; } .site-nav .nav-install { padding-inline: 10px; } }
-  .site-nav a { white-space: nowrap; }
-  @media (max-width: 360px) { .site-nav-links { gap: 0; } .site-nav .nav-github { width: 40px; padding: 8px; } .site-nav .nav-bug { width: 40px; padding: 8px; } .site-nav .nav-leaderboard { width: 40px; padding: 8px; } .nav-leaderboard span { display: none; } .site-nav .nav-install { padding-inline: 8px; } }
+  @media (max-width: 360px) {
+    /* 320px: 44 + 4 x 44 + 68 fills the row exactly, so the groups touch (icons keep 10px inner padding). */
+    .site-nav, .site-nav-links { gap: 0; }
+    .site-nav .nav-home { min-width: 44px; justify-content: flex-start; font-size: .85rem; padding-right: 0; }
+    .site-nav .nav-install { padding-inline: 5px; font-size: .8rem; }
+  }
 
   main { position: relative; z-index: 1; padding: calc(var(--header-height) + clamp(24px, 6svh, 72px)) max(16px, 6vw) clamp(56px, 9svh, 120px); }
   .wide { max-width: 1240px; margin-inline: auto; min-width: 0; }
@@ -166,7 +172,8 @@
   <nav class="site-nav" aria-label="Main navigation">
     <div class="site-nav-start">
       <a class="nav-home" href="../">Omnix</a>
-      <a class="nav-leaderboard" href="./" aria-current="page" title="AI models, benchmarks and routing"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M7 3h10v2h3v3a4 4 0 0 1-3.6 4A5 5 0 0 1 13 15.9V18h3v3H8v-3h3v-2.1A5 5 0 0 1 7.6 12 4 4 0 0 1 4 8V5h3V3zm0 4H6v1a2 2 0 0 0 1 1.7V7zm10 0v2.7A2 2 0 0 0 18 8V7h-1z"/></svg><span>Models</span></a>
+      <a class="nav-leaderboard" href="./" aria-current="page" title="AI models, benchmarks and routing" aria-label="Models"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M7 3h10v2h3v3a4 4 0 0 1-3.6 4A5 5 0 0 1 13 15.9V18h3v3H8v-3h3v-2.1A5 5 0 0 1 7.6 12 4 4 0 0 1 4 8V5h3V3zm0 4H6v1a2 2 0 0 0 1 1.7V7zm10 0v2.7A2 2 0 0 0 18 8V7h-1z"/></svg><span>Models</span></a>
+      <a class="nav-apps" href="../apps/" title="Apps tested on Omnix" aria-label="Apps"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M4 4h7v7H4zm9 0h7v7h-7zM4 13h7v7H4zm9 0h7v7h-7z"/></svg><span>Apps</span></a>
     </div>
     <div class="site-nav-links">
       <a class="nav-bug" href="../#bugs" title="Report a bug" aria-label="Report a bug"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M9 4.5 7.6 3.1l1.1-1.1L10.4 3.7a5 5 0 0 1 3.2 0L15.3 2l1.1 1.1L15 4.5A4.9 4.9 0 0 1 16.9 8H7.1A4.9 4.9 0 0 1 9 4.5zM6 10h12v4a6 6 0 0 1-5 5.9V12h-2v7.9A6 6 0 0 1 6 14v-4zm-3 1h2v2H3v-2zm16 0h2v2h-2v-2zM3.6 17l1.6-1 1 1.7-1.6 1-1-1.7zm15.2-1 1.6 1-1 1.7-1.6-1 1-1.7zM3.6 7.3l1-1.7 1.6 1-1 1.7-1.6-1zm14.2-.7 1.6-1 1 1.7-1.6 1-1-1.7z"/></svg><span>Report a bug</span></a>
