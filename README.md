@@ -71,19 +71,22 @@ Page copy follows the language guidelines in [issue #2](https://github.com/Omnix
 
 The document itself never scrolls: `html` and `body` are `overflow: hidden`, and `main` and `footer` scroll inside `#page`, a fixed full-screen scroll container. The shader canvas, wordmark, tagline, backdrops, header and rail are siblings of `#page`, so a scroll never moves or re-composites them. As fixed layers of a scrolling document on iOS, the canvas was repositioned a frame late whenever its worker drew mid-scroll, so the shader jittered vertically during touch scrolling. The hero fade is a CSS scroll-driven animation on `#page`'s named timeline (`scroll-timeline: --page`, shared with the fixed layers through `timeline-scope`), so opacity is computed in the same frame as the scroll. Browsers without scroll timelines fall back to `coronal.js` setting `--hero-fade` from `#page`'s scroll position. `column-scroll.js` reads `#page`'s `scrollTop`. `#page` takes keyboard focus on load, and again after in-page links in the header or rail, so arrow keys, Page Down and space scroll it. On iOS, Safari's toolbars no longer collapse while scrolling, and tapping the status bar no longer scrolls to the top.
 
-## Model leaderboard
+## Model benchmarks
 
-`leaderboard/index.html` is a generated static page that lists the [OpenRouter](https://openrouter.ai/models) model catalog (prices per million tokens, context length) with a per-row Route dialog of copy-ready config (base URL, model id, `OPENROUTER_API_KEY` placeholder, curl, OpenAI SDK). No API key is ever embedded. When BridgeBench scores are present, those rows lead in rank order; otherwise the page says "BridgeBench scores not loaded yet" and sorts by provider and name, implying no ranking.
+`benchmarks/index.html`, linked from the **Benchmarks** button in the top nav, is a generated static page. It ranks AI models by [BridgeBench](https://www.bridgebench.ai/leaderboard)'s published overall rating and joins each one to the [OpenRouter](https://openrouter.ai/models) catalog: price per million tokens, context length, and a per-row **Route** dialog with copy-ready config (base URL, model id, `OPENROUTER_API_KEY` placeholder, curl, OpenAI SDK and `OPENAI_BASE_URL` forms). No API key is ever embedded. OpenRouter-only models are behind a toggle; BridgeBench models that aren't on OpenRouter stay in the ranking with a disabled Route button.
 
-Regenerate locally and commit the output. There is no CI job for it:
+Regenerate it locally and commit the output; there is no workflow for it:
 
 ```sh
 python3 scripts/build_leaderboard.py
-git add leaderboard && git commit -m "Refresh leaderboard snapshot"
+git add benchmarks && git commit -m "Refresh benchmarks snapshot"
 ```
 
-`scripts/build_leaderboard.py` (stdlib only) fetches `https://openrouter.ai/api/v1/models`, collapses `:free`/`:batch` variants into their base model (listed in the dialog), drops `~…-latest` aliases, and writes `leaderboard/data.json` (`generated_at`, per-source `fetched_at`/`stale`, compact model rows) and `leaderboard/index.html` from `scripts/leaderboard_template.html`, with the data inlined. Edit the template, not the generated page. If a source fails or OpenRouter returns implausibly few models, the previous snapshot for that source is kept and marked stale; the script exits non-zero only if both fail.
+Edit `scripts/leaderboard_template.html`, not the generated page. The script (stdlib only) fetches two public sources:
 
-BridgeBench is never scraped: its site sits behind a Cloudflare challenge and its `robots.txt` disallows `/api/`. `leaderboard/bridgebench.json` is maintained by hand (schema documented in its `_schema` key: `source`, `transcribed_at`, `version`, `models: [{rank, name, slug, overall, axes}]`) and currently has no models until a permitted data source is agreed (issue #5). Names are matched by normalizing both sides (strip `Vendor: ` and `vendor/`, lowercase, `.`/space/`_` to `-`, drop `:free`/`:batch`/`(free)`), then through `leaderboard/aliases.json` (BridgeBench name → OpenRouter id). The script prints unmatched names to add there.
+- **BridgeBench ratings** from [BenchLM's BridgeBench page](https://benchlm.ai/benchmarks/bridgebench), which republishes BridgeBench's overall ratings with their update date and links to BridgeBench's leaderboard and methodology. The script reads the page's embedded data; BenchLM's `robots.txt` allows `/benchmarks/`. bridgebench.ai itself is never contacted: it sits behind a Cloudflare challenge and its `robots.txt` disallows `/api/`. Only the overall rating is published there, so the per-axis scores aren't shown. Tied ratings share a rank.
+- **The OpenRouter catalog** from `https://openrouter.ai/api/v1/models` (no key needed). `:free`/`:batch` variants collapse into their base model and `~…-latest` aliases are dropped.
 
-Tests: `python3 -m unittest discover -s tests -p 'test_*.py'` covers normalization, variant collapsing, joining and the stale fallback; `tests/leaderboard-data.test.cjs` checks the committed snapshot's shape.
+If BenchLM can't be fetched, the script falls back to `benchmarks/bridgebench.json`, a hand-maintained copy (schema in the file), and then to the previous snapshot marked stale. The OpenRouter source works the same way. The script exits non-zero only when both sources fail. Names are matched after normalization (`GPT-6.1 Sol` and `openai/gpt-6.1-sol` both become `gpt-6-1-sol`). The script prints BridgeBench models it couldn't match; add an alias to `benchmarks/aliases.json` only when the two are certainly the same model, since a wrong id routes requests to a different model.
+
+Tests: `python3 -m unittest discover -s tests -p 'test_*.py'` covers normalization, variant collapsing, joining, the BenchLM parser and tie ranks, source precedence and the stale fallback; `tests/leaderboard-data.test.cjs` checks the committed snapshot's shape.

@@ -4,7 +4,7 @@ const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const path = require('node:path');
 
-const dir = path.join(__dirname, '..', 'leaderboard');
+const dir = path.join(__dirname, '..', 'benchmarks');
 const data = JSON.parse(fs.readFileSync(path.join(dir, 'data.json'), 'utf8'));
 const html = fs.readFileSync(path.join(dir, 'index.html'), 'utf8');
 
@@ -34,6 +34,6 @@ test('page inlines the data and marks the leaderboard nav item current', () => {
 
 test('home nav links the leaderboard before the bug report button', () => {
   const home = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
-  const lb = home.indexOf('class="nav-leaderboard" href="leaderboard/"');
+  const lb = home.indexOf('class="nav-leaderboard" href="benchmarks/"');
   assert.ok(lb !== -1 && lb < home.indexOf('class="nav-bug"'));
 });

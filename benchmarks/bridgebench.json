@@ -1,6 +1,6 @@
 {
   "_schema": {
-    "about": "Hand-maintained transcription of https://www.bridgebench.ai/leaderboard. A maintainer copies it from the site in a normal browser; scripts/build_leaderboard.py only reads this file and never contacts bridgebench.ai. Leave models empty until the data source and attribution terms are settled (issue #5).",
+    "about": "Hand-maintained fallback, used only when https://benchlm.ai/benchmarks/bridgebench (BenchLM's republished snapshot of BridgeBench's overall ratings) cannot be fetched. Copy the scores from https://www.bridgebench.ai/leaderboard in a normal browser. scripts/build_leaderboard.py never contacts bridgebench.ai: it sits behind a bot challenge and its robots.txt disallows /api/.",
     "source": "URL the scores were read from",
     "transcribed_at": "ISO 8601 UTC time the scores were copied, e.g. 2026-10-05T12:00:00Z",
     "version": "BridgeBench version label, e.g. V3",

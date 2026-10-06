@@ -1,11 +1,14 @@
 #!/usr/bin/env python3
 """Build the model leaderboard snapshot and page.
 
-Reads   leaderboard/bridgebench.json  (hand-maintained; never scraped)
-        leaderboard/aliases.json      (BridgeBench name -> OpenRouter id)
-Fetches https://openrouter.ai/api/v1/models (public, no API key)
-Writes  leaderboard/data.json          (merged snapshot)
-        leaderboard/index.html         (static page, data inlined)
+Fetches https://benchlm.ai/benchmarks/bridgebench (BridgeBench's published overall
+          ratings as republished by BenchLM; its robots.txt allows /benchmarks/)
+        https://openrouter.ai/api/v1/models (public, no API key)
+Reads   benchmarks/bridgebench.json  (hand-maintained fallback; bridgebench.ai itself
+          is never contacted: it sits behind a bot challenge and disallows /api/)
+        benchmarks/aliases.json       (BridgeBench name -> OpenRouter id)
+Writes  benchmarks/data.json           (merged snapshot)
+        benchmarks/index.html          (static page, data inlined)
 
 Stdlib only. Run from anywhere: python3 scripts/build_leaderboard.py
 If a source fails, the previous snapshot's data for it is kept and marked stale.
@@ -19,10 +22,14 @@ import urllib.request
 from pathlib import Path
 
 REPO = Path(__file__).resolve().parent.parent
-OUT_DIR = REPO / "leaderboard"
+OUT_DIR = REPO / "benchmarks"
 TEMPLATE = Path(__file__).resolve().parent / "leaderboard_template.html"
 OPENROUTER_URL = "https://openrouter.ai/api/v1/models"
 MIN_OPENROUTER_MODELS = 20  # fewer than this is treated as an implausible response
+BENCHLM_URL = "https://benchlm.ai/benchmarks/bridgebench"
+BRIDGEBENCH_URL = "https://www.bridgebench.ai/leaderboard"
+MIN_BRIDGEBENCH_MODELS = 5
+USER_AGENT = "omnix-linux.github.io leaderboard builder (+https://www.omnix-linux.com)"
 
 
 def now_iso():
@@ -100,8 +107,43 @@ def collapse_openrouter(raw_models):
     return sorted(rows.values(), key=lambda r: (r["provider"], r["name"].lower()))
 
 
+def competition_ranks(scores):
+    """Standard competition ranking: ties share a rank and the next rank skips (1, 2, 2, 4)."""
+    ranks, prev = [], None
+    for i, score in enumerate(scores):
+        ranks.append(ranks[-1] if score == prev else i + 1)
+        prev = score
+    return ranks
+
+
+def parse_benchlm(html):
+    """Extract BridgeBench's overall ratings from BenchLM's page data (__NEXT_DATA__)."""
+    m = re.search(r'<script id="__NEXT_DATA__"[^>]*>(.*?)</script>', html, re.S)
+    if not m:
+        raise ValueError("BenchLM page has no __NEXT_DATA__")
+    props = json.loads(m.group(1))["props"]["pageProps"]
+    ext = props.get("externalBenchmark") or {}
+    rows = [r for r in props.get("leaderboard") or [] if isinstance(r.get("score"), (int, float))]
+    rows.sort(key=lambda r: -r["score"])
+    models = [{"rank": rank, "name": r["model"], "slug": r.get("slug"), "creator": r.get("creator"),
+               "overall": r["score"], "axes": {}}
+              for rank, r in zip(competition_ranks([r["score"] for r in rows]), rows)]
+    return {"source": ext.get("sourceUrl") or BRIDGEBENCH_URL,
+            "via": BENCHLM_URL,
+            "methodology": ext.get("methodologyUrl"),
+            "version": (props.get("benchmark") or {}).get("version"),
+            "updated": ext.get("updatedLabel") or props.get("lastUpdated"),
+            "models": models}
+
+
+def fetch_bridgebench(url=BENCHLM_URL, timeout=30):
+    req = urllib.request.Request(url, headers={"User-Agent": USER_AGENT})
+    with urllib.request.urlopen(req, timeout=timeout) as resp:
+        return parse_benchlm(resp.read().decode("utf-8"))
+
+
 def fetch_openrouter(url=OPENROUTER_URL, timeout=30):
-    req = urllib.request.Request(url, headers={"User-Agent": "omnix-linux.github.io leaderboard builder"})
+    req = urllib.request.Request(url, headers={"User-Agent": USER_AGENT})
     with urllib.request.urlopen(req, timeout=timeout) as resp:
         data = json.load(resp)
     models = data.get("data")
@@ -155,26 +197,46 @@ def join(bb_models, or_models, aliases):
     return rows + rest, unmatched, len(rest)
 
 
-def build(fetch=fetch_openrouter, out_dir=OUT_DIR, log=print):
+def build(fetch=fetch_openrouter, out_dir=OUT_DIR, log=print, fetch_bb=fetch_bridgebench):
     out_dir = Path(out_dir)
     previous = load_json(out_dir / "data.json", {}) or {}
     prev_sources = previous.get("sources", {})
     aliases = {k: v for k, v in (load_json(out_dir / "aliases.json", {}) or {}).items() if not k.startswith("_")}
     failures = 0
 
-    # BridgeBench: hand-maintained file only.
+    # BridgeBench: BenchLM's republished snapshot, else the hand-maintained file,
+    # else the previous snapshot marked stale.
     bb_prev = prev_sources.get("bridgebench", {})
+    bb_source = bb_models = None
     try:
-        bb = validate_bridgebench(load_json(out_dir / "bridgebench.json", {"models": []}))
-        bb_source = {"url": bb.get("source") or "https://www.bridgebench.ai/leaderboard",
-                     "version": bb.get("version"), "fetched_at": bb.get("transcribed_at"),
-                     "stale": False, "count": len(bb["models"])}
+        bb = validate_bridgebench(fetch_bb())
+        if len(bb["models"]) < MIN_BRIDGEBENCH_MODELS:
+            raise ValueError(f"implausible BridgeBench snapshot ({len(bb['models'])} models)")
+        bb_source = {"url": bb["source"], "via": bb["via"], "methodology": bb.get("methodology"),
+                     "version": bb.get("version"), "updated": bb.get("updated"),
+                     "fetched_at": now_iso(), "stale": False, "count": len(bb["models"])}
         bb_models = bb["models"]
-    except (ValueError, json.JSONDecodeError) as exc:
-        failures += 1
-        log(f"warning: BridgeBench data unusable ({exc}); keeping previous snapshot")
-        bb_source = dict(bb_prev, stale=True)
-        bb_models = previous.get("bridgebench_models", [])
+    except Exception as exc:  # network, HTTP, parse or plausibility failure
+        log(f"warning: BenchLM fetch failed ({exc}); trying benchmarks/bridgebench.json")
+    if bb_models is None:
+        try:
+            bb = validate_bridgebench(load_json(out_dir / "bridgebench.json", {"models": []}))
+            if not bb["models"]:
+                raise ValueError("bridgebench.json has no models")
+            bb_source = {"url": bb.get("source") or BRIDGEBENCH_URL, "via": None,
+                         "version": bb.get("version"), "updated": bb.get("transcribed_at"),
+                         "fetched_at": bb.get("transcribed_at"), "stale": False, "count": len(bb["models"])}
+            bb_models = bb["models"]
+        except (ValueError, json.JSONDecodeError) as exc:
+            bb_models = previous.get("bridgebench_models", [])
+            if bb_models:
+                # Only a lost snapshot counts as a failure; never having had one is "not loaded".
+                failures += 1
+                log(f"warning: no usable BridgeBench data ({exc}); keeping previous snapshot")
+                bb_source = dict(bb_prev, stale=True)
+            else:
+                log(f"warning: no BridgeBench data ({exc}); the page will say scores are not loaded")
+                bb_source = {"url": BRIDGEBENCH_URL, "via": None, "fetched_at": None, "stale": False, "count": 0}
 
     # OpenRouter: live.
     or_prev = prev_sources.get("openrouter", {})
@@ -196,7 +258,7 @@ def build(fetch=fetch_openrouter, out_dir=OUT_DIR, log=print):
 
     rows, unmatched_bb, or_only = join(bb_models, or_models, aliases)
     for name in unmatched_bb:
-        log(f"unmatched BridgeBench model: {name}  (add it to leaderboard/aliases.json)")
+        log(f"unmatched BridgeBench model: {name}  (add it to benchmarks/aliases.json)")
     if bb_models:
         log(f"{or_only} OpenRouter models have no BridgeBench score")
     stale_alias = [k for k, v in aliases.items() if v not in {m['id'] for m in or_models}]

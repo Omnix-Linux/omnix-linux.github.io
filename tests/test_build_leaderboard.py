@@ -53,7 +53,11 @@ class Build(unittest.TestCase):
 
     def run_build(self, fetch, bb=None):
         (self.dir / "bridgebench.json").write_text(json.dumps(bb or {"models": []}))
-        return bl.build(fetch=fetch, out_dir=self.dir, log=self.logs.append)
+        return bl.build(fetch=fetch, out_dir=self.dir, log=self.logs.append, fetch_bb=self.fetch_bb)
+
+    @staticmethod
+    def fetch_bb():
+        raise OSError("offline")  # exercise the hand-maintained fallback
 
     def test_empty_bridgebench_and_stale_fallback(self):
         self.assertEqual(self.run_build(lambda: FIXTURE), 0)
@@ -88,3 +92,49 @@ class Build(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+BENCHLM_PAGE = """<html><script id="__NEXT_DATA__" type="application/json">%s</script></html>""" % json.dumps({
+    "props": {"pageProps": {
+        "benchmark": {"version": "Sept 2026"},
+        "lastUpdated": "October 5, 2026",
+        "externalBenchmark": {"sourceUrl": "https://www.bridgebench.ai/leaderboard",
+                              "methodologyUrl": "https://www.bridgebench.ai/blog/how-the-leaderboard-works",
+                              "updatedLabel": "October 5, 2026"},
+        "leaderboard": [
+            {"model": "Model C", "slug": "model-c", "creator": "Z", "score": 501},
+            {"model": "Model A", "slug": "model-a", "creator": "X", "score": 760},
+            {"model": "Model B", "slug": "model-b", "creator": "Y", "score": 501},
+            {"model": "Model D", "slug": None, "creator": "Z", "score": 450},
+            {"model": "No score", "slug": "x", "creator": "Z", "score": None},
+        ]}}})
+
+
+class BenchLM(unittest.TestCase):
+    def test_parse_orders_by_score_with_shared_tie_ranks(self):
+        bb = bl.parse_benchlm(BENCHLM_PAGE)
+        self.assertEqual([(m["rank"], m["name"], m["overall"]) for m in bb["models"]],
+                         [(1, "Model A", 760), (2, "Model C", 501), (2, "Model B", 501), (4, "Model D", 450)])
+        self.assertEqual(bb["source"], "https://www.bridgebench.ai/leaderboard")
+        self.assertEqual(bb["via"], bl.BENCHLM_URL)
+        self.assertEqual(bb["updated"], "October 5, 2026")
+
+    def test_page_without_data_is_rejected(self):
+        with self.assertRaises(ValueError):
+            bl.parse_benchlm("<html></html>")
+
+    def test_build_prefers_benchlm_and_records_attribution(self):
+        with tempfile.TemporaryDirectory() as d:
+            out = Path(d)
+            (out / "bridgebench.json").write_text(json.dumps({"models": []}))
+            many = dict(json.loads(BENCHLM_PAGE.split(">", 2)[2].rsplit("</script>", 1)[0]))
+            rows = [{"model": f"M{i}", "slug": f"m{i}", "creator": "Z", "score": 900 - i} for i in range(6)]
+            many["props"]["pageProps"]["leaderboard"] = rows
+            page = '<script id="__NEXT_DATA__" type="application/json">%s</script>' % json.dumps(many)
+            logs = []
+            self.assertEqual(bl.build(fetch=lambda: FIXTURE, out_dir=out, log=logs.append,
+                                      fetch_bb=lambda: bl.parse_benchlm(page)), 0)
+            src = json.loads((out / "data.json").read_text())["sources"]["bridgebench"]
+            self.assertEqual(src["count"], 6)
+            self.assertEqual(src["via"], bl.BENCHLM_URL)
+            self.assertFalse(src["stale"])
