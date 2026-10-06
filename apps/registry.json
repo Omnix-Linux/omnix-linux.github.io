@@ -547,43 +547,247 @@
         "notes": "Fresh NixOS VM run (nix build .#checks.x86_64-linux.app-designcraft); sha256 matched SHA256SUMS.txt; window “DesignCraft”. Test added in Omnix-Linux/Omnix#3.",
         "log_excerpt": "subtest: CLI and --version run\n(finished: subtest: CLI and --version run, in 0.08 seconds)\nsubtest: main window appears\n(finished: subtest: main window appears, in 11.24 seconds)\ntest script finished in 34.74s"
       }
-    }
-  ],
-  "candidates": [
+    },
     {
       "id": "brave",
-      "name": "Brave",
+      "name": "Brave 1.96.61",
       "icon": "assets/desktop-icons/brave-browser.png",
       "category": "Browser",
-      "description": "Chromium-based web browser."
-    },
-    {
-      "id": "slack",
-      "name": "Slack",
-      "icon": "assets/desktop-icons/slack.png",
-      "category": "Chat",
-      "description": "Team messaging desktop app."
-    },
-    {
-      "id": "signal",
-      "name": "Signal",
-      "icon": "assets/desktop-icons/signal-desktop.png",
-      "category": "Chat",
-      "description": "End-to-end encrypted messenger."
+      "kind": "Prebuilt binary",
+      "description": "Brave's official Linux build, run from its unmodified GitHub release zip.",
+      "platforms": [
+        "x86_64-linux"
+      ],
+      "workflow": [
+        "Fetch brave-browser-1.96.61-linux-amd64.zip from the GitHub release, pinned to the sha256 in its .sha256 file",
+        "brave --version reports Brave Browser 154.1.96.61",
+        "Start Brave in an X11 session through the Omnix FHS layer (--no-sandbox because the test session is root, a fresh profile, --no-first-run)",
+        "A browser window opens on about:blank and stays up",
+        "Take a screenshot"
+      ],
+      "test": {
+        "repo": "Omnix-Linux/Omnix",
+        "path": "tests/apps-desktop.nix",
+        "check": "checks.x86_64-linux.app-brave",
+        "url": "https://github.com/Omnix-Linux/Omnix/blob/85489ab/tests/apps-desktop.nix"
+      },
+      "install": {
+        "label": "Download from GitHub and verify",
+        "snippet": "curl -fsSLO https://github.com/brave/brave-browser/releases/download/v1.96.61/brave-browser-1.96.61-linux-amd64.zip\ncurl -fsSL https://github.com/brave/brave-browser/releases/download/v1.96.61/brave-browser-1.96.61-linux-amd64.zip.sha256 | sha256sum -c -\nsudo mkdir -p /opt/brave && sudo unzip -q brave-browser-1.96.61-linux-amd64.zip -d /opt/brave"
+      },
+      "screenshot": "assets/app-shots/brave.webp",
+      "homepage": "https://brave.com",
+      "distribution": {
+        "via": "GitHub releases",
+        "repo": "brave/brave-browser",
+        "release": "v1.96.61",
+        "artifact": "brave-browser-1.96.61-linux-amd64.zip",
+        "url": "https://github.com/brave/brave-browser/releases/tag/v1.96.61",
+        "license": "MPL-2.0",
+        "checksums": "brave-browser-1.96.61-linux-amd64.zip.sha256",
+        "attestation": "none",
+        "checked_at": "2026-10-06"
+      },
+      "verification": {
+        "status": "passing",
+        "verified_at": "2026-10-06",
+        "commit": "Omnix-Linux/Omnix@85489ab",
+        "notes": "Fresh NixOS VM run; sha256 matched the release's .sha256 file. Test added on Omnix branch apps-desktop-tests.",
+        "log_excerpt": "Brave Browser 154.1.96.61\nwindow: about:blank - Brave\ntest script finished in 59.75s"
+      }
     },
     {
       "id": "telegram",
-      "name": "Telegram",
+      "name": "Telegram Desktop 7.2.9",
       "icon": "assets/desktop-icons/org.telegram.desktop.png",
       "category": "Chat",
-      "description": "Telegram Desktop messenger."
+      "kind": "Prebuilt binary",
+      "description": "Telegram's official Linux build, run from its unmodified GitHub release tarball.",
+      "platforms": [
+        "x86_64-linux"
+      ],
+      "workflow": [
+        "Fetch td-setup-linux-x64-7.2.9.tar.xz from the GitHub release, pinned by sha256 (Telegram publishes no checksum file)",
+        "Start Telegram in an X11 session through the Omnix FHS layer, no flags",
+        "The welcome window opens and stays up",
+        "Take a screenshot"
+      ],
+      "test": {
+        "repo": "Omnix-Linux/Omnix",
+        "path": "tests/apps-desktop.nix",
+        "check": "checks.x86_64-linux.app-telegram",
+        "url": "https://github.com/Omnix-Linux/Omnix/blob/85489ab/tests/apps-desktop.nix"
+      },
+      "install": {
+        "label": "Download from GitHub",
+        "snippet": "curl -fsSL https://github.com/telegramdesktop/tdesktop/releases/download/v7.2.9/td-setup-linux-x64-7.2.9.tar.xz \\\n  | sudo tar -xJ -C /opt\n/opt/Telegram/Telegram"
+      },
+      "screenshot": "assets/app-shots/telegram.webp",
+      "homepage": "https://desktop.telegram.org",
+      "distribution": {
+        "via": "GitHub releases",
+        "repo": "telegramdesktop/tdesktop",
+        "release": "v7.2.9",
+        "artifact": "td-setup-linux-x64-7.2.9.tar.xz",
+        "url": "https://github.com/telegramdesktop/tdesktop/releases/tag/v7.2.9",
+        "license": "GPL-3.0",
+        "checksums": null,
+        "attestation": "none",
+        "checked_at": "2026-10-06"
+      },
+      "verification": {
+        "status": "passing",
+        "verified_at": "2026-10-06",
+        "commit": "Omnix-Linux/Omnix@85489ab",
+        "notes": "Fresh NixOS VM run; no flags or workarounds needed. Test added on Omnix branch apps-desktop-tests.",
+        "log_excerpt": "window: Telegram (welcome screen)\ntest script finished in 44.07s"
+      }
     },
     {
       "id": "kitty",
-      "name": "kitty",
+      "name": "kitty 0.49.2",
       "icon": "assets/desktop-icons/kitty.svg",
       "category": "Terminal",
-      "description": "GPU-accelerated terminal emulator."
+      "kind": "Prebuilt binary",
+      "description": "The GPU-accelerated terminal, run from its unmodified GitHub release.",
+      "platforms": [
+        "x86_64-linux"
+      ],
+      "workflow": [
+        "Fetch kitty-0.49.2-x86_64.txz from the GitHub release, pinned by sha256",
+        "kitty --version reports kitty 0.49.2",
+        "Start kitty in an X11 session: as shipped it stops because /usr/share/X11/xkb is missing (the documented gap)",
+        "With XKB_CONFIG_ROOT pointed at xkeyboard-config it opens, OpenGL 4.6 (Mesa llvmpipe) loads, and it runs uname -a",
+        "Take a screenshot"
+      ],
+      "known_gaps": [
+        "Omnix doesn't provide /usr/share/X11/xkb yet, so kitty's bundled xkbcommon can't find a keyboard layout and exits. Setting XKB_CONFIG_ROOT works around it; the fix is for the Omnix desktop preset to provide xkeyboard-config's share/X11 at /usr/share/X11."
+      ],
+      "test": {
+        "repo": "Omnix-Linux/Omnix",
+        "path": "tests/apps-desktop.nix",
+        "check": "checks.x86_64-linux.app-kitty",
+        "url": "https://github.com/Omnix-Linux/Omnix/blob/85489ab/tests/apps-desktop.nix"
+      },
+      "install": {
+        "label": "Download from GitHub",
+        "snippet": "sudo mkdir -p /opt/kitty\ncurl -fsSL https://github.com/kovidgoyal/kitty/releases/download/v0.49.2/kitty-0.49.2-x86_64.txz \\\n  | sudo tar -xJ -C /opt/kitty\n/opt/kitty/bin/kitty --version"
+      },
+      "screenshot": "assets/app-shots/kitty.webp",
+      "homepage": "https://sw.kovidgoyal.net/kitty/",
+      "distribution": {
+        "via": "GitHub releases",
+        "repo": "kovidgoyal/kitty",
+        "release": "v0.49.2",
+        "artifact": "kitty-0.49.2-x86_64.txz",
+        "url": "https://github.com/kovidgoyal/kitty/releases/tag/v0.49.2",
+        "license": "GPL-3.0",
+        "checksums": null,
+        "attestation": "none",
+        "checked_at": "2026-10-06"
+      },
+      "verification": {
+        "status": "known-gap",
+        "verified_at": "2026-10-06",
+        "commit": "Omnix-Linux/Omnix@85489ab",
+        "notes": "Fresh NixOS VM run. As shipped, kitty fails at startup on Omnix because /usr/share/X11/xkb is missing; with XKB_CONFIG_ROOT set it runs normally. Test added on Omnix branch apps-desktop-tests.",
+        "log_excerpt": "xkbcommon: ERROR: failed to add default include path /usr/share/X11/xkb\n[glfw error 65544]: Failed to initialize XKB context\nGLFW initialization failed\n(with XKB_CONFIG_ROOT) kitty 0.49.2, window opened, ran uname -a\ntest script finished in 42.15s"
+      }
+    },
+    {
+      "id": "signal",
+      "name": "Signal Desktop 8.26.0",
+      "icon": "assets/desktop-icons/signal-desktop.png",
+      "category": "Chat",
+      "kind": "nixpkgs package",
+      "description": "End-to-end encrypted messenger, from nixpkgs (Signal publishes only an apt repository).",
+      "platforms": [
+        "x86_64-linux"
+      ],
+      "workflow": [
+        "Install nixpkgs signal-desktop on the Omnix base",
+        "Start Signal in an X11 session (--no-sandbox because the test session is root)",
+        "The Signal window opens and stays up; with no network in the VM it shows its can't-connect page",
+        "Take a screenshot"
+      ],
+      "test": {
+        "repo": "Omnix-Linux/Omnix",
+        "path": "tests/apps-desktop.nix",
+        "check": "checks.x86_64-linux.app-signal",
+        "url": "https://github.com/Omnix-Linux/Omnix/blob/85489ab/tests/apps-desktop.nix"
+      },
+      "install": {
+        "label": "Add to your configuration",
+        "snippet": "environment.systemPackages = [ pkgs.signal-desktop ];"
+      },
+      "screenshot": "assets/app-shots/signal.webp",
+      "homepage": "https://signal.org/download/",
+      "distribution": {
+        "via": "nixpkgs",
+        "repo": null,
+        "release": "signal-desktop",
+        "artifact": "signal-desktop",
+        "url": "https://search.nixos.org/packages?channel=unstable&query=signal-desktop",
+        "license": "AGPL-3.0",
+        "checksums": null,
+        "attestation": "none",
+        "checked_at": "2026-10-06"
+      },
+      "verification": {
+        "status": "passing",
+        "verified_at": "2026-10-06",
+        "commit": "Omnix-Linux/Omnix@85489ab",
+        "notes": "Fresh NixOS VM run. The test VM has no network, so the screenshot shows Signal's “Failed to connect to server” page rather than the link-device screen. Test added on Omnix branch apps-desktop-tests.",
+        "log_excerpt": "window: Signal\ntest script finished in 63.47s"
+      }
+    },
+    {
+      "id": "slack",
+      "name": "Slack 4.51.180",
+      "icon": "assets/desktop-icons/slack.png",
+      "category": "Chat",
+      "kind": "nixpkgs package",
+      "description": "Team chat, from nixpkgs (unfree; Slack publishes only .deb and .rpm).",
+      "platforms": [
+        "x86_64-linux"
+      ],
+      "workflow": [
+        "Install nixpkgs slack on the Omnix base (unfree allowed for Slack only)",
+        "Start Slack as an ordinary user with its sandbox on, no flags",
+        "The Slack window opens and stays up; with no network in the VM it shows its cannot-connect page",
+        "Take a screenshot"
+      ],
+      "test": {
+        "repo": "Omnix-Linux/Omnix",
+        "path": "tests/apps-desktop.nix",
+        "check": "checks.x86_64-linux.app-slack",
+        "url": "https://github.com/Omnix-Linux/Omnix/blob/85489ab/tests/apps-desktop.nix"
+      },
+      "install": {
+        "label": "Add to your configuration",
+        "snippet": "nixpkgs.config.allowUnfreePredicate = pkg: builtins.elem (lib.getName pkg) [ \"slack\" ];\nenvironment.systemPackages = [ pkgs.slack ];"
+      },
+      "screenshot": "assets/app-shots/slack.webp",
+      "homepage": "https://slack.com/downloads/linux",
+      "distribution": {
+        "via": "nixpkgs",
+        "repo": null,
+        "release": "slack",
+        "artifact": "slack",
+        "url": "https://search.nixos.org/packages?channel=unstable&query=slack",
+        "license": "Proprietary",
+        "checksums": null,
+        "attestation": "none",
+        "checked_at": "2026-10-06"
+      },
+      "verification": {
+        "status": "passing",
+        "verified_at": "2026-10-06",
+        "commit": "Omnix-Linux/Omnix@85489ab",
+        "notes": "Fresh NixOS VM run as a normal user with the sandbox on. The test VM has no network, so the screenshot shows Slack's “cannot connect” page. Test added on Omnix branch apps-desktop-tests.",
+        "log_excerpt": "Slack 4.51.180, linux 6.18.54 on x64\nwindow: Slack\ntest script finished in 51.77s"
+      }
     }
-  ]
+  ],
+  "candidates": []
 }

@@ -280,10 +280,18 @@ def render(reg, template):
     blob = json.dumps({k: v for k, v in reg.items() if k != "_schema"}, separators=(",", ":"),
                       ensure_ascii=False).replace("</", "<\\/")
     out = template
+    # With no untested candidates left, drop their whole section rather than show an empty list.
+    start, end = "<!--__CANDIDATES_SECTION__-->", "<!--__END_CANDIDATES_SECTION__-->"
+    if start in out and end in out:
+        if reg.get("candidates"):
+            out = out.replace(start, "").replace(end, "")
+        else:
+            out = out[:out.index(start)] + out[out.index(end) + len(end):]
     for key, val in {
         "<!--__APP_COUNT__-->": e(count),
         "<!--__APP_CARDS__-->": "\n".join(render_app(a) for a in apps),
-        "<!--__CANDIDATES__-->": "\n".join(render_candidate(c) for c in reg.get("candidates", [])),
+        **({"<!--__CANDIDATES__-->": "\n".join(render_candidate(c) for c in reg["candidates"])}
+           if reg.get("candidates") else {}),
         "/*__APPS_DATA__*/null": blob,
     }.items():
         if key not in out:
