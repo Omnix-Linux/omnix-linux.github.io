@@ -29,7 +29,8 @@ STATUS_LABELS = {"passing": "Passing", "patched": "Patched", "known-gap": "Known
                  "untested": "Unknown", None: "Unknown"}
 STATUS_CLASS = {"passing": "passing", "patched": "patched", "known-gap": "known-gap", "failing": "failing",
                 "untested": "unknown", None: "unknown"}
-APP_FIELDS = ("id", "name", "icon", "category", "kind", "description", "platforms", "workflow", "test", "install")
+APP_FIELDS = ("id", "section", "name", "icon", "category", "kind", "description", "platforms", "workflow", "test",
+              "install")
 TEST_FIELDS = ("repo", "path", "check", "url")
 DATE_RE = re.compile(r"^\d{4}-\d\d-\d\d(T[\d:]+Z?)?$")
 
@@ -99,6 +100,32 @@ def dist_html(dist, homepage=None):
     return f'<p class="dist" title="Checked {e(dist["checked_at"])}">{" · ".join(parts)}</p>'
 
 
+def validate_sections(sections):
+    """The fixed, ordered list of page sections. Returns their ids."""
+    if not isinstance(sections, list) or not sections:
+        raise RegistryError("registry needs a non-empty 'sections' array")
+    ids = []
+    for i, s in enumerate(sections):
+        where = f"sections[{i}]"
+        if not isinstance(s, dict):
+            raise RegistryError(f"{where}: must be an object")
+        sid = _str(s, "id", where)
+        if not re.fullmatch(r"[a-z0-9][a-z0-9-]*", sid):
+            raise RegistryError(f"{where}: id must be kebab-case")
+        if sid in ids:
+            raise RegistryError(f"{where}: duplicate section id {sid}")
+        _str(s, "title", where)
+        _str(s, "blurb", where)
+        ids.append(sid)
+    return ids
+
+
+def validate_section_ref(entry, section_ids, where):
+    sid = entry.get("section")
+    if sid not in section_ids:
+        raise RegistryError(f"{where}: section {sid!r} is not one of {', '.join(section_ids)}")
+
+
 def status_of(app):
     v = app.get("verification")
     return v["status"] if v else None
@@ -108,6 +135,7 @@ def validate(reg):
     """Raise RegistryError on any schema problem; return the registry unchanged."""
     if not isinstance(reg, dict) or not isinstance(reg.get("apps"), list):
         raise RegistryError("registry must be an object with an 'apps' array")
+    section_ids = validate_sections(reg.get("sections"))
     seen = set()
     for i, app in enumerate(reg["apps"]):
         where = f"apps[{i}]"
@@ -125,6 +153,7 @@ def validate(reg):
         seen.add(aid)
         for k in ("name", "icon", "category", "kind", "description"):
             _str(app, k, where)
+        validate_section_ref(app, section_ids, where)
         validate_icon(app["icon"], where)
         validate_distribution(app.get("distribution"), where)
         if app.get("homepage") is not None and not str(app["homepage"]).startswith("https://"):
@@ -175,6 +204,7 @@ def validate(reg):
         where = f"candidates[{i}]"
         for k in ("id", "name", "icon", "category", "description"):
             _str(c, k, where)
+        validate_section_ref(c, section_ids, where)
         validate_icon(c["icon"], where)
         validate_distribution(c.get("distribution"), where)
         if c.get("homepage") is not None and not str(c["homepage"]).startswith("https://"):
@@ -273,25 +303,87 @@ def render_candidate(c):
 </li>'''
 
 
+def plural(n, word):
+    return f"{n} {word}" if n == 1 else f"{n} {word}s"
+
+
+def section_summary(apps, cands):
+    """'7 apps · 6 passing · 1 known gap': the count, then each status in the legend's order."""
+    entries = apps + cands
+    counts = {}
+    for a in apps:
+        counts[status_of(a) or "untested"] = counts.get(status_of(a) or "untested", 0) + 1
+    if cands:
+        counts["untested"] = counts.get("untested", 0) + len(cands)
+    parts = [plural(len(entries), "app")]
+    for s in STATUSES:
+        if counts.get(s):
+            parts.append(f"{counts[s]} {STATUS_LABELS[s].lower()}")
+    return " · ".join(parts)
+
+
+def grouped_sections(reg):
+    """[(section, apps, candidates)] in registry order, skipping sections with nothing in them."""
+    out = []
+    for s in reg["sections"]:
+        apps = [a for a in reg["apps"] if a["section"] == s["id"]]
+        cands = [c for c in reg.get("candidates", []) if c["section"] == s["id"]]
+        if apps or cands:
+            out.append((s, apps, cands))
+    return out
+
+
+def render_section(section, apps, cands, number=1):
+    sid = e(section["id"])
+    cards = "\n".join(render_app(a) for a in apps)
+    cand_html = ""
+    if cands:
+        items = "\n".join(render_candidate(c) for c in cands)
+        cand_html = f'''
+        <p class="cands-note">No test has run for these yet, so their status is unknown.</p>
+        <ul class="cands">
+{items}
+        </ul>'''
+    grid = f'''
+        <div class="apps">
+{cards}
+        </div>''' if apps else ""
+    return f'''      <section class="app-section" id="section-{sid}" aria-labelledby="section-{sid}-title">
+        <details class="sec" open>
+          <summary>
+            <span class="sec-head">
+              <span class="eyebrow">Section {number:02d}</span>
+              <h3 class="sec-title" id="section-{sid}-title">{e(section["title"])}</h3>
+              <span class="sec-blurb">{e(section["blurb"])}</span>
+              <span class="sec-summary">{e(section_summary(apps, cands))}</span>
+            </span>
+          </summary>{grid}{cand_html}
+        </details>
+      </section>'''
+
+
+def render_index(groups):
+    chips = "\n".join(
+        f'        <li><a class="chip" href="#section-{e(s["id"])}">{e(s["title"])} <span class="chip-n">{len(a) + len(c)}</span></a></li>'
+        for s, a, c in groups)
+    return f'''      <nav class="sec-index" aria-label="App sections">
+        <ul>
+{chips}
+        </ul>
+      </nav>'''
+
+
 def render(reg, template):
     apps = reg["apps"]
-    n = len(apps)
-    count = f"{n} app" if n == 1 else f"{n} apps"
+    count = plural(len(apps), "app")
     blob = json.dumps({k: v for k, v in reg.items() if k != "_schema"}, separators=(",", ":"),
                       ensure_ascii=False).replace("</", "<\\/")
+    groups = grouped_sections(reg)
     out = template
-    # With no untested candidates left, drop their whole section rather than show an empty list.
-    start, end = "<!--__CANDIDATES_SECTION__-->", "<!--__END_CANDIDATES_SECTION__-->"
-    if start in out and end in out:
-        if reg.get("candidates"):
-            out = out.replace(start, "").replace(end, "")
-        else:
-            out = out[:out.index(start)] + out[out.index(end) + len(end):]
     for key, val in {
         "<!--__APP_COUNT__-->": e(count),
-        "<!--__APP_CARDS__-->": "\n".join(render_app(a) for a in apps),
-        **({"<!--__CANDIDATES__-->": "\n".join(render_candidate(c) for c in reg["candidates"])}
-           if reg.get("candidates") else {}),
+        "<!--__SECTION_INDEX__-->": render_index(groups),
+        "<!--__APP_SECTIONS__-->": "\n".join(render_section(*g, number=i) for i, g in enumerate(groups, 1)),
         "/*__APPS_DATA__*/null": blob,
     }.items():
         if key not in out:

@@ -97,6 +97,8 @@ Tests: `python3 -m unittest discover -s tests -p 'test_*.py'` covers normalizati
 
 `apps/index.html`, linked from the **Apps** button next to **Models** in the top nav, lists apps with the workflow an agent verifies on Omnix, a link to the NixOS test that runs it, the last verification (date, commit, result) and a copy-ready install snippet. It is generated from `apps/registry.json`, the source of truth (its `_schema` documents every field), by `scripts/build_apps.py` (stdlib) and `scripts/apps_template.html`. Edit the registry or the template, never the generated page.
 
+Sections: the page groups apps into the sections listed, in order, in the registry's `sections` array (`{id, title, blurb}`): today Media and creative, Documents and publishing, Internet and communication, Developer tools and Desktops. Every app and candidate needs a `section` naming one of those ids; an unknown or missing id fails the build. Each section renders as a collapsible block (a native `<details open>`, expanded by default) with its title, a one-line blurb and a summary such as "7 apps · 7 passing", followed by its cards; a row of anchor chips with counts under the lineup heading jumps to each section. A section with no apps or candidates is not rendered, and candidates appear in their own section marked Unknown. To add a group, append it to `sections` and point apps at it.
+
 Status rules:
 
 - Every card shows one status colour: green **Passing** or **Patched** (works because Omnix carries a fix of its own, cited in the card), yellow **Known gap**, red **Failing**, gray **Unknown** (`verification` is `null` because the test hasn't been run yet, or the app is a candidate with no test). The workflow, test, last run, log excerpt and install snippet sit in an expandable **Details** section.
@@ -108,7 +110,7 @@ Status rules:
 How an agent adds an app:
 
 1. Write a NixOS test (`pkgs.testers.runNixOSTest`) in the repo that owns the app, e.g. `Omnix/tests/fhs.nix`, wired into the flake's `checks`.
-2. Add a registry entry: id, name, icon, category, kind, description, platforms, the workflow steps the test performs, `test` (repo, path, check, url) and `install`.
+2. Add a registry entry: id, section, name, icon, category, kind, description, platforms, the workflow steps the test performs, `test` (repo, path, check, url) and `install`.
 3. Run the test, e.g. `nix build github:Omnix-Linux/Omnix#checks.x86_64-linux.fhs -L`.
 4. Record the result in `verification`: status, `verified_at`, the tested commit, notes and a short log excerpt.
 5. Rebuild and commit:
@@ -118,7 +120,7 @@ python3 scripts/build_apps.py
 git add apps && git commit -m "Apps: verify <app>"
 ```
 
-Re-run the tests and update `verification` whenever Omnix, nixpkgs or an app changes. Tests: `tests/test_build_apps.py` covers validation and rendering and that the committed page is current; `tests/apps-data.test.cjs` checks the registry and page shape and the nav on all three pages.
+Re-run the tests and update `verification` whenever Omnix, nixpkgs or an app changes. Tests: `tests/test_build_apps.py` covers validation (including section ids), rendering (sections in order, empty ones skipped, summary counts, every app exactly once) and that the committed page is current; `tests/apps-data.test.cjs` checks the registry and page shape and the nav on all three pages.
 
 Candidates and apps can carry a `distribution` block: where the app is published (`GitHub releases`, `nixpkgs`, ...), the release, artifact, license, checksum file and attestation status, plus the date it was checked. A card shows **Attested** only when GitHub's attestations API (or `gh attestation verify`) confirms the artifact's digest; otherwise it says **Not attested**. As of 2026-10-06, none of the listed GitHub artifacts have attestations.
 

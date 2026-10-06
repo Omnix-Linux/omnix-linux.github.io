@@ -43,7 +43,7 @@ test('candidates are never presented as tested', () => {
     assert.equal(c.test, undefined);
     assert.ok(fs.existsSync(path.join(root, c.icon)), c.icon);
   }
-  const cands = html.slice(html.indexOf('<ul class="cands">'), html.indexOf('</ul>', html.indexOf('<ul class="cands">')));
+  const cands = [...html.matchAll(/<ul class="cands">[\s\S]*?<\/ul>/g)].map(m => m[0]).join('\n');
   assert.equal((cands.match(/<li class="app status-unknown cand"/g) || []).length, reg.candidates.length);
   assert.doesNotMatch(cands, /badge-(passing|known-gap|failing)/);
   assert.doesNotMatch(cands, /<details/, 'candidates have nothing to expand');
@@ -77,4 +77,25 @@ test('Apps nav item is on the left of all three pages and current on the Apps pa
     assert.ok(start !== -1 && start < models && models < apps && apps < links, name);
     assert.match(page, /<span>Apps<\/span>/, name);
   }
+});
+
+
+test('apps are grouped into the registry sections, in order, each app exactly once', () => {
+  const ids = reg.sections.map(s => s.id);
+  assert.equal(new Set(ids).size, ids.length);
+  for (const e of [...reg.apps, ...reg.candidates]) assert.ok(ids.includes(e.section), `${e.id}: ${e.section}`);
+  const used = ids.filter(id => [...reg.apps, ...reg.candidates].some(e => e.section === id));
+  const rendered = [...html.matchAll(/<section class="app-section" id="section-([a-z0-9-]+)"/g)].map(m => m[1]);
+  assert.deepEqual(rendered, used, 'non-empty sections, in registry order');
+  const chips = [...html.matchAll(/<a class="chip" href="#section-([a-z0-9-]+)">/g)].map(m => m[1]);
+  assert.deepEqual(chips, used);
+  assert.equal((html.match(/<details class="sec" open>/g) || []).length, used.length);
+  for (const id of used) {
+    const block = html.split(`id="section-${id}"`)[1].split('</section>')[0];
+    const members = reg.apps.filter(a => a.section === id);
+    for (const a of members) assert.ok(block.includes(`" id="${a.id}">`), a.id);
+    const n = members.length + reg.candidates.filter(c => c.section === id).length;
+    assert.match(block, new RegExp(`<span class="sec-summary">${n} apps? · `));
+  }
+  for (const a of reg.apps) assert.equal((html.match(new RegExp(`<article class="app status-[a-z-]+" id="${a.id}">`, 'g')) || []).length, 1, a.id);
 });

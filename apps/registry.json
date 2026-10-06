@@ -16,15 +16,25 @@
       "known_gaps": "optional list of documented gaps from the test file (shown on the card; not a status)",
       "screenshot": "optional path under assets/: a screenshot taken by the app's own test run (never a vendor's marketing image)",
       "distribution": "optional, same shape as on candidates",
-      "homepage": "optional https URL"
+      "homepage": "optional https URL",
+      "section": "required: id of an entry in sections[]; the app is listed under that section"
     },
-    "candidates[]": "apps not tested yet: {id, name, icon, category, description}. Always rendered as untested.",
+    "sections[]": "ordered list of page sections: {id (kebab-case), title, blurb (one line)}. Every app and candidate names one in 'section'; an unknown id fails the build, and a section with no apps or candidates is not rendered.",
+    "candidates[]": "apps not tested yet: {id, name, icon, category, description, section}. Always rendered as untested.",
     "statuses": "passing | patched | known-gap | failing | untested. patched means it works on Omnix because Omnix carries a fix of its own (cite it in notes). passing, patched, known-gap and failing require test.path and verification.verified_at, or the build fails.",
     "distribution": "optional on apps and candidates: {via: 'GitHub releases' | 'nixpkgs' | ..., repo: 'owner/name', release: tag, artifact: file name, url: download or project URL, license: SPDX id, checksums: checksum file name or null, attestation: 'none' | 'verified' (from GitHub's attestations API for the artifact's digest), checked_at: YYYY-MM-DD}. Never mark attestation 'verified' without the API or `gh attestation verify` confirming it."
   },
+  "sections": [
+    {"id": "media", "title": "Media and creative", "blurb": "Video editing, recording and streaming, photo editing and raw development, illustration and visual effects."},
+    {"id": "documents", "title": "Documents and publishing", "blurb": "PDF editing and page layout for print and screen."},
+    {"id": "internet", "title": "Internet and communication", "blurb": "Browsing, messaging and team chat."},
+    {"id": "developer", "title": "Developer tools", "blurb": "Runtimes and the terminal, straight from upstream."},
+    {"id": "desktops", "title": "Desktops", "blurb": "The desktop sessions Omnix ships, each booted to a real session."}
+  ],
   "apps": [
     {
       "id": "nodejs",
+      "section": "developer",
       "name": "Node.js 22.12",
       "icon": "node",
       "category": "JavaScript runtime",
@@ -58,6 +68,7 @@
     },
     {
       "id": "python",
+      "section": "developer",
       "name": "Python 3.12.8",
       "icon": "python",
       "category": "Python runtime",
@@ -93,6 +104,7 @@
     },
     {
       "id": "atrium",
+      "section": "desktops",
       "name": "KDE Plasma - Atrium",
       "icon": "assets/project-icons/atrium.png",
       "category": "Desktop",
@@ -128,6 +140,7 @@
     },
     {
       "id": "omarchy-stable",
+      "section": "desktops",
       "name": "Hyprland - Omarchy (stable)",
       "icon": "assets/project-icons/autarchy.png",
       "category": "Desktop",
@@ -164,6 +177,7 @@
     },
     {
       "id": "filmcraft",
+      "section": "media",
       "name": "FilmCraft 0.2.0",
       "icon": "assets/app-icons/filmcraft.webp",
       "category": "Video editor",
@@ -212,6 +226,7 @@
     },
     {
       "id": "obs-studio",
+      "section": "media",
       "name": "OBS Studio 32.2.2",
       "icon": "assets/desktop-icons/com.obsproject.Studio.svg",
       "category": "Recording and streaming",
@@ -260,6 +275,7 @@
     },
     {
       "id": "opencut",
+      "section": "media",
       "name": "OpenCut 0.3.0",
       "icon": "assets/app-icons/opencut.webp",
       "category": "Video editor",
@@ -309,6 +325,7 @@
     },
     {
       "id": "photocraft",
+      "section": "media",
       "name": "PhotoCraft 0.2.0",
       "icon": "assets/app-icons/photocraft.webp",
       "category": "Image editor",
@@ -357,6 +374,7 @@
     },
     {
       "id": "vectorcraft",
+      "section": "media",
       "name": "VectorCraft 0.3.0",
       "icon": "assets/app-icons/vectorcraft.webp",
       "category": "Vector illustration",
@@ -405,6 +423,7 @@
     },
     {
       "id": "lightcraft",
+      "section": "media",
       "name": "LightCraft 0.2.0",
       "icon": "assets/app-icons/lightcraft.webp",
       "category": "Photo library and raw developer",
@@ -453,6 +472,7 @@
     },
     {
       "id": "printcraft",
+      "section": "documents",
       "name": "PrintCraft 0.2.0",
       "icon": "assets/app-icons/printcraft.webp",
       "category": "PDF workbench",
@@ -501,6 +521,7 @@
     },
     {
       "id": "effectcraft",
+      "section": "media",
       "name": "EffectCraft 0.3.0",
       "icon": "assets/app-icons/effectcraft.webp",
       "category": "Motion graphics and VFX",
@@ -549,6 +570,7 @@
     },
     {
       "id": "designcraft",
+      "section": "documents",
       "name": "DesignCraft 0.2.0",
       "icon": "assets/app-icons/designcraft.webp",
       "category": "Page layout and publishing",
@@ -597,6 +619,7 @@
     },
     {
       "id": "brave",
+      "section": "internet",
       "name": "Brave 1.96.61",
       "icon": "assets/desktop-icons/brave-browser.png",
       "category": "Browser",
@@ -645,6 +668,7 @@
     },
     {
       "id": "telegram",
+      "section": "internet",
       "name": "Telegram Desktop 7.2.9",
       "icon": "assets/desktop-icons/org.telegram.desktop.png",
       "category": "Chat",
@@ -692,6 +716,7 @@
     },
     {
       "id": "kitty",
+      "section": "developer",
       "name": "kitty 0.49.2",
       "icon": "assets/desktop-icons/kitty.svg",
       "category": "Terminal",
@@ -741,6 +766,7 @@
     },
     {
       "id": "signal",
+      "section": "internet",
       "name": "Signal Desktop 8.26.0",
       "icon": "assets/desktop-icons/signal-desktop.png",
       "category": "Chat",
@@ -788,6 +814,7 @@
     },
     {
       "id": "slack",
+      "section": "internet",
       "name": "Slack 4.51.180",
       "icon": "assets/desktop-icons/slack.png",
       "category": "Chat",
