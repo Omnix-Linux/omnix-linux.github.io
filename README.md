@@ -61,6 +61,8 @@ Use **Omarchy** in prose. Follow the [Omnix naming policy](https://github.com/Om
 
 The favicon is rendered from `coronal-shader.js` at time 6 seconds, with the same white O rim as the hero. It uses an artwork diameter of 1.35 times the icon size so the O fills the tab icon. The SVG embeds a 64px shader render; PNG and ICO variants include renders at native tab sizes.
 
+The `#who` statement (eyebrow, headline and copy) is a CSS scroll-driven animation on `#who`'s own view timeline (`view-timeline: --who`, `animation-range: entry 0% entry 70svh`). It starts 45svh below its place and eases in on `cubic-bezier(0.08, 0.82, 0.17, 1)`: it rises several times faster than the scroll on entry, decelerates heavily, and is exactly in place (transform `none`) for the rest of the page. The animation owns the block's transform; inside `#who` the reveal transitions animate only the copy's opacity. Above 860px, `#page` uses `scroll-snap-type: y proximity` with the statement as the only snap point, so a scroll that stops near it settles it 24px below the header; phones do not snap. Reduced motion and browsers without `animation-timeline: view()` keep the static layout and the normal reveal. `tests/who-motion.test.cjs` pins this contract.
+
 Section reveals observe the first eyebrow or heading inside the viewport band from 10% to 65% of its height. The hero observes its wordmark with 12% top/bottom insets and fades when less than 65% remains visible. Its suffix and subtitle fade out in 180ms; the corona drops to 8% opacity. Pixel observer margins are rebuilt on resize because percentage root margins follow viewport width. This gives the hero time to dim before section copy appears.
 
 ## Copy and discoverability

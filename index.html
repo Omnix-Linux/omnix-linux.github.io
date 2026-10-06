@@ -588,6 +588,33 @@
   .statement .lede { max-width: 62ch; }
   .statement .lede + .lede { margin-top: 16px; }
   .statement .cta { margin-top: 32px; gap: 14px; }
+  /* #who headline: a pure-CSS scroll-driven entrance (no scroll listeners, frame-accurate on iOS).
+     The statement block enters 45svh below its place, so it rushes up much faster than the scroll,
+     then decelerates hard ("molasses") and lands exactly in place at 70svh past the section's entry.
+     The whole block moves, so the headline never overlaps its own copy. The scroll animation owns the
+     transform; the reveal transitions keep only opacity for the copy below the headline. */
+  @supports (animation-timeline: view()) {
+    @media (prefers-reduced-motion: no-preference) {
+      #who { view-timeline: --who block; }
+      #who .statement-inner {
+        animation: who-rise linear both;
+        animation-timeline: --who;
+        animation-range: entry 0% entry 70svh;
+      }
+      .motion main #who :is(.eyebrow, h2) { opacity: 1; transform: none; transition: none; }
+      .motion main #who .lede { transform: none; transition-property: opacity; }
+      /* Gentle snap: a scroll that stops near the statement settles it under the header. */
+      @media (min-width: 861px) {
+        .page { scroll-snap-type: y proximity; }
+        #who .statement-inner { scroll-snap-align: start; scroll-margin-top: 24px; }
+      }
+    }
+  }
+  @keyframes who-rise {
+    from { transform: translate3d(0, 45svh, 0); opacity: 0; animation-timing-function: cubic-bezier(0.08, 0.82, 0.17, 1); }
+    18% { opacity: 1; }
+    to { transform: none; opacity: 1; }
+  }
 
   /* Vision: collapsed by default, expanding to show the detail. */
   .vision-list { margin-top: 26px; display: grid; gap: 12px; }
