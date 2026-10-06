@@ -256,7 +256,7 @@
         "x86_64-linux"
       ],
       "workflow": [
-        "Build OBS from Omnix-Linux/obs-studio master (cb73236): upstream master plus Omnix's shutdown and core-module-path fixes",
+        "Build OBS from omnix-apps/obs-studio master (cb73236): upstream master plus Omnix's shutdown and core-module-path fixes",
         "obs --version runs",
         "Start OBS in an X11 session; OpenGL loads (Mesa llvmpipe in the VM)",
         "The main window maps and OBS is still running 15 s later; take a screenshot",
@@ -267,7 +267,7 @@
         "repo": "Omnix-Linux/Omnix",
         "path": "tests/apps-gui.nix",
         "check": "checks.x86_64-linux.app-obs",
-        "url": "https://github.com/Omnix-Linux/Omnix/blob/385b089/tests/apps-gui.nix"
+        "url": "https://github.com/Omnix-Linux/Omnix/blob/cfca01d/tests/apps-gui.nix"
       },
       "install": {
         "label": "Use Omnix's OBS (flake overlay)",
@@ -276,11 +276,11 @@
       "screenshot": "assets/app-shots/obs.webp",
       "homepage": "https://obsproject.com",
       "distribution": {
-        "via": "Omnix-Linux/obs-studio fork",
-        "repo": "Omnix-Linux/obs-studio",
+        "via": "omnix-apps/obs-studio fork",
+        "repo": "omnix-apps/obs-studio",
         "release": "master",
         "artifact": "pkgs/obs-studio.nix",
-        "url": "https://github.com/Omnix-Linux/obs-studio/commits/master",
+        "url": "https://github.com/omnix-apps/obs-studio/commits/master",
         "license": "GPL-2.0",
         "checksums": null,
         "attestation": "none",
@@ -289,8 +289,8 @@
       "verification": {
         "status": "patched",
         "verified_at": "2026-10-06",
-        "commit": "Omnix-Linux/Omnix@385b089",
-        "notes": "Fresh NixOS VM run of OBS 33.0.0-beta6 built from Omnix-Linux/obs-studio master (Omnix-Linux/Omnix#8). The fork carries two Omnix fixes: a guard against a freed core on shutdown (proposed upstream as obsproject/obs-studio#13906), and absolute core module paths on Linux, without which OBS 33 loaded no modules when built by Nix. The test requires every core module to load and a clean exit. The shutdown crash was a race, so a clean exit shows the patched build shuts down correctly; it can't prove the race never occurs.",
+        "commit": "Omnix-Linux/Omnix@cfca01d",
+        "notes": "Fresh NixOS VM run of OBS 33.0.0-beta6 built from omnix-apps/obs-studio master (Omnix-Linux/Omnix#8; the fork now lives in the omnix-apps organization, Omnix-Linux/Omnix#9). The fork carries two Omnix fixes: a guard against a freed core on shutdown (proposed upstream as obsproject/obs-studio#13906), and absolute core module paths on Linux, without which OBS 33 loaded no modules when built by Nix. The test requires every core module to load and a clean exit. The shutdown crash was a race, so a clean exit shows the patched build shuts down correctly; it can't prove the race never occurs.",
         "log_excerpt": "OBS 33.0.0-beta6-unstable-2026-10-06 (linux)\nLoaded Modules: obs-x264.so obs-ffmpeg.so linux-pipewire.so linux-capture.so obs-browser.so obs-websocket.so ... (24)\nwindow: OBS 33.0.0-beta6-unstable-2026-10-06 - Profile: Untitled - Scenes: Untitled\nsubtest: quits cleanly\nobs unit result: success\ntest script finished in 39.11s"
       }
     },
