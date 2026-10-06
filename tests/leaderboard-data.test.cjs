@@ -50,9 +50,9 @@ test('Models page groups the home link and Models on the left', () => {
 
 test('model ids reveal on row hover/focus with a copy button, always shown on touch', () => {
   const tpl = fs.readFileSync(path.join(__dirname, '..', 'scripts', 'leaderboard_template.html'), 'utf8');
-  assert.match(tpl, /td\.model \.mid \{[^}]*opacity: 0;/);
+  assert.match(tpl, /td\.model \.mid \{ position: absolute;[^}]*bottom: calc\(100% \+ 5px\)[^}]*opacity: 0;/);
   assert.match(tpl, /tbody tr:hover \.mid, tbody tr:focus-within \.mid \{[^}]*opacity: 1;/);
-  assert.match(tpl, /@media \(hover: none\) \{ td\.model \.mid \{ opacity: 1;/);
+  assert.match(tpl, /@media \(hover: none\) \{\s*td\.model \.mid \{ position: static; opacity: 1;/);
   assert.match(tpl, /cb\.className = "id-copy"; cb\.dataset\.copyId = r\.id;/);
   assert.match(tpl, /copyText\(cp\.dataset\.copyId\)/);
 });

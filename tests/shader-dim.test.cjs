@@ -20,7 +20,10 @@ test('the shader is not tied to the scroll timeline or --hero-fade', () => {
   assert.doesNotMatch(scrollRule.slice(0, scrollRule.indexOf('}')), /#coronal/);
 });
 
-test('an observer on a hero marker drives the trigger, not a scroll listener', () => {
-  assert.match(html, /<section class="hero" id="top">\s*<div class="hero-dim-trigger" aria-hidden="true"><\/div>/);
-  assert.match(js, /new IntersectionObserver\([\s\S]*?hero-dimmed[\s\S]*?\.observe\(dimTrigger\)/);
+test('two hero markers drive the trigger with hysteresis, not a scroll listener', () => {
+  assert.match(html, /<section class="hero" id="top">\s*<div class="hero-dim-trigger" aria-hidden="true"><\/div>\s*<div class="hero-wake-trigger" aria-hidden="true"><\/div>/);
+  // Dims 20svh in going down; wakes as soon as you scroll back above 45svh.
+  assert.match(html, /\.hero-dim-trigger \{ top: 20svh; \}/);
+  assert.match(html, /\.hero-wake-trigger \{ top: 45svh; \}/);
+  assert.match(js, /new IntersectionObserver\([\s\S]*?hero-dimmed[\s\S]*?observer\.observe\(dimTrigger\);\s*observer\.observe\(wakeTrigger\);/);
 });

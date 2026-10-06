@@ -21,16 +21,24 @@ afterFirstPaint(async function () {
     lastFade = f;
     root.style.setProperty("--hero-fade", f);
   }
-  // The shader dims on a trigger: once the marker 20svh down the hero scrolls above the
-  // top of the screen, html.hero-dimmed starts a fixed 0.5s CSS fade (and scrolling back
-  // fades it in). An observer fires once at the threshold, not on every scroll frame.
+  // The shader dims on a trigger with hysteresis. Scrolling down, it dims when the marker
+  // 20svh into the hero passes above the top of the screen; scrolling back up, it wakes as
+  // soon as the 45svh marker comes back. Between the two it keeps its state, so the
+  // wake-up never waits for a thin last stretch of scrolling. html.hero-dimmed drives a
+  // fixed 0.5s CSS fade; the observer fires at the thresholds, not on every scroll frame.
   var dimTrigger = document.querySelector(".hero-dim-trigger");
-  if (dimTrigger && "IntersectionObserver" in window) {
-    new IntersectionObserver(function (entries) {
-      var e = entries[entries.length - 1];
-      var top = e.rootBounds ? e.rootBounds.top : 0;
-      root.classList.toggle("hero-dimmed", !e.isIntersecting && e.boundingClientRect.top < top);
-    }, { root: scroller === document.scrollingElement ? null : scroller }).observe(dimTrigger);
+  var wakeTrigger = document.querySelector(".hero-wake-trigger");
+  if (dimTrigger && wakeTrigger && "IntersectionObserver" in window) {
+    var above = function (e) { return !e.isIntersecting && e.boundingClientRect.top < (e.rootBounds ? e.rootBounds.top : 0); };
+    var observer = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) {
+        var gone = above(e);
+        if (e.target === wakeTrigger) root.classList.toggle("hero-dimmed", gone);  // past 45svh: dim; back above it: wake
+        else if (gone) root.classList.add("hero-dimmed");                           // past 20svh going down: dim
+      });
+    }, { root: scroller === document.scrollingElement ? null : scroller });
+    observer.observe(dimTrigger);
+    observer.observe(wakeTrigger);
   }
   // Browsers with scroll-driven animations fade the hero in CSS, in the same frame
   // as the scroll; a listener here would trail it by a frame.

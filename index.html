@@ -344,7 +344,12 @@
   .lede code { color: var(--ink); background: rgba(126, 186, 228, 0.1); padding: 1px 6px; border-radius: 4px; }
 
   /* Hero */
-  .hero-dim-trigger { position: absolute; top: 20svh; left: 0; width: 1px; height: 1px; pointer-events: none; }
+  /* Hysteresis: the shader dims once 20svh of the hero has scrolled away, but wakes as soon as
+     you scroll back above 45svh, before the wordmark is fully back, so there's no thin band
+     where the hero is mostly on screen and the shader is still dark. */
+  .hero-dim-trigger, .hero-wake-trigger { position: absolute; left: 0; width: 1px; height: 1px; pointer-events: none; }
+  .hero-dim-trigger { top: 20svh; }
+  .hero-wake-trigger { top: 45svh; }
   .hero { position: relative; align-items: center; justify-items: center; text-align: center; }
   .hero .hero-inner { justify-items: center; }
   .hero .brand { width: 100%; }
@@ -724,6 +729,7 @@
 <main>
   <section class="hero" id="top">
     <div class="hero-dim-trigger" aria-hidden="true"></div>
+    <div class="hero-wake-trigger" aria-hidden="true"></div>
     <div class="hero-inner">
       <div class="brand">
         <div class="wordmark" role="img" aria-label="Omnix">
@@ -1431,7 +1437,7 @@ afterFirstPaint(function () {
 });
 </script>
 <script src="shader-layout.js?v=mobile-stability-alpha-20261004" defer></script>
-<script src="coronal.js?v=20261006-shader-dim-trigger" defer></script>
+<script src="coronal.js?v=20261006-shader-wake" defer></script>
 <script src="column-scroll.js?v=20261005-pinned-shader" defer></script>
 <script src="desktop-preview.js?v=20261004-demo-tabs-only" defer></script>
 <script src="omarchy-preview.js?v=20261005-toolbar-shader" defer></script>
