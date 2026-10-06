@@ -96,10 +96,10 @@ class Render(unittest.TestCase):
     def render(self, reg):
         return ba.render(ba.validate(reg), ba.TEMPLATE.read_text(encoding="utf-8"))
 
-    def test_null_verification_shows_awaiting(self):
+    def test_null_verification_shows_gray_unknown(self):
         page = self.render({"apps": [app()]})
-        self.assertIn("badge-awaiting", page)
-        self.assertIn("Awaiting verification", page)
+        self.assertIn('class="app status-unknown"', page)
+        self.assertIn('<span class="badge badge-unknown">Unknown</span>', page)
         self.assertNotIn('class="badge badge-passing">Passing</span> on', page)
 
     def test_passing_shows_date_commit_and_test_link(self):

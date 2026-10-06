@@ -23,8 +23,12 @@ TEMPLATE = Path(__file__).resolve().parent / "apps_template.html"
 
 STATUSES = ("passing", "known-gap", "failing", "untested")
 TESTED_STATUSES = ("passing", "known-gap", "failing")
+# Four colours, nothing else: green passing, yellow known gap, red failing, gray unknown
+# (no recorded run yet, or explicitly untested).
 STATUS_LABELS = {"passing": "Passing", "known-gap": "Known gap", "failing": "Failing",
-                 "untested": "Untested", None: "Awaiting verification"}
+                 "untested": "Unknown", None: "Unknown"}
+STATUS_CLASS = {"passing": "passing", "known-gap": "known-gap", "failing": "failing",
+                "untested": "unknown", None: "unknown"}
 APP_FIELDS = ("id", "name", "icon", "category", "kind", "description", "platforms", "workflow", "test", "install")
 TEST_FIELDS = ("repo", "path", "check", "url")
 DATE_RE = re.compile(r"^\d{4}-\d\d-\d\d(T[\d:]+Z?)?$")
@@ -144,8 +148,7 @@ def icon_html(icon, name):
 
 
 def badge_html(status):
-    cls = status or "awaiting"
-    return f'<span class="badge badge-{cls}">{e(STATUS_LABELS[status])}</span>'
+    return f'<span class="badge badge-{STATUS_CLASS[status]}">{e(STATUS_LABELS[status])}</span>'
 
 
 def render_app(app):
@@ -170,29 +173,42 @@ def render_app(app):
     else:
         last = "Not run for this page yet. The status appears once a maintainer or agent runs the test and records the result."
     snippet_id = f"snip-{app['id']}"
-    return f'''<article class="app" id="{e(app["id"])}">
+    # The card itself is just identity and status; the evidence folds away.
+    return f'''<article class="app status-{STATUS_CLASS[status]}" id="{e(app["id"])}">
   <header class="app-head">
     {icon_html(app["icon"], app["name"])}
-    <div class="app-title"><h3>{e(app["name"])}</h3><p class="app-cat">{e(app["category"])} · {e(app["kind"])}</p></div>
+    <div class="app-title"><h3>{e(app["name"])}</h3><p class="app-cat">{e(app["category"])}</p></div>
     {badge_html(status)}
   </header>
   <p class="app-desc">{e(app["description"])}</p>
-  <div class="term"><div class="term-bar"><i></i><i></i><i></i><b>workflow an agent verifies</b></div><ol class="steps">{steps}</ol></div>
-  {gaps}
-  <dl class="evidence">
-    <div><dt>Test</dt><dd>{test_line}</dd></div>
-    <div><dt>Last verification</dt><dd>{last}</dd></div>
-    <div><dt>Platforms</dt><dd>{e(", ".join(app["platforms"]))}</dd></div>
-  </dl>
-  <div class="snip">
-    <div class="snip-head"><span>{e(app["install"]["label"])}</span><button class="copy" type="button" data-copy="{snippet_id}">Copy</button></div>
-    <pre id="{snippet_id}">{e(app["install"]["snippet"])}</pre>
-  </div>
+  <details class="more">
+    <summary>Details</summary>
+    <div class="more-body">
+      <div class="term"><div class="term-bar"><i></i><i></i><i></i><b>workflow an agent verifies</b></div><ol class="steps">{steps}</ol></div>
+      {gaps}
+      <dl class="evidence">
+        <div><dt>Test</dt><dd>{test_line}</dd></div>
+        <div><dt>Last run</dt><dd>{last}</dd></div>
+        <div><dt>Platforms</dt><dd>{e(", ".join(app["platforms"]))}</dd></div>
+      </dl>
+      <div class="snip">
+        <div class="snip-head"><span>{e(app["install"]["label"])}</span><button class="copy" type="button" data-copy="{snippet_id}">Copy</button></div>
+        <pre id="{snippet_id}">{e(app["install"]["snippet"])}</pre>
+      </div>
+    </div>
+  </details>
 </article>'''
 
 
 def render_candidate(c):
-    return f'''<li class="cand">{icon_html(c["icon"], c["name"])}<div><strong>{e(c["name"])}</strong><span>{e(c["category"])} · {e(c["description"])}</span></div><span class="badge badge-untested">Untested</span></li>'''
+    return f'''<li class="app status-unknown cand" id="{e(c["id"])}">
+  <header class="app-head">
+    {icon_html(c["icon"], c["name"])}
+    <div class="app-title"><h3>{e(c["name"])}</h3><p class="app-cat">{e(c["category"])}</p></div>
+    {badge_html(None)}
+  </header>
+  <p class="app-desc">{e(c["description"])}</p>
+</li>'''
 
 
 def render(reg, template):

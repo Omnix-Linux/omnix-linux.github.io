@@ -44,16 +44,22 @@ test('candidates are never presented as tested', () => {
     assert.ok(fs.existsSync(path.join(root, c.icon)), c.icon);
   }
   const cands = html.slice(html.indexOf('<ul class="cands">'), html.indexOf('</ul>', html.indexOf('<ul class="cands">')));
-  assert.equal((cands.match(/<li class="cand">/g) || []).length, reg.candidates.length);
+  assert.equal((cands.match(/<li class="app status-unknown cand"/g) || []).length, reg.candidates.length);
   assert.doesNotMatch(cands, /badge-(passing|known-gap|failing)/);
+  assert.doesNotMatch(cands, /<details/, 'candidates have nothing to expand');
 });
 
 test('page renders one card per app, inlines the registry and links each test', () => {
   assert.ok(!html.includes('/*__APPS_DATA__*/') && !html.includes('<!--__'));
-  assert.equal((html.match(/<article class="app"/g) || []).length, reg.apps.length);
+  assert.equal((html.match(/<article class="app status-/g) || []).length, reg.apps.length);
+  // Each card collapses its evidence behind one Details toggle.
+  assert.equal((html.match(/<details class="more">/g) || []).length, reg.apps.length);
+  // Status colours: green, yellow, red, gray only.
+  const used = new Set([...html.matchAll(/class="app status-([a-z-]+)/g)].map(m => m[1]));
+  for (const s of used) assert.ok(['passing', 'known-gap', 'failing', 'unknown'].includes(s), s);
   for (const a of reg.apps) if (a.test) assert.ok(html.includes(`href="${a.test.url}"`), a.id);
   const unverified = reg.apps.filter(a => !a.verification).length;
-  assert.equal((html.match(/<span class="badge badge-awaiting">Awaiting verification<\/span>\n/g) || []).length, unverified);
+  assert.equal((html.match(/<article class="app status-unknown"/g) || []).length, unverified);
 });
 
 test('Apps nav item is on the left of all three pages and current on the Apps page', () => {
