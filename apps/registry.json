@@ -259,6 +259,55 @@
       }
     },
     {
+      "id": "opencut",
+      "name": "OpenCut 0.3.0",
+      "icon": "assets/app-icons/opencut.webp",
+      "category": "Video editor",
+      "kind": "Web app (built from source)",
+      "description": "Open-source browser video editor (Next.js), built from its v0.3.0 source, served locally and opened in Brave.",
+      "platforms": [
+        "x86_64-linux"
+      ],
+      "workflow": [
+        "Fetch the OpenCut v0.3.0 source tag from GitHub (no Linux binary, AppImage, flake or nixpkgs package exists); bun dependencies pinned by output hash",
+        "Build the Next.js app offline in Nix (next/font's Google Fonts download answered with Next's mock hook and the nixpkgs Inter font)",
+        "Start OpenCut's own standalone server on 127.0.0.1:3000 with the upstream .env.example placeholders; /projects returns the app",
+        "Open /editor in Brave's official Linux build in an X11 session (--no-sandbox as root, software GL via SwiftShader since the VM has no GPU)",
+        "The editor creates a new project and redirects to /editor/<uuid>; the welcome dialog shows",
+        "Dismiss it: the editor (assets, preview, properties, timeline) shows \"Untitled Project\"; take a screenshot"
+      ],
+      "test": {
+        "repo": "Omnix-Linux/Omnix",
+        "path": "tests/apps-opencut.nix",
+        "check": "checks.x86_64-linux.app-opencut",
+        "url": "https://github.com/Omnix-Linux/Omnix/blob/29659f2c683a3537893d1bf9cba0636b5d85a8cd/tests/apps-opencut.nix"
+      },
+      "install": {
+        "label": "Build and run from source",
+        "snippet": "git clone --branch v0.3.0 https://github.com/OpenCut-app/OpenCut && cd OpenCut\nbun install && cp apps/web/.env.example apps/web/.env.local\ncd apps/web && bun run build && bun run start   # then open http://localhost:3000"
+      },
+      "screenshot": "assets/app-shots/opencut.webp",
+      "homepage": "https://opencut.app",
+      "distribution": {
+        "via": "GitHub source (tag)",
+        "repo": "OpenCut-app/OpenCut",
+        "release": "v0.3.0",
+        "artifact": "source tag v0.3.0 (f4bd689); the release has no binary assets",
+        "url": "https://github.com/OpenCut-app/OpenCut/releases/tag/v0.3.0",
+        "license": "MIT",
+        "checksums": null,
+        "attestation": "none",
+        "checked_at": "2026-10-06"
+      },
+      "verification": {
+        "status": "passing",
+        "verified_at": "2026-10-06",
+        "commit": "Omnix-Linux/Omnix@29659f2",
+        "notes": "Fresh NixOS VM run (nix build .#checks.x86_64-linux.app-opencut) on the Omnix base with its desktop preset; the screenshot above is from this run. OpenCut publishes only the web app's source (its v0.3.0 release has no assets; nixpkgs has no package; no flake), so the test builds it from source. The editor's renderer needs WebGL2 or WebGPU: in the GPU-less VM Brave needs --use-angle=swiftshader --enable-unsafe-swiftshader, without which it shows \"Failed to load project\". The editor gates viewports under 1024 px, so the VM screen is 1280x800. Icon: OpenCut's own logo (apps/web/public/logos/opencut/icon.svg, MIT). Test on Omnix branch apps-opencut-test.",
+        "log_excerpt": "opencut-web: ✓ Ready in 507ms\nwindow: OpenCut - Brave\n\"url\": \"http://127.0.0.1:3000/editor/ca4914a0-7f1e-45bf-92a5-9ee849c17ec9\"\nscreen text: Welcome to OpenCut Beta!\nscreen text: Untitled Project\ntest script finished in 65.95s"
+      }
+    },
+    {
       "id": "photocraft",
       "name": "PhotoCraft 0.2.0",
       "icon": "assets/app-icons/photocraft.webp",
