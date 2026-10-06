@@ -25,11 +25,31 @@
     "distribution": "optional on apps and candidates: {via: 'GitHub releases' | 'nixpkgs' | ..., repo: 'owner/name', release: tag, artifact: file name, url: download or project URL, license: SPDX id, checksums: checksum file name or null, attestation: 'none' | 'verified' (from GitHub's attestations API for the artifact's digest), checked_at: YYYY-MM-DD}. Never mark attestation 'verified' without the API or `gh attestation verify` confirming it."
   },
   "sections": [
-    {"id": "media", "title": "Media and creative", "blurb": "Video editing, recording and streaming, photo editing and raw development, illustration and visual effects."},
-    {"id": "documents", "title": "Documents and publishing", "blurb": "PDF editing and page layout for print and screen."},
-    {"id": "internet", "title": "Internet and communication", "blurb": "Browsing, messaging and team chat."},
-    {"id": "developer", "title": "Developer tools", "blurb": "Runtimes and the terminal, straight from upstream."},
-    {"id": "desktops", "title": "Desktops", "blurb": "The desktop sessions Omnix ships, each booted to a real session."}
+    {
+      "id": "media",
+      "title": "Media and creative",
+      "blurb": "Video editing, recording and streaming, photo editing and raw development, illustration and visual effects."
+    },
+    {
+      "id": "documents",
+      "title": "Documents and publishing",
+      "blurb": "PDF editing and page layout for print and screen."
+    },
+    {
+      "id": "internet",
+      "title": "Internet and communication",
+      "blurb": "Browsing, messaging and team chat."
+    },
+    {
+      "id": "developer",
+      "title": "Developer tools",
+      "blurb": "Runtimes and the terminal, straight from upstream."
+    },
+    {
+      "id": "desktops",
+      "title": "Desktops",
+      "blurb": "The desktop sessions Omnix ships, each booted to a real session."
+    }
   ],
   "apps": [
     {
@@ -230,47 +250,47 @@
       "name": "OBS Studio 32.2.2",
       "icon": "assets/desktop-icons/com.obsproject.Studio.svg",
       "category": "Recording and streaming",
-      "kind": "nixpkgs package",
-      "description": "Screen recording and live streaming, from nixpkgs (OBS publishes only Ubuntu .debs on GitHub).",
+      "kind": "Omnix package",
+      "description": "Screen recording and live streaming. Omnix ships nixpkgs' OBS with its own shutdown fix, carried on the Omnix-Linux/obs-studio fork.",
       "platforms": [
         "x86_64-linux"
       ],
       "workflow": [
-        "Install nixpkgs obs-studio on the Omnix base",
+        "Build Omnix's OBS: nixpkgs obs-studio 32.2.2 plus the fix from Omnix-Linux/obs-studio (omnix/32.2.2, commit 5218ef9), pinned by hash",
         "obs --version runs",
         "Start OBS in an X11 session; OpenGL loads (Mesa llvmpipe in the VM)",
-        "The main window maps and OBS is still running 15 s later",
-        "Take a screenshot"
+        "The main window maps and OBS is still running 15 s later; take a screenshot",
+        "Quit OBS through the window manager: it must exit with Result=success and leave no core dump"
       ],
       "test": {
         "repo": "Omnix-Linux/Omnix",
         "path": "tests/apps-gui.nix",
         "check": "checks.x86_64-linux.app-obs",
-        "url": "https://github.com/Omnix-Linux/Omnix/blob/3f1ce17/tests/apps-gui.nix"
+        "url": "https://github.com/Omnix-Linux/Omnix/blob/541ea4b/tests/apps-gui.nix"
       },
       "install": {
-        "label": "Add to your configuration",
-        "snippet": "environment.systemPackages = [ pkgs.obs-studio ];"
+        "label": "Use Omnix's OBS (flake overlay)",
+        "snippet": "# flake.nix: inputs.omnix.url = \"github:Omnix-Linux/Omnix\";\nnixpkgs.overlays = [ omnix.overlays.default ];\nprograms.obs-studio.enable = true;   # now Omnix's patched OBS"
       },
       "screenshot": "assets/app-shots/obs.webp",
       "homepage": "https://obsproject.com",
       "distribution": {
-        "via": "nixpkgs",
-        "repo": "obsproject/obs-studio",
-        "release": "obs-studio",
-        "artifact": "obs-studio",
-        "url": "https://search.nixos.org/packages?channel=unstable&query=obs-studio",
+        "via": "Omnix-Linux/obs-studio fork",
+        "repo": "Omnix-Linux/obs-studio",
+        "release": "omnix/32.2.2",
+        "artifact": "pkgs/obs-studio.nix",
+        "url": "https://github.com/Omnix-Linux/obs-studio/tree/omnix/32.2.2",
         "license": "GPL-2.0",
         "checksums": null,
         "attestation": "none",
         "checked_at": "2026-10-06"
       },
       "verification": {
-        "status": "passing",
+        "status": "patched",
         "verified_at": "2026-10-06",
-        "commit": "Omnix-Linux/Omnix@3f1ce17",
-        "notes": "Fresh NixOS VM run (nix build .#checks.x86_64-linux.app-obs); the screenshot shows the first-run Auto-Configuration Wizard over the main window. Test in Omnix main (Omnix-Linux/Omnix#6).",
-        "log_excerpt": "must succeed: obs --version\nOpenGL loaded successfully, version 4.6 (Mesa llvmpipe)\nwindow: OBS 32.2.2 - Profile: Untitled - Scenes: Untitled\nmust succeed: systemctl is-active obs\ntest script finished in 33.45s"
+        "commit": "Omnix-Linux/Omnix@541ea4b",
+        "notes": "Fresh NixOS VM run of Omnix's OBS. Upstream OBS can crash on exit when a preview, multiview or screenshot destructor runs after obs_shutdown() has freed the core; Omnix carries the fix (proposed upstream as obsproject/obs-studio#13906) on the Omnix-Linux/obs-studio fork and applies it in pkgs/obs-studio.nix (Omnix-Linux/Omnix#7). The test now quits OBS and requires a clean exit. The crash was a shutdown-order race, so a clean exit here shows the patched build shuts down correctly; it can't prove the race never occurs.",
+        "log_excerpt": "patching file libobs/obs.c\npatching file frontend/widgets/OBSBasicPreview.cpp\nwindow: OBS 32.2.2 - Profile: Untitled - Scenes: Untitled\nsubtest: quits cleanly\nobs unit result: success\nmust fail: coredumpctl --no-pager list obs\ntest script finished in 38.50s"
       }
     },
     {
