@@ -26,7 +26,9 @@
       "category": "JavaScript runtime",
       "kind": "Prebuilt binary",
       "description": "The official linux-x64 tarball from nodejs.org, unpacked and run as shipped.",
-      "platforms": ["x86_64-linux"],
+      "platforms": [
+        "x86_64-linux"
+      ],
       "workflow": [
         "Unpack the official node-v22.12.0-linux-x64.tar.xz into /opt/node",
         "/opt/node/bin/node -e 'require(\"zlib\").gzipSync(\"x\")'",
@@ -42,7 +44,13 @@
         "label": "Download and unpack",
         "snippet": "sudo mkdir -p /opt/node\ncurl -fsSL https://nodejs.org/dist/v22.12.0/node-v22.12.0-linux-x64.tar.xz \\\n  | sudo tar -xJ -C /opt/node --strip-components=1\n/opt/node/bin/node --version"
       },
-      "verification": null
+      "verification": {
+        "status": "passing",
+        "verified_at": "2026-10-06",
+        "commit": "Omnix-Linux/Omnix@18b26e7",
+        "notes": "Fresh NixOS VM run (nix build .#checks.x86_64-linux.fhs --rebuild); test script finished in 29.3 s.",
+        "log_excerpt": "must succeed: /opt/node/bin/node -e 'require(\"zlib\").gzipSync(\"x\")'\nmust succeed: systemd-run --wait --pipe /opt/node/bin/node -e 'console.log(1)'  (0.29 s)\ntest script finished in 29.34s"
+      }
     },
     {
       "id": "python",
@@ -51,7 +59,9 @@
       "category": "Python runtime",
       "kind": "Prebuilt binary",
       "description": "astral-sh's python-build-standalone build, unpacked and run as shipped.",
-      "platforms": ["x86_64-linux"],
+      "platforms": [
+        "x86_64-linux"
+      ],
       "workflow": [
         "Unpack cpython-3.12.8+20241206-x86_64-unknown-linux-gnu-install_only.tar.gz into /opt/python",
         "/opt/python/bin/python3 -c 'import ssl, sqlite3, ctypes'",
@@ -71,7 +81,13 @@
         "label": "Download and unpack",
         "snippet": "sudo mkdir -p /opt/python\ncurl -fsSL https://github.com/astral-sh/python-build-standalone/releases/download/20241206/cpython-3.12.8%2B20241206-x86_64-unknown-linux-gnu-install_only.tar.gz \\\n  | sudo tar -xz -C /opt/python --strip-components=1\n/opt/python/bin/python3 --version"
       },
-      "verification": null
+      "verification": {
+        "status": "known-gap",
+        "verified_at": "2026-10-06",
+        "commit": "Omnix-Linux/Omnix@18b26e7",
+        "notes": "Fresh NixOS VM run; imports, find_library and time zones pass. Running a script by its #!/usr/bin/python3 line under this relocatable interpreter fails as documented, until Mic92/envfs#233 reaches nixpkgs.",
+        "log_excerpt": "must succeed: /opt/python/bin/python3 -c 'import ctypes.util as c; assert c.find_library(\"z\")'\nmust succeed: /opt/python/bin/python3 -c 'import zoneinfo; zoneinfo.ZoneInfo(\"Europe/Moscow\")'\nmust fail: PATH=/opt/python/bin:$PATH /tmp/s.py\n  Fatal Python error: init_fs_encoding: failed to get the Python codec of the filesystem encoding\ntest script finished in 29.34s"
+      }
     },
     {
       "id": "atrium",
@@ -80,7 +96,9 @@
       "category": "Desktop",
       "kind": "Desktop session",
       "description": "Omnix's KDE Plasma desktop, booted to a real Plasma Wayland session.",
-      "platforms": ["x86_64-linux"],
+      "platforms": [
+        "x86_64-linux"
+      ],
       "workflow": [
         "Boot to the display manager and auto-login a new user",
         "plasmashell and kwin_wayland start for that user",
@@ -98,7 +116,13 @@
         "label": "flake.nix",
         "snippet": "inputs.omnix.url = \"github:Omnix-Linux/Omnix\";\ninputs.atrium.url = \"github:Omnix-Linux/Atrium\";\n\n# in your nixosConfiguration:\nmodules = [\n  omnix.nixosModules.default\n  atrium.nixosModules.default\n];"
       },
-      "verification": null
+      "verification": {
+        "status": "passing",
+        "verified_at": "2026-10-06",
+        "commit": "Omnix-Linux/Atrium@be855d4",
+        "notes": "Fresh NixOS VM run (nix build .#checks.x86_64-linux.desktop); plasmashell up 32 s after boot; test script finished in 72.3 s.",
+        "log_excerpt": "waiting for success: pgrep -u alice plasmashell  (31.90 s)\nmust succeed: su - alice -c 'kreadconfig6 --file kwinrc --group Windows --key PerOutputVirtualDesktops'\nmust succeed: test -e /usr/lib/libgtk-3.so.0\ntest script finished in 72.29s"
+      }
     },
     {
       "id": "omarchy-stable",
@@ -107,7 +131,9 @@
       "category": "Desktop",
       "kind": "Desktop session",
       "description": "Omarchy's own Hyprland config, themes and scripts on the Omnix base, pinned to a stable release.",
-      "platforms": ["x86_64-linux"],
+      "platforms": [
+        "x86_64-linux"
+      ],
       "workflow": [
         "Boot to the display manager and auto-login a new user",
         "The user's config is seeded from Omarchy's templates (~/.config/hypr/hyprland.lua, omarchy-theme-set on PATH)",
@@ -126,15 +152,57 @@
         "label": "flake.nix",
         "snippet": "inputs.omnix.url = \"github:Omnix-Linux/Omnix\";\ninputs.autarchy.url = \"github:Omnix-Linux/Autarchy\";\n\n# in your nixosConfiguration:\nmodules = [\n  omnix.nixosModules.default\n  autarchy.nixosModules.stable\n];"
       },
-      "verification": null
+      "verification": {
+        "status": "passing",
+        "verified_at": "2026-10-06",
+        "commit": "Omnix-Linux/Autarchy@17a5baf",
+        "notes": "Fresh NixOS VM run (nix build .#checks.x86_64-linux.stable); Hyprland 0.56.2 running Omarchy v4.0.4's config; test script finished in 70.9 s.",
+        "log_excerpt": "must succeed: grep -q OMARCHY_PATH /home/alice/.config/hypr/hyprland.lua\nmust succeed: su - alice -c 'command -v omarchy-theme-set'\nhyprctl version: Hyprland 0.56.2 built from branch v0.56.2-b\ntest script finished in 70.94s"
+      }
     }
   ],
   "candidates": [
-    {"id": "brave", "name": "Brave", "icon": "assets/desktop-icons/brave-browser.png", "category": "Browser", "description": "Chromium-based web browser."},
-    {"id": "slack", "name": "Slack", "icon": "assets/desktop-icons/slack.png", "category": "Chat", "description": "Team messaging desktop app."},
-    {"id": "signal", "name": "Signal", "icon": "assets/desktop-icons/signal-desktop.png", "category": "Chat", "description": "End-to-end encrypted messenger."},
-    {"id": "telegram", "name": "Telegram", "icon": "assets/desktop-icons/org.telegram.desktop.png", "category": "Chat", "description": "Telegram Desktop messenger."},
-    {"id": "kitty", "name": "kitty", "icon": "assets/desktop-icons/kitty.svg", "category": "Terminal", "description": "GPU-accelerated terminal emulator."},
-    {"id": "obs-studio", "name": "OBS Studio", "icon": "assets/desktop-icons/com.obsproject.Studio.svg", "category": "Video", "description": "Screen recording and live streaming."}
+    {
+      "id": "brave",
+      "name": "Brave",
+      "icon": "assets/desktop-icons/brave-browser.png",
+      "category": "Browser",
+      "description": "Chromium-based web browser."
+    },
+    {
+      "id": "slack",
+      "name": "Slack",
+      "icon": "assets/desktop-icons/slack.png",
+      "category": "Chat",
+      "description": "Team messaging desktop app."
+    },
+    {
+      "id": "signal",
+      "name": "Signal",
+      "icon": "assets/desktop-icons/signal-desktop.png",
+      "category": "Chat",
+      "description": "End-to-end encrypted messenger."
+    },
+    {
+      "id": "telegram",
+      "name": "Telegram",
+      "icon": "assets/desktop-icons/org.telegram.desktop.png",
+      "category": "Chat",
+      "description": "Telegram Desktop messenger."
+    },
+    {
+      "id": "kitty",
+      "name": "kitty",
+      "icon": "assets/desktop-icons/kitty.svg",
+      "category": "Terminal",
+      "description": "GPU-accelerated terminal emulator."
+    },
+    {
+      "id": "obs-studio",
+      "name": "OBS Studio",
+      "icon": "assets/desktop-icons/com.obsproject.Studio.svg",
+      "category": "Video",
+      "description": "Screen recording and live streaming."
+    }
   ]
 }

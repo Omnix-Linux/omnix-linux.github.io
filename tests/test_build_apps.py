@@ -32,9 +32,16 @@ class Validate(unittest.TestCase):
     def test_committed_registry_is_valid(self):
         ba.validate(copy.deepcopy(REGISTRY))
 
-    def test_seed_registry_claims_no_results(self):
+    def test_recorded_results_cite_their_test_run(self):
+        # A status is only recorded from a real run: it names the tested repo
+        # commit and quotes the test log.
         for a in REGISTRY["apps"]:
-            self.assertIsNone(a["verification"], a["id"])
+            v = a["verification"]
+            if v is None:
+                continue
+            self.assertRegex(v["commit"], r"^Omnix-Linux/[A-Za-z-]+@[0-9a-f]{7,}$", a["id"])
+            self.assertIn("test script finished", v["log_excerpt"], a["id"])
+            self.assertEqual(a["test"]["repo"], v["commit"].split("@")[0], a["id"])
         for c in REGISTRY["candidates"]:
             self.assertNotIn("verification", c)
             self.assertNotIn("test", c)

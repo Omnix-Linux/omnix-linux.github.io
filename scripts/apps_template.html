@@ -187,7 +187,7 @@
   <div class="wide">
     <div class="eyebrow">Apps on Omnix</div>
     <h1><!--__APP_COUNT__-->. <em>One test behind each.</em></h1>
-    <p class="lede">Every app here comes with a workflow an agent runs in a booted NixOS VM: the real binary, the real commands, the real session. A status only appears after that test has run, and it is re-checked on every update so the way you work survives the upgrade.</p>
+    <p class="lede">Every app here comes with a workflow an agent runs in a booted NixOS VM: the real binary, the real commands, the real session. A status only appears after that test has run, and each card shows when it last ran and against which commit. Re-run the test after an update and the card tells you whether your workflow survived it.</p>
     <p class="meta"><span>Registry: <a href="https://github.com/Omnix-Linux/omnix-linux.github.io/blob/main/apps/registry.json">apps/registry.json</a></span><span>Badges: <span class="badge badge-passing">Passing</span> <span class="badge badge-known-gap">Known gap</span> <span class="badge badge-failing">Failing</span> <span class="badge badge-awaiting">Awaiting verification</span></span></p>
 
     <section aria-labelledby="lineup">
@@ -213,7 +213,7 @@
       <ol class="principles">
         <li><strong>Tested, not claimed</strong><p>An app is listed for the workflow a test runs, not for a line in a feature list.</p></li>
         <li><strong>Every status links to a test</strong><p>Passing, known gap and failing all point at the NixOS test file and the commit it ran against. The page build refuses a status without one.</p></li>
-        <li><strong>Re-verified on every update</strong><p>Tests re-run when Omnix, nixpkgs or the app changes, so a workflow that worked yesterday still works after the upgrade.</p></li>
+        <li><strong>Re-run after every update</strong><p>When Omnix, nixpkgs or the app changes, an agent re-runs the test and records the new result, so you can see whether a workflow that worked yesterday still works after the upgrade.</p></li>
         <li><strong>Rollback when an update breaks one</strong><p>A failing workflow is a reason to stay on, or boot back to, the previous generation until it is fixed.</p></li>
         <li><strong>Agent-maintained</strong><p>An agent adds an app by writing a test and a registry entry, running it, and recording the result. No hand-edited badges.</p></li>
         <li><strong>No special packaging</strong><p>Apps run as unmodified upstream binaries through the Omnix standard filesystem layer: <code>/lib64</code>, <code>/usr/lib</code>, <code>ldconfig</code> and envfs.</p></li>
