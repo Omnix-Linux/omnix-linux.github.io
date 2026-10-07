@@ -46,6 +46,14 @@ const base = process.env.APPS_BASE_URL || 'http://127.0.0.1:4187';
       await page.mouse.move(1, 880);
       await page.waitForTimeout(260);
       assert.equal(await details.isVisible(), false, 'unpinned Details stays open after leaving');
+      // Each genuine re-entry must open immediately, even after delayed dismissal.
+      for (let attempt = 0; attempt < 3; attempt++) {
+        await detailsTrigger.hover();
+        assert(await details.isVisible(), 'Details requires a second hover after mouse-out');
+        await page.mouse.move(1, 880);
+        await page.waitForTimeout(260);
+        assert.equal(await details.isVisible(), false);
+      }
       await detailsTrigger.focus();
       assert(await details.isVisible(), 'keyboard focus opens Details');
       await page.keyboard.press('Escape');

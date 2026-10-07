@@ -75,7 +75,8 @@
       if (!active || pinned) return;
       if (active.trigger.matches(":hover") || panel.matches(":hover")) return;
       if (document.activeElement === active.trigger || panel.contains(document.activeElement)) return;
-      close();
+      // Pointer-out is ordinary dismissal, not an explicit request to suppress hover.
+      close(false, false);
     }, 180);
   }
   panel.addEventListener("pointerenter", () => clearTimeout(closeTimer));
@@ -108,7 +109,11 @@
     trigger.setAttribute("aria-controls", panel.id);
     trigger.setAttribute("aria-expanded", "false");
     trigger.addEventListener("pointerenter", event => {
-      if (event.pointerType === "mouse") open(disclosure, trigger);
+      if (event.pointerType === "mouse") {
+        // A genuine new entry ends suppression from Escape or the close button.
+        suppressed = null;
+        open(disclosure, trigger);
+      }
     });
     trigger.addEventListener("pointerleave", () => { suppressed = null; scheduleClose(); });
     trigger.addEventListener("focus", () => {
