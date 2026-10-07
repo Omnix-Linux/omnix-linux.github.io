@@ -3,6 +3,8 @@
   "use strict";
   const panel = document.getElementById("app-details");
   if (!panel) return;
+  const shotPreview = document.getElementById("test-run-preview");
+  const inShotPreview = target => shotPreview && !shotPreview.hidden && shotPreview.contains(target);
   const supportsPopover = typeof panel.showPopover === "function";
   if (!supportsPopover) panel.removeAttribute("popover");
   const content = panel.querySelector(".details-content");
@@ -14,6 +16,7 @@
   function close(restoreFocus = false, suppress = true) {
     clearTimeout(closeTimer);
     if (!active) return;
+    document.dispatchEvent(new Event("details-dismiss"));
     const { disclosure, trigger, body } = active;
     active = null;
     pinned = false;
@@ -68,7 +71,7 @@
     pointerY = event.clientY;
     if (!active || !scrollHeld || !moved) return;
     scrollHeld = false;
-    if (panel.contains(event.target) || active.trigger.contains(event.target)) clearTimeout(closeTimer);
+    if (panel.contains(event.target) || active.trigger.contains(event.target) || inShotPreview(event.target)) clearTimeout(closeTimer);
     else scheduleClose();
   }, { passive: true });
   panel.addEventListener("pointerdown", () => { if (active) pinned = true; });
@@ -77,10 +80,10 @@
   }, { passive: true });
   closeButton.addEventListener("click", () => close(true));
   document.addEventListener("pointerdown", event => {
-    if (active && !panel.contains(event.target) && !active.trigger.contains(event.target)) close();
+    if (active && !panel.contains(event.target) && !active.trigger.contains(event.target) && !inShotPreview(event.target)) close();
   });
   document.addEventListener("keydown", event => {
-    if (event.key === "Escape" && active) {
+    if (event.key === "Escape" && active && (!shotPreview || shotPreview.hidden)) {
       event.preventDefault();
       close(true);
     }
@@ -105,11 +108,13 @@
     closeTimer = setTimeout(() => {
       if (!active || pinned || scrollHeld) return;
       if (active.trigger.matches(":hover") || panel.matches(":hover")) return;
+      if (shotPreview && !shotPreview.hidden && (shotPreview.matches(":hover") || shotPreview.dataset.pinned === "true" || inShotPreview(document.activeElement))) return;
       if (document.activeElement === active.trigger || panel.contains(document.activeElement)) return;
       // Pointer-out is ordinary dismissal, not an explicit request to suppress hover.
       close(false, false);
     }, 180);
   }
+  document.addEventListener("test-preview-dismiss", scheduleClose);
   panel.addEventListener("pointerenter", () => clearTimeout(closeTimer));
   panel.addEventListener("pointerleave", scheduleClose);
   panel.addEventListener("focusin", () => clearTimeout(closeTimer));
@@ -151,6 +156,8 @@
     trigger.setAttribute("aria-expanded", "false");
     trigger.addEventListener("pointerenter", event => {
       if (event.pointerType === "mouse") {
+        // Hiding an overlay can reveal this control under a stationary pointer.
+        if (suppressed === trigger && event.clientX === pointerX && event.clientY === pointerY) return;
         // A genuine new entry ends suppression from Escape or the close button.
         suppressed = null;
         open(disclosure, trigger);

@@ -3,6 +3,7 @@
 These rules apply to this page and its generator/template in `scripts/build_apps.py` and `scripts/apps_template.html`.
 
 - Combine status and Details in one expandable status pill; keep Test run images inside Details. Use three columns on wide desktops, two on tablets, and one on phones.
+- Test run thumbnails open a separate preview on hover/focus or tap. Never upscale screenshots; fit large images to the viewport, with a 1:1 control for scrollable natural-resolution inspection. Moving into the preview keeps its parent Details open; Escape closes the preview before Details. Keep the original image link for no-JavaScript access.
 - Stack evidence labels above their values inside Details; never reserve a fixed label column in these narrow dropdowns. Keep URLs and commands at the full available width.
 - Do not waste space. Every region must serve a clear purpose: app identity, useful information, or an interaction. Prefer content-sized layouts and compact spacing; avoid empty reserved rows, repeated headings, and oversized controls.
 - Give descriptions the available width. Hover or focus opens the full compact dropdown directly, without an intermediate preview or expansion control.
