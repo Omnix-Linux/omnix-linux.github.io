@@ -53,15 +53,11 @@
     panel.style.top = (onBottom ? card.bottom + gap : card.top - panel.getBoundingClientRect().height - gap) + "px";
   }
 
-  // Casual hover must not capture page scrolling. Deliberate interaction pins evidence.
+  // Interacting or scrolling keeps the hovered evidence open for reading.
   panel.addEventListener("pointerdown", () => { if (active) pinned = true; });
-  panel.addEventListener("wheel", event => {
-    if (pinned) return;
-    event.preventDefault();
-    const unit = event.deltaMode === 1 ? 16 : event.deltaMode === 2 ? innerHeight : 1;
-    close(false, false);
-    window.scrollBy({ left: event.deltaX * unit, top: event.deltaY * unit, behavior: "instant" });
-  }, { passive: false });
+  document.addEventListener("wheel", event => {
+    if (active && (panel.contains(event.target) || active.trigger.contains(event.target))) pinned = true;
+  }, { passive: true });
   closeButton.addEventListener("click", () => close(true));
   document.addEventListener("pointerdown", event => {
     if (active && !panel.contains(event.target) && !active.trigger.contains(event.target)) close();
@@ -73,9 +69,12 @@
     }
   });
   document.addEventListener("scroll", event => {
-    if (active && !panel.contains(event.target)) {
-      if (pinned) position();
-      else close(false, false);
+    if (!active) return;
+    // Page scrolling can move the anchor away from a stationary pointer.
+    // Keep it open rather than treating that movement as an intentional mouse-out.
+    if (event.target === document || (event.target instanceof Element && event.target.contains(active.disclosure))) {
+      pinned = true;
+      position();
     }
   }, true);
   window.addEventListener("resize", position);
