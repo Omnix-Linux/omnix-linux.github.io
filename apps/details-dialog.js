@@ -8,6 +8,7 @@
   const content = panel.querySelector(".details-content");
   const title = panel.querySelector("h3");
   const closeButton = panel.querySelector(".details-close");
+  let scrollHeld = false, pointerX = null, pointerY = null;
   let active = null, pinned = false, closeTimer = 0, suppressed = null, restoringFocus = false;
 
   function close(restoreFocus = false, suppress = true) {
@@ -16,6 +17,7 @@
     const { disclosure, trigger, body } = active;
     active = null;
     pinned = false;
+    scrollHeld = false;
     if (suppress) suppressed = trigger;
     // Return focus before hiding so the browser never restores it into hidden evidence.
     if (restoreFocus || panel.contains(document.activeElement)) {
@@ -53,10 +55,25 @@
     panel.style.top = (onBottom ? card.bottom + gap : card.top - panel.getBoundingClientRect().height - gap) + "px";
   }
 
-  // Interacting or scrolling keeps the hovered evidence open for reading.
+  // Clicks pin explicitly; scrolling only holds hover until the mouse moves.
+  function holdForScroll() {
+    if (!active) return;
+    scrollHeld = true;
+    clearTimeout(closeTimer);
+  }
+  document.addEventListener("pointermove", event => {
+    if (event.pointerType !== "mouse") return;
+    const moved = event.clientX !== pointerX || event.clientY !== pointerY;
+    pointerX = event.clientX;
+    pointerY = event.clientY;
+    if (!active || !scrollHeld || !moved) return;
+    scrollHeld = false;
+    if (panel.contains(event.target) || active.trigger.contains(event.target)) clearTimeout(closeTimer);
+    else scheduleClose();
+  }, { passive: true });
   panel.addEventListener("pointerdown", () => { if (active) pinned = true; });
-  document.addEventListener("wheel", event => {
-    if (active && (panel.contains(event.target) || active.trigger.contains(event.target))) pinned = true;
+  document.addEventListener("wheel", () => {
+    if (active) holdForScroll();
   }, { passive: true });
   closeButton.addEventListener("click", () => close(true));
   document.addEventListener("pointerdown", event => {
@@ -73,7 +90,7 @@
     // Page scrolling can move the anchor away from a stationary pointer.
     // Keep it open rather than treating that movement as an intentional mouse-out.
     if (event.target === document || (event.target instanceof Element && event.target.contains(active.disclosure))) {
-      pinned = true;
+      holdForScroll();
       position();
     }
   }, true);
@@ -86,7 +103,7 @@
   function scheduleClose() {
     clearTimeout(closeTimer);
     closeTimer = setTimeout(() => {
-      if (!active || pinned) return;
+      if (!active || pinned || scrollHeld) return;
       if (active.trigger.matches(":hover") || panel.matches(":hover")) return;
       if (document.activeElement === active.trigger || panel.contains(document.activeElement)) return;
       // Pointer-out is ordinary dismissal, not an explicit request to suppress hover.
@@ -116,6 +133,7 @@
     title.replaceChildren(icon, name);
     active = { disclosure, trigger, body };
     pinned = pin;
+    scrollHeld = false;
     content.append(body);
     const pageX = scrollX, pageY = scrollY;
     panel.hidden = false;
