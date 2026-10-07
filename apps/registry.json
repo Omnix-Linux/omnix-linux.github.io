@@ -26,9 +26,14 @@
   },
   "sections": [
     {
-      "id": "media",
-      "title": "Media and creative",
-      "blurb": "Video editing, recording and streaming, photo editing and raw development, illustration and visual effects."
+      "id": "video",
+      "title": "Video",
+      "blurb": "Video editing, recording, streaming, motion graphics and visual effects."
+    },
+    {
+      "id": "image",
+      "title": "Image",
+      "blurb": "Photo editing, raw development, image libraries and vector illustration."
     },
     {
       "id": "documents",
@@ -207,7 +212,7 @@
     },
     {
       "id": "filmcraft",
-      "section": "media",
+      "section": "video",
       "name": "FilmCraft 0.2.0",
       "icon": "assets/app-icons/filmcraft.webp",
       "category": "Video editor",
@@ -256,7 +261,7 @@
     },
     {
       "id": "obs-studio",
-      "section": "media",
+      "section": "video",
       "name": "OBS Studio 33 (beta)",
       "icon": "assets/desktop-icons/com.obsproject.Studio.svg",
       "category": "Recording and streaming",
@@ -306,7 +311,7 @@
     },
     {
       "id": "opencut",
-      "section": "media",
+      "section": "video",
       "name": "OpenCut 0.3.0",
       "icon": "assets/app-icons/opencut.webp",
       "category": "Video editor",
@@ -356,7 +361,7 @@
     },
     {
       "id": "photocraft",
-      "section": "media",
+      "section": "image",
       "name": "PhotoCraft 0.2.0",
       "icon": "assets/app-icons/photocraft.webp",
       "category": "Image editor",
@@ -405,7 +410,7 @@
     },
     {
       "id": "vectorcraft",
-      "section": "media",
+      "section": "image",
       "name": "VectorCraft 0.3.0",
       "icon": "assets/app-icons/vectorcraft.webp",
       "category": "Vector illustration",
@@ -454,7 +459,7 @@
     },
     {
       "id": "lightcraft",
-      "section": "media",
+      "section": "image",
       "name": "LightCraft 0.2.0",
       "icon": "assets/app-icons/lightcraft.webp",
       "category": "Photo library and raw developer",
@@ -552,7 +557,7 @@
     },
     {
       "id": "effectcraft",
-      "section": "media",
+      "section": "video",
       "name": "EffectCraft 0.3.0",
       "icon": "assets/app-icons/effectcraft.webp",
       "category": "Motion graphics and VFX",
