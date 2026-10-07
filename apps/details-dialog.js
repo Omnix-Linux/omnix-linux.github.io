@@ -8,14 +8,21 @@
   const content = panel.querySelector(".details-content");
   const title = panel.querySelector("h3");
   const closeButton = panel.querySelector(".details-close");
-  let active = null;
+  let active = null, pinned = false, closeTimer = 0, suppressed = null, restoringFocus = false;
 
-  function close(restoreFocus = false) {
+  function close(restoreFocus = false, suppress = true) {
+    clearTimeout(closeTimer);
     if (!active) return;
     const { disclosure, trigger, body } = active;
     active = null;
+    pinned = false;
+    if (suppress) suppressed = trigger;
     // Return focus before hiding so the browser never restores it into hidden evidence.
-    if (restoreFocus || panel.contains(document.activeElement)) trigger.focus({ preventScroll: true });
+    if (restoreFocus || panel.contains(document.activeElement)) {
+      restoringFocus = true;
+      trigger.focus({ preventScroll: true });
+      restoringFocus = false;
+    }
     if (supportsPopover && panel.matches(":popover-open")) panel.hidePopover();
     panel.hidden = true;
     disclosure.append(body);
@@ -62,27 +69,59 @@
     window.visualViewport.addEventListener("scroll", position);
   }
   new ResizeObserver(position).observe(panel);
+  function scheduleClose() {
+    clearTimeout(closeTimer);
+    closeTimer = setTimeout(() => {
+      if (!active || pinned) return;
+      if (active.trigger.matches(":hover") || panel.matches(":hover")) return;
+      if (document.activeElement === active.trigger || panel.contains(document.activeElement)) return;
+      close();
+    }, 180);
+  }
+  panel.addEventListener("pointerenter", () => clearTimeout(closeTimer));
+  panel.addEventListener("pointerleave", scheduleClose);
+  panel.addEventListener("focusin", () => clearTimeout(closeTimer));
+  panel.addEventListener("focusout", scheduleClose);
+
+  function open(disclosure, trigger, pin = false) {
+    clearTimeout(closeTimer);
+    if (!pin && (suppressed === trigger || (pinned && active && active.trigger !== trigger))) return;
+    if (active && active.trigger === trigger) { pinned = pinned || pin; return; }
+    close(false, false);
+    const body = disclosure.querySelector(":scope > .more-body");
+    title.textContent = disclosure.closest(".app").querySelector("h3").textContent + " — Details";
+    active = { disclosure, trigger, body };
+    pinned = pin;
+    content.append(body);
+    const pageX = scrollX, pageY = scrollY;
+    panel.hidden = false;
+    trigger.setAttribute("aria-expanded", "true");
+    if (supportsPopover) panel.showPopover({ source: trigger });
+    // Reopening a scrolled panel must not scroll the document to its old focus.
+    if (scrollX !== pageX || scrollY !== pageY) window.scrollTo({ left: pageX, top: pageY, behavior: "instant" });
+    panel.scrollTop = 0;
+    position();
+  }
   for (const disclosure of document.querySelectorAll(".app > .more")) {
     const trigger = disclosure.querySelector(":scope > summary");
     trigger.setAttribute("aria-haspopup", "dialog");
     trigger.setAttribute("aria-controls", panel.id);
     trigger.setAttribute("aria-expanded", "false");
+    trigger.addEventListener("pointerenter", event => {
+      if (event.pointerType === "mouse") open(disclosure, trigger);
+    });
+    trigger.addEventListener("pointerleave", () => { suppressed = null; scheduleClose(); });
+    trigger.addEventListener("focus", () => {
+      if (restoringFocus) return;
+      suppressed = null;
+      open(disclosure, trigger);
+    });
+    trigger.addEventListener("blur", () => { suppressed = null; scheduleClose(); });
     trigger.addEventListener("click", event => {
       event.preventDefault();
-      if (active && active.trigger === trigger) { close(true); return; }
-      close();
-      const body = disclosure.querySelector(":scope > .more-body");
-      title.textContent = disclosure.closest(".app").querySelector("h3").textContent + " — Details";
-      active = { disclosure, trigger, body };
-      content.append(body);
-      const pageX = scrollX, pageY = scrollY;
-      panel.hidden = false;
-      trigger.setAttribute("aria-expanded", "true");
-      if (supportsPopover) panel.showPopover({ source: trigger });
-      // Reopening a scrolled panel must not scroll the document to its old focus.
-      if (scrollX !== pageX || scrollY !== pageY) window.scrollTo({ left: pageX, top: pageY, behavior: "instant" });
-      panel.scrollTop = 0;
-      position();
+      if (active && active.trigger === trigger && pinned) { close(true); return; }
+      suppressed = null;
+      open(disclosure, trigger, true);
       closeButton.focus({ preventScroll: true });
     });
   }

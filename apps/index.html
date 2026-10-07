@@ -131,6 +131,9 @@
   .more > summary:focus-visible, .validation-preview:focus-visible { outline: 2px solid var(--ice); outline-offset: 2px; }
   .more-body { display: flex; flex-direction: column; gap: 12px; border-top: 1px solid var(--line); margin-top: 12px; padding-top: 14px; }
   .details-dialog { position: fixed; inset: auto; margin: 0; z-index: 20; box-sizing: border-box; width: min(640px, calc(100vw - 24px)); max-height: calc(100dvh - 32px); overflow: auto; padding: 20px; border: 1px solid var(--ice); border-radius: 12px; background: #0b1020; color: var(--ink); box-shadow: 0 20px 60px rgba(0, 0, 0, .65); }
+  .details-dialog:not([hidden]) { animation: details-enter 140ms ease-out; }
+  @keyframes details-enter { from { opacity: 0; transform: translateY(-6px); } to { opacity: 1; transform: translateY(0); } }
+  @media (prefers-reduced-motion: reduce) { .details-dialog:not([hidden]) { animation: none; } }
   .details-dialog[hidden] { display: none; }
   .details-dialog::backdrop { background: transparent; pointer-events: none; }
   .details-dialog h3 { margin: 0 44px 0 0; font: 700 1rem/1.4 var(--font-mono); }
