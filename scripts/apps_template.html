@@ -159,13 +159,13 @@
   .preview-close:hover { background: rgba(126, 186, 228, .1); }
   .preview-close:focus-visible { outline: 2px solid var(--ice); outline-offset: -2px; }
   @media (max-width: 640px) {
-    .app > .app-head { grid-template-columns: 64px minmax(0, 1fr) 48px; gap: 6px; padding-right: 0; min-height: 82px; }
+    .app > .app-head { grid-template-columns: 32px 26px minmax(0, 1fr) 48px; gap: 6px; padding-right: 0; min-height: 82px; }
     .app-head .app-icon { width: 32px; height: 32px; grid-column: 1; grid-row: 1; }
     .app > .app-head h3 { font-size: .88rem; }
     .app-head .app-title { grid-column: 2 / -1; grid-row: 1; }
-    .app > .app-head .badge { grid-column: 2; grid-row: 2; justify-self: center; }
+    .app > .app-head .badge { grid-column: 3; grid-row: 2; justify-self: center; }
     .app > .app-head .badge { margin-left: 0; }
-    .app > .app-head .validation-preview { grid-column: 3; grid-row: 2; min-height: 44px; padding: 2px; gap: 2px; }
+    .app > .app-head .validation-preview { grid-column: 4; grid-row: 2; min-height: 44px; padding: 2px; gap: 2px; }
     .validation-preview img { width: 36px; height: 24px; }
     .validation-preview span { font: .53rem/1 var(--font-mono); }
     .more > summary { top: auto; left: 14px; right: auto; margin-top: -46px; }
