@@ -99,3 +99,14 @@ test('apps are grouped into the registry sections, in order, each app exactly on
   }
   for (const a of reg.apps) assert.equal((html.match(new RegExp(`<article class="app status-[a-z-]+" id="${a.id}">`, 'g')) || []).length, 1, a.id);
 });
+
+
+test('dedicated terminal, browser and communication groups cover the requested lineup', () => {
+  const groups = Object.fromEntries(reg.sections.map(section => [section.id, reg.apps.filter(app => app.section === section.id).map(app => app.id)]));
+  assert.ok(groups.terminals.length >= 4 && groups.terminals.length <= 8);
+  for (const id of ['kitty', 'tmux', 'wezterm']) assert.ok(groups.terminals.includes(id));
+  for (const id of ['brave', 'chrome', 'chromium', 'helium', 'firefox']) assert.ok(groups.browsers.includes(id));
+  for (const id of ['telegram', 'signal', 'slack', 'discord']) assert.ok(groups.communication.includes(id));
+  assert.ok(!groups.developer.includes('kitty'));
+  assert.ok(!groups.internet);
+});

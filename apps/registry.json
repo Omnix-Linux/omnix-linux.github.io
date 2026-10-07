@@ -36,14 +36,24 @@
       "blurb": "PDF editing and page layout for print and screen."
     },
     {
-      "id": "internet",
-      "title": "Internet and communication",
-      "blurb": "Browsing, messaging and team chat."
+      "id": "browsers",
+      "title": "Browsers",
+      "blurb": "Browser startup and page rendering checked in Omnix virtual machines."
+    },
+    {
+      "id": "communication",
+      "title": "Communication",
+      "blurb": "Messaging, team chat, Matrix and email clients. Desktop startup is tested; account-based messaging and calls are not."
+    },
+    {
+      "id": "terminals",
+      "title": "Terminals",
+      "blurb": "Terminal emulators and tmux, checked for shell access, keyboard input and session behavior."
     },
     {
       "id": "developer",
       "title": "Developer tools",
-      "blurb": "Runtimes and the terminal, straight from upstream."
+      "blurb": "Language runtimes, straight from upstream."
     },
     {
       "id": "desktops",
@@ -341,7 +351,7 @@
         "verified_at": "2026-10-06",
         "commit": "Omnix-Linux/Omnix@3f1ce17",
         "notes": "Fresh NixOS VM run (nix build .#checks.x86_64-linux.app-opencut) on the Omnix base with its desktop preset; the screenshot above is from this run. OpenCut publishes only the web app's source (its v0.3.0 release has no assets; nixpkgs has no package; no flake), so the test builds it from source. The editor's renderer needs WebGL2 or WebGPU: in the GPU-less VM Brave needs --use-angle=swiftshader --enable-unsafe-swiftshader, without which it shows \"Failed to load project\". The editor gates viewports under 1024 px, so the VM screen is 1280x800. Icon: OpenCut's own logo (apps/web/public/logos/opencut/icon.svg, MIT). Test in Omnix main (Omnix-Linux/Omnix#6).",
-        "log_excerpt": "opencut-web: ✓ Ready in 507ms\nwindow: OpenCut - Brave\n\"url\": \"http://127.0.0.1:3000/editor/ca4914a0-7f1e-45bf-92a5-9ee849c17ec9\"\nscreen text: Welcome to OpenCut Beta!\nscreen text: Untitled Project\ntest script finished in 57.35s"
+        "log_excerpt": "opencut-web: \u2713 Ready in 507ms\nwindow: OpenCut - Brave\n\"url\": \"http://127.0.0.1:3000/editor/ca4914a0-7f1e-45bf-92a5-9ee849c17ec9\"\nscreen text: Welcome to OpenCut Beta!\nscreen text: Untitled Project\ntest script finished in 57.35s"
       }
     },
     {
@@ -389,7 +399,7 @@
         "status": "passing",
         "verified_at": "2026-10-06",
         "commit": "Omnix-Linux/Omnix@3f1ce17",
-        "notes": "Fresh NixOS VM run (nix build .#checks.x86_64-linux.app-photocraft); sha256 matched SHA256SUMS.txt; window “PhotoCraft”. Test in Omnix main (Omnix-Linux/Omnix#6).",
+        "notes": "Fresh NixOS VM run (nix build .#checks.x86_64-linux.app-photocraft); sha256 matched SHA256SUMS.txt; window \u201cPhotoCraft\u201d. Test in Omnix main (Omnix-Linux/Omnix#6).",
         "log_excerpt": "subtest: CLI and --version run\n(finished: subtest: CLI and --version run, in 0.29 seconds)\nsubtest: main window appears\n(finished: subtest: main window appears, in 12.80 seconds)\ntest script finished in 28.84s"
       }
     },
@@ -438,7 +448,7 @@
         "status": "passing",
         "verified_at": "2026-10-06",
         "commit": "Omnix-Linux/Omnix@3f1ce17",
-        "notes": "Fresh NixOS VM run (nix build .#checks.x86_64-linux.app-vectorcraft); sha256 matched SHA256SUMS.txt; window “VectorCraft”. Test in Omnix main (Omnix-Linux/Omnix#6).",
+        "notes": "Fresh NixOS VM run (nix build .#checks.x86_64-linux.app-vectorcraft); sha256 matched SHA256SUMS.txt; window \u201cVectorCraft\u201d. Test in Omnix main (Omnix-Linux/Omnix#6).",
         "log_excerpt": "subtest: CLI and --version run\n(finished: subtest: CLI and --version run, in 0.17 seconds)\nsubtest: main window appears\n(finished: subtest: main window appears, in 12.49 seconds)\ntest script finished in 27.65s"
       }
     },
@@ -487,7 +497,7 @@
         "status": "passing",
         "verified_at": "2026-10-06",
         "commit": "Omnix-Linux/Omnix@3f1ce17",
-        "notes": "Fresh NixOS VM run (nix build .#checks.x86_64-linux.app-lightcraft); sha256 matched SHA256SUMS.txt; window “LightCraft”. Test in Omnix main (Omnix-Linux/Omnix#6).",
+        "notes": "Fresh NixOS VM run (nix build .#checks.x86_64-linux.app-lightcraft); sha256 matched SHA256SUMS.txt; window \u201cLightCraft\u201d. Test in Omnix main (Omnix-Linux/Omnix#6).",
         "log_excerpt": "subtest: CLI and --version run\n(finished: subtest: CLI and --version run, in 0.18 seconds)\nsubtest: main window appears\n(finished: subtest: main window appears, in 12.90 seconds)\ntest script finished in 27.68s"
       }
     },
@@ -536,7 +546,7 @@
         "status": "passing",
         "verified_at": "2026-10-06",
         "commit": "Omnix-Linux/Omnix@3f1ce17",
-        "notes": "Fresh NixOS VM run (nix build .#checks.x86_64-linux.app-printcraft); sha256 matched SHA256SUMS.txt; window “PrintCraft”. Test in Omnix main (Omnix-Linux/Omnix#6).",
+        "notes": "Fresh NixOS VM run (nix build .#checks.x86_64-linux.app-printcraft); sha256 matched SHA256SUMS.txt; window \u201cPrintCraft\u201d. Test in Omnix main (Omnix-Linux/Omnix#6).",
         "log_excerpt": "subtest: CLI and --version run\n(finished: subtest: CLI and --version run, in 0.09 seconds)\nsubtest: main window appears\n(finished: subtest: main window appears, in 11.32 seconds)\ntest script finished in 29.18s"
       }
     },
@@ -585,7 +595,7 @@
         "status": "passing",
         "verified_at": "2026-10-06",
         "commit": "Omnix-Linux/Omnix@3f1ce17",
-        "notes": "Fresh NixOS VM run (nix build .#checks.x86_64-linux.app-effectcraft); sha256 matched SHA256SUMS.txt; window “EffectCraft - Untitled Project.ecproj”. Test in Omnix main (Omnix-Linux/Omnix#6).",
+        "notes": "Fresh NixOS VM run (nix build .#checks.x86_64-linux.app-effectcraft); sha256 matched SHA256SUMS.txt; window \u201cEffectCraft - Untitled Project.ecproj\u201d. Test in Omnix main (Omnix-Linux/Omnix#6).",
         "log_excerpt": "subtest: CLI and --version run\n(finished: subtest: CLI and --version run, in 0.06 seconds)\nsubtest: main window appears\n(finished: subtest: main window appears, in 16.62 seconds)\ntest script finished in 31.65s"
       }
     },
@@ -634,13 +644,13 @@
         "status": "passing",
         "verified_at": "2026-10-06",
         "commit": "Omnix-Linux/Omnix@3f1ce17",
-        "notes": "Fresh NixOS VM run (nix build .#checks.x86_64-linux.app-designcraft); sha256 matched SHA256SUMS.txt; window “DesignCraft”. Test in Omnix main (Omnix-Linux/Omnix#6).",
+        "notes": "Fresh NixOS VM run (nix build .#checks.x86_64-linux.app-designcraft); sha256 matched SHA256SUMS.txt; window \u201cDesignCraft\u201d. Test in Omnix main (Omnix-Linux/Omnix#6).",
         "log_excerpt": "subtest: CLI and --version run\n(finished: subtest: CLI and --version run, in 0.08 seconds)\nsubtest: main window appears\n(finished: subtest: main window appears, in 11.24 seconds)\ntest script finished in 29.02s"
       }
     },
     {
       "id": "brave",
-      "section": "internet",
+      "section": "browsers",
       "name": "Brave 1.96.61",
       "icon": "assets/desktop-icons/brave-browser.png",
       "category": "Browser",
@@ -689,7 +699,7 @@
     },
     {
       "id": "telegram",
-      "section": "internet",
+      "section": "communication",
       "name": "Telegram Desktop 7.2.9",
       "icon": "assets/desktop-icons/org.telegram.desktop.png",
       "category": "Chat",
@@ -737,7 +747,7 @@
     },
     {
       "id": "kitty",
-      "section": "developer",
+      "section": "terminals",
       "name": "kitty 0.49.2",
       "icon": "assets/desktop-icons/kitty.svg",
       "category": "Terminal",
@@ -787,7 +797,7 @@
     },
     {
       "id": "signal",
-      "section": "internet",
+      "section": "communication",
       "name": "Signal Desktop 8.26.0",
       "icon": "assets/desktop-icons/signal-desktop.png",
       "category": "Chat",
@@ -829,13 +839,13 @@
         "status": "passing",
         "verified_at": "2026-10-06",
         "commit": "Omnix-Linux/Omnix@3f1ce17",
-        "notes": "Fresh NixOS VM run. The test VM has no network, so the screenshot shows Signal's “Failed to connect to server” page rather than the link-device screen. Test in Omnix main (Omnix-Linux/Omnix#6).",
+        "notes": "Fresh NixOS VM run. The test VM has no network, so the screenshot shows Signal's \u201cFailed to connect to server\u201d page rather than the link-device screen. Test in Omnix main (Omnix-Linux/Omnix#6).",
         "log_excerpt": "window: Signal\ntest script finished in 40.05s"
       }
     },
     {
       "id": "slack",
-      "section": "internet",
+      "section": "communication",
       "name": "Slack 4.51.180",
       "icon": "assets/desktop-icons/slack.png",
       "category": "Chat",
@@ -877,9 +887,568 @@
         "status": "passing",
         "verified_at": "2026-10-06",
         "commit": "Omnix-Linux/Omnix@3f1ce17",
-        "notes": "Fresh NixOS VM run as a normal user with the sandbox on. The test VM has no network, so the screenshot shows Slack's “cannot connect” page. Test in Omnix main (Omnix-Linux/Omnix#6).",
+        "notes": "Fresh NixOS VM run as a normal user with the sandbox on. The test VM has no network, so the screenshot shows Slack's \u201ccannot connect\u201d page. Test in Omnix main (Omnix-Linux/Omnix#6).",
         "log_excerpt": "Slack 4.51.180, linux 6.18.54 on x64\nwindow: Slack\ntest script finished in 39.02s"
       }
+    },
+    {
+      "id": "tmux",
+      "section": "terminals",
+      "name": "tmux 3.7c",
+      "icon": "terminal",
+      "category": "Terminal multiplexer",
+      "kind": "nixpkgs package",
+      "description": "Persistent terminal sessions with multiple panes. Tested for shell commands, split panes, attachment and detachment.",
+      "platforms": [
+        "x86_64-linux"
+      ],
+      "workflow": [
+        "Report the installed tmux version",
+        "Create an isolated detached tmux session as a normal user",
+        "Send a shell command and verify its output marker",
+        "Split the session into two panes",
+        "Attach through xterm, capture a screenshot, detach and confirm the session survives"
+      ],
+      "test": {
+        "repo": "Omnix-Linux/Omnix",
+        "path": "tests/apps-catalog.nix",
+        "check": "checks.x86_64-linux.apps-terminals",
+        "url": "https://github.com/Omnix-Linux/Omnix/blob/e9960229758df5eec998d1266f90aff208e99c2d/tests/apps-catalog.nix"
+      },
+      "install": {
+        "label": "Try with Nix",
+        "snippet": "nix shell nixpkgs#tmux\ntmux"
+      },
+      "verification": {
+        "status": "passing",
+        "verified_at": "2026-10-07",
+        "commit": "Omnix-Linux/Omnix@e9960229758df5eec998d1266f90aff208e99c2d",
+        "notes": "Fresh Omnix X11 VM: tmux created a two-pane session, accepted shell input, attached through xterm, and retained the session after detachment. Native package from the locked nixpkgs revision.",
+        "log_excerpt": "machine: waiting for success: grep -q OMNIX-TMUX-OK /tmp/tmux-ran\nmachine: waiting for success: runuser -u alice -- tmux -L omnix-test -f /dev/null list-clients | grep -q compatibility\nmachine: must succeed: runuser -u alice -- tmux -L omnix-test -f /dev/null has-session -t compatibility\nOMNIX-CATALOG-PASS tmux (scoped VM assertions)\ntest script finished in 53.67s"
+      },
+      "homepage": "https://github.com/tmux/tmux",
+      "distribution": {
+        "via": "nixpkgs",
+        "release": "3.7c",
+        "url": "https://github.com/NixOS/nixpkgs/tree/c59305bab2065cfecc4944690d9eedbb56f3a9fa/pkgs",
+        "license": "BSD-3-Clause",
+        "attestation": "none",
+        "checked_at": "2026-10-07"
+      },
+      "screenshot": "assets/app-shots/tmux.png"
+    },
+    {
+      "id": "wezterm",
+      "section": "terminals",
+      "name": "WezTerm (2026-09-17)",
+      "icon": "assets/desktop-icons/wezterm.png",
+      "category": "Terminal emulator",
+      "kind": "nixpkgs package",
+      "description": "A GPU-accelerated terminal with tabs and multiplexing. The test checks an interactive shell, PTY, terminfo and typed commands.",
+      "platforms": [
+        "x86_64-linux"
+      ],
+      "workflow": [
+        "Report the installed WezTerm version",
+        "Launch WezTerm in an X11 session as a normal user",
+        "Verify the shell has a PTY on stdin/stdout, a TERM value and working color terminfo",
+        "Type a shell command into the window and verify its output marker",
+        "Confirm the application remains running and capture a screenshot"
+      ],
+      "test": {
+        "repo": "Omnix-Linux/Omnix",
+        "path": "tests/apps-catalog.nix",
+        "check": "checks.x86_64-linux.apps-terminals",
+        "url": "https://github.com/Omnix-Linux/Omnix/blob/e9960229758df5eec998d1266f90aff208e99c2d/tests/apps-catalog.nix"
+      },
+      "install": {
+        "label": "Try with Nix",
+        "snippet": "nix shell nixpkgs#wezterm\nwezterm"
+      },
+      "verification": {
+        "status": "passing",
+        "verified_at": "2026-10-07",
+        "commit": "Omnix-Linux/Omnix@e9960229758df5eec998d1266f90aff208e99c2d",
+        "notes": "Fresh Omnix X11 VM with the desktop library preset; native packages from the locked nixpkgs revision. Shell, PTY, terminfo and keyboard input passed.",
+        "log_excerpt": "machine: must succeed: cat /tmp/terminal-wezterm-ready\nmachine: waiting for success: grep -q OMNIX-INPUT-OK /tmp/input-wezterm\nOMNIX-CATALOG-PASS wezterm (scoped VM assertions)\ntest script finished in 53.67s"
+      },
+      "homepage": "https://wezterm.org/",
+      "distribution": {
+        "via": "nixpkgs",
+        "release": "0-unstable-2026-09-17",
+        "url": "https://github.com/NixOS/nixpkgs/tree/c59305bab2065cfecc4944690d9eedbb56f3a9fa/pkgs",
+        "license": "MIT",
+        "attestation": "none",
+        "checked_at": "2026-10-07"
+      },
+      "screenshot": "assets/app-shots/wezterm.png"
+    },
+    {
+      "id": "alacritty",
+      "section": "terminals",
+      "name": "Alacritty 0.17.0",
+      "icon": "assets/desktop-icons/alacritty.svg",
+      "category": "Terminal emulator",
+      "kind": "nixpkgs package",
+      "description": "An OpenGL terminal emulator. Tested for an interactive shell, PTY, terminfo and typed commands.",
+      "platforms": [
+        "x86_64-linux"
+      ],
+      "workflow": [
+        "Report the installed Alacritty version",
+        "Launch Alacritty in an X11 session as a normal user",
+        "Verify the shell has a PTY on stdin/stdout, a TERM value and working color terminfo",
+        "Type a shell command into the window and verify its output marker",
+        "Confirm the application remains running and capture a screenshot"
+      ],
+      "test": {
+        "repo": "Omnix-Linux/Omnix",
+        "path": "tests/apps-catalog.nix",
+        "check": "checks.x86_64-linux.apps-terminals",
+        "url": "https://github.com/Omnix-Linux/Omnix/blob/e9960229758df5eec998d1266f90aff208e99c2d/tests/apps-catalog.nix"
+      },
+      "install": {
+        "label": "Try with Nix",
+        "snippet": "nix shell nixpkgs#alacritty\nalacritty"
+      },
+      "verification": {
+        "status": "passing",
+        "verified_at": "2026-10-07",
+        "commit": "Omnix-Linux/Omnix@e9960229758df5eec998d1266f90aff208e99c2d",
+        "notes": "Fresh Omnix X11 VM with the desktop library preset; native packages from the locked nixpkgs revision. Shell, PTY, terminfo and keyboard input passed.",
+        "log_excerpt": "machine: must succeed: cat /tmp/terminal-alacritty-ready\nmachine: waiting for success: grep -q OMNIX-INPUT-OK /tmp/input-alacritty\nOMNIX-CATALOG-PASS alacritty (scoped VM assertions)\ntest script finished in 53.67s"
+      },
+      "homepage": "https://alacritty.org/",
+      "distribution": {
+        "via": "nixpkgs",
+        "release": "0.17.0",
+        "url": "https://github.com/NixOS/nixpkgs/tree/c59305bab2065cfecc4944690d9eedbb56f3a9fa/pkgs",
+        "license": "Apache-2.0",
+        "attestation": "none",
+        "checked_at": "2026-10-07"
+      },
+      "screenshot": "assets/app-shots/alacritty.png"
+    },
+    {
+      "id": "ghostty",
+      "section": "terminals",
+      "name": "Ghostty 1.3.1",
+      "icon": "assets/desktop-icons/ghostty.png",
+      "category": "Terminal emulator",
+      "kind": "nixpkgs package",
+      "description": "A native Linux terminal with a GTK interface. Tested for an interactive shell, PTY, terminfo and typed commands.",
+      "platforms": [
+        "x86_64-linux"
+      ],
+      "workflow": [
+        "Report the installed Ghostty version",
+        "Launch Ghostty in an X11 session as a normal user",
+        "Verify the shell has a PTY on stdin/stdout, a TERM value and working color terminfo",
+        "Type a shell command into the window and verify its output marker",
+        "Confirm the application remains running and capture a screenshot"
+      ],
+      "test": {
+        "repo": "Omnix-Linux/Omnix",
+        "path": "tests/apps-catalog.nix",
+        "check": "checks.x86_64-linux.apps-terminals",
+        "url": "https://github.com/Omnix-Linux/Omnix/blob/e9960229758df5eec998d1266f90aff208e99c2d/tests/apps-catalog.nix"
+      },
+      "install": {
+        "label": "Try with Nix",
+        "snippet": "nix shell nixpkgs#ghostty\nghostty"
+      },
+      "verification": {
+        "status": "passing",
+        "verified_at": "2026-10-07",
+        "commit": "Omnix-Linux/Omnix@e9960229758df5eec998d1266f90aff208e99c2d",
+        "notes": "Fresh Omnix X11 VM with the desktop library preset; native packages from the locked nixpkgs revision. Shell, PTY, terminfo and keyboard input passed.",
+        "log_excerpt": "machine: must succeed: cat /tmp/terminal-ghostty-ready\nmachine: waiting for success: grep -q OMNIX-INPUT-OK /tmp/input-ghostty\nOMNIX-CATALOG-PASS ghostty (scoped VM assertions)\ntest script finished in 53.67s"
+      },
+      "homepage": "https://ghostty.org/",
+      "distribution": {
+        "via": "nixpkgs",
+        "release": "1.3.1",
+        "url": "https://github.com/NixOS/nixpkgs/tree/c59305bab2065cfecc4944690d9eedbb56f3a9fa/pkgs",
+        "license": "MIT",
+        "attestation": "none",
+        "checked_at": "2026-10-07"
+      },
+      "screenshot": "assets/app-shots/ghostty.png"
+    },
+    {
+      "id": "xterm",
+      "section": "terminals",
+      "name": "xterm 411",
+      "icon": "terminal",
+      "category": "X11 terminal",
+      "kind": "nixpkgs package",
+      "description": "The X Window System terminal. Tested for an interactive shell, PTY, terminfo and typed commands.",
+      "platforms": [
+        "x86_64-linux"
+      ],
+      "workflow": [
+        "Report the installed xterm version",
+        "Launch xterm in an X11 session as a normal user",
+        "Verify the shell has a PTY on stdin/stdout, a TERM value and working color terminfo",
+        "Type a shell command into the window and verify its output marker",
+        "Confirm the application remains running and capture a screenshot"
+      ],
+      "test": {
+        "repo": "Omnix-Linux/Omnix",
+        "path": "tests/apps-catalog.nix",
+        "check": "checks.x86_64-linux.apps-terminals",
+        "url": "https://github.com/Omnix-Linux/Omnix/blob/e9960229758df5eec998d1266f90aff208e99c2d/tests/apps-catalog.nix"
+      },
+      "install": {
+        "label": "Try with Nix",
+        "snippet": "nix shell nixpkgs#xterm\nxterm"
+      },
+      "verification": {
+        "status": "passing",
+        "verified_at": "2026-10-07",
+        "commit": "Omnix-Linux/Omnix@e9960229758df5eec998d1266f90aff208e99c2d",
+        "notes": "Fresh Omnix X11 VM with the desktop library preset; native packages from the locked nixpkgs revision. Shell, PTY, terminfo and keyboard input passed.",
+        "log_excerpt": "machine: must succeed: cat /tmp/terminal-xterm-ready\nmachine: waiting for success: grep -q OMNIX-INPUT-OK /tmp/input-xterm\nOMNIX-CATALOG-PASS xterm (scoped VM assertions)\ntest script finished in 53.67s"
+      },
+      "homepage": "https://invisible-island.net/xterm/",
+      "distribution": {
+        "via": "nixpkgs",
+        "release": "411",
+        "url": "https://github.com/NixOS/nixpkgs/tree/c59305bab2065cfecc4944690d9eedbb56f3a9fa/pkgs",
+        "license": "MIT",
+        "attestation": "none",
+        "checked_at": "2026-10-07"
+      },
+      "screenshot": "assets/app-shots/xterm.png"
+    },
+    {
+      "id": "chrome",
+      "section": "browsers",
+      "name": "Chrome 154.0.8037.92",
+      "icon": "assets/desktop-icons/chrome.png",
+      "category": "Web browser",
+      "kind": "nixpkgs package",
+      "description": "Google Chrome from the pinned nixpkgs package set. The test loads a local page and verifies its title and JavaScript request.",
+      "platforms": [
+        "x86_64-linux"
+      ],
+      "workflow": [
+        "Report the installed Chrome version",
+        "Launch Chrome as a normal user with a fresh profile",
+        "Load an offline HTTP fixture served inside the VM",
+        "Verify the window title matches the fixture and JavaScript sends a request to the local server",
+        "Confirm the browser remains running and capture a screenshot"
+      ],
+      "test": {
+        "repo": "Omnix-Linux/Omnix",
+        "path": "tests/apps-catalog.nix",
+        "check": "checks.x86_64-linux.apps-browsers",
+        "url": "https://github.com/Omnix-Linux/Omnix/blob/e9960229758df5eec998d1266f90aff208e99c2d/tests/apps-catalog.nix"
+      },
+      "install": {
+        "label": "Try with Nix",
+        "snippet": "NIXPKGS_ALLOW_UNFREE=1 nix shell --impure nixpkgs#google-chrome\ngoogle-chrome"
+      },
+      "verification": {
+        "status": "passing",
+        "verified_at": "2026-10-07",
+        "commit": "Omnix-Linux/Omnix@e9960229758df5eec998d1266f90aff208e99c2d",
+        "notes": "Fresh Omnix X11 VM as a normal user: a fresh browser profile loaded the local HTML fixture and ran JavaScript. Browser sandbox retained. Native package from the locked nixpkgs revision.",
+        "log_excerpt": "machine: waiting for success: journalctl -u browser-fixtures --no-pager | grep -q chrome-js-ok\nOMNIX-CATALOG-PASS chrome (scoped VM assertions)\ntest script finished in 64.88s"
+      },
+      "homepage": "https://www.google.com/chrome/",
+      "distribution": {
+        "via": "nixpkgs",
+        "release": "154.0.8037.92",
+        "url": "https://github.com/NixOS/nixpkgs/tree/c59305bab2065cfecc4944690d9eedbb56f3a9fa/pkgs",
+        "license": "Proprietary",
+        "attestation": "none",
+        "checked_at": "2026-10-07"
+      },
+      "screenshot": "assets/app-shots/chrome.png"
+    },
+    {
+      "id": "chromium",
+      "section": "browsers",
+      "name": "Chromium 154.0.8037.92",
+      "icon": "assets/desktop-icons/chromium.png",
+      "category": "Web browser",
+      "kind": "nixpkgs package",
+      "description": "The open-source Chromium browser. The test loads a local page and verifies its title and JavaScript request.",
+      "platforms": [
+        "x86_64-linux"
+      ],
+      "workflow": [
+        "Report the installed Chromium version",
+        "Launch Chromium as a normal user with a fresh profile",
+        "Load an offline HTTP fixture served inside the VM",
+        "Verify the window title matches the fixture and JavaScript sends a request to the local server",
+        "Confirm the browser remains running and capture a screenshot"
+      ],
+      "test": {
+        "repo": "Omnix-Linux/Omnix",
+        "path": "tests/apps-catalog.nix",
+        "check": "checks.x86_64-linux.apps-browsers",
+        "url": "https://github.com/Omnix-Linux/Omnix/blob/e9960229758df5eec998d1266f90aff208e99c2d/tests/apps-catalog.nix"
+      },
+      "install": {
+        "label": "Try with Nix",
+        "snippet": "nix shell nixpkgs#chromium\nchromium"
+      },
+      "verification": {
+        "status": "passing",
+        "verified_at": "2026-10-07",
+        "commit": "Omnix-Linux/Omnix@e9960229758df5eec998d1266f90aff208e99c2d",
+        "notes": "Fresh Omnix X11 VM as a normal user: a fresh browser profile loaded the local HTML fixture and ran JavaScript. Browser sandbox retained. Native package from the locked nixpkgs revision.",
+        "log_excerpt": "machine: waiting for success: journalctl -u browser-fixtures --no-pager | grep -q chromium-js-ok\nOMNIX-CATALOG-PASS chromium (scoped VM assertions)\ntest script finished in 64.88s"
+      },
+      "homepage": "https://www.chromium.org/",
+      "distribution": {
+        "via": "nixpkgs",
+        "release": "154.0.8037.92",
+        "url": "https://github.com/NixOS/nixpkgs/tree/c59305bab2065cfecc4944690d9eedbb56f3a9fa/pkgs",
+        "license": "BSD-3-Clause",
+        "attestation": "none",
+        "checked_at": "2026-10-07"
+      },
+      "screenshot": "assets/app-shots/chromium.png"
+    },
+    {
+      "id": "firefox",
+      "section": "browsers",
+      "name": "Firefox 157.0",
+      "icon": "assets/desktop-icons/firefox.png",
+      "category": "Web browser",
+      "kind": "nixpkgs package",
+      "description": "Mozilla Firefox from the pinned nixpkgs package set. The test loads a local page and verifies its title and JavaScript request.",
+      "platforms": [
+        "x86_64-linux"
+      ],
+      "workflow": [
+        "Report the installed Firefox version",
+        "Launch Firefox as a normal user with a fresh profile",
+        "Load an offline HTTP fixture served inside the VM",
+        "Verify the window title matches the fixture and JavaScript sends a request to the local server",
+        "Confirm the browser remains running and capture a screenshot"
+      ],
+      "test": {
+        "repo": "Omnix-Linux/Omnix",
+        "path": "tests/apps-catalog.nix",
+        "check": "checks.x86_64-linux.apps-browsers",
+        "url": "https://github.com/Omnix-Linux/Omnix/blob/e9960229758df5eec998d1266f90aff208e99c2d/tests/apps-catalog.nix"
+      },
+      "install": {
+        "label": "Try with Nix",
+        "snippet": "nix shell nixpkgs#firefox\nfirefox"
+      },
+      "verification": {
+        "status": "passing",
+        "verified_at": "2026-10-07",
+        "commit": "Omnix-Linux/Omnix@e9960229758df5eec998d1266f90aff208e99c2d",
+        "notes": "Fresh Omnix X11 VM as a normal user: a fresh browser profile loaded the local HTML fixture and ran JavaScript. Browser sandbox retained. Native package from the locked nixpkgs revision.",
+        "log_excerpt": "machine: waiting for success: journalctl -u browser-fixtures --no-pager | grep -q firefox-js-ok\nOMNIX-CATALOG-PASS firefox (scoped VM assertions)\ntest script finished in 64.88s"
+      },
+      "homepage": "https://www.mozilla.org/firefox/",
+      "distribution": {
+        "via": "nixpkgs",
+        "release": "157.0",
+        "url": "https://github.com/NixOS/nixpkgs/tree/c59305bab2065cfecc4944690d9eedbb56f3a9fa/pkgs",
+        "license": "MPL-2.0",
+        "attestation": "none",
+        "checked_at": "2026-10-07"
+      },
+      "screenshot": "assets/app-shots/firefox.png"
+    },
+    {
+      "id": "helium",
+      "section": "browsers",
+      "name": "Helium 0.18.3.1",
+      "icon": "assets/desktop-icons/helium.png",
+      "category": "Web browser",
+      "kind": "Prebuilt binary",
+      "description": "Helium\u2019s upstream Linux tarball, run through the Omnix FHS layer. The test loads a local page and verifies its title and JavaScript request.",
+      "platforms": [
+        "x86_64-linux"
+      ],
+      "workflow": [
+        "Report the installed Helium version",
+        "Launch Helium as a normal user with a fresh profile",
+        "Load an offline HTTP fixture served inside the VM",
+        "Verify the window title matches the fixture and JavaScript sends a request to the local server",
+        "Confirm the browser remains running and capture a screenshot"
+      ],
+      "test": {
+        "repo": "Omnix-Linux/Omnix",
+        "path": "tests/apps-catalog.nix",
+        "check": "checks.x86_64-linux.apps-browsers",
+        "url": "https://github.com/Omnix-Linux/Omnix/blob/e9960229758df5eec998d1266f90aff208e99c2d/tests/apps-catalog.nix"
+      },
+      "install": {
+        "label": "Download from upstream",
+        "snippet": "sudo mkdir -p /opt/helium\ncurl -fsSL https://github.com/imputnet/helium-linux/releases/download/0.18.3.1/helium-0.18.3.1-x86_64_linux.tar.xz \\\n  | sudo tar -xJ -C /opt/helium --strip-components=1\n/opt/helium/helium"
+      },
+      "verification": {
+        "status": "passing",
+        "verified_at": "2026-10-07",
+        "commit": "Omnix-Linux/Omnix@e9960229758df5eec998d1266f90aff208e99c2d",
+        "notes": "Fresh Omnix X11 VM as a normal user: a fresh browser profile loaded the local HTML fixture and ran JavaScript. Browser sandbox retained. Upstream Helium Linux archive, pinned to the verified SHA-256.",
+        "log_excerpt": "machine: waiting for success: journalctl -u browser-fixtures --no-pager | grep -q helium-js-ok\nOMNIX-CATALOG-PASS helium (scoped VM assertions)\ntest script finished in 64.88s"
+      },
+      "homepage": "https://helium.computer/",
+      "distribution": {
+        "via": "GitHub releases",
+        "repo": "imputnet/helium-linux",
+        "release": "0.18.3.1",
+        "artifact": "helium-0.18.3.1-x86_64_linux.tar.xz",
+        "url": "https://github.com/imputnet/helium-linux/releases/tag/0.18.3.1",
+        "license": "GPL-3.0",
+        "checksums": null,
+        "attestation": "none",
+        "checked_at": "2026-10-07"
+      },
+      "screenshot": "assets/app-shots/helium.png"
+    },
+    {
+      "id": "discord",
+      "section": "communication",
+      "name": "Discord 1.0.159",
+      "icon": "assets/desktop-icons/discord.png",
+      "category": "Voice and chat",
+      "kind": "nixpkgs package",
+      "description": "Voice and community chat. In the VM the bootstrap window opens, but its update download fails before sign-in.",
+      "platforms": [
+        "x86_64-linux"
+      ],
+      "workflow": [
+        "Launch Discord as a normal user in the Omnix X11 test session",
+        "Wait for a visible bootstrap window and confirm the process remains active",
+        "Capture the startup screen: update download fails before sign-in",
+        "No external account is used; messaging and calls are not tested"
+      ],
+      "test": {
+        "repo": "Omnix-Linux/Omnix",
+        "path": "tests/apps-catalog.nix",
+        "check": "checks.x86_64-linux.apps-communication",
+        "url": "https://github.com/Omnix-Linux/Omnix/blob/e9960229758df5eec998d1266f90aff208e99c2d/tests/apps-catalog.nix"
+      },
+      "install": {
+        "label": "Try with Nix",
+        "snippet": "NIXPKGS_ALLOW_UNFREE=1 nix shell --impure nixpkgs#discord\ndiscord"
+      },
+      "verification": {
+        "status": "known-gap",
+        "verified_at": "2026-10-07",
+        "commit": "Omnix-Linux/Omnix@e9960229758df5eec998d1266f90aff208e99c2d",
+        "notes": "Fresh Omnix X11 VM as a normal user. The bootstrap window opened and remained active, but the screenshot shows \u201cUpdate failed \u2014 retrying\u201d; the sign-in screen was not reached. This is a known gap, despite the scoped bootstrap assertions passing. No account, messaging or calls were tested.",
+        "log_excerpt": "machine: waiting for success: DISPLAY=:0 xdotool search --onlyvisible --class discord\nmachine: must succeed: sleep 3; systemctl is-active check-discord\nOMNIX-CATALOG-PASS discord (scoped VM assertions)\ntest script finished in 59.08s"
+      },
+      "homepage": "https://discord.com/",
+      "distribution": {
+        "via": "nixpkgs",
+        "release": "1.0.159",
+        "url": "https://github.com/NixOS/nixpkgs/tree/c59305bab2065cfecc4944690d9eedbb56f3a9fa/pkgs",
+        "license": "Proprietary",
+        "attestation": "none",
+        "checked_at": "2026-10-07"
+      },
+      "known_gaps": [
+        "The VM reaches the updater, which reports an update download failure. Sign-in readiness, messaging and calls are unverified."
+      ],
+      "screenshot": "assets/app-shots/discord.png"
+    },
+    {
+      "id": "element",
+      "section": "communication",
+      "name": "Element 1.12.29",
+      "icon": "assets/desktop-icons/element.png",
+      "category": "Matrix chat",
+      "kind": "nixpkgs package",
+      "description": "A Matrix desktop chat client. The test checks desktop startup as a normal user; account-based messaging and calls are not tested.",
+      "platforms": [
+        "x86_64-linux"
+      ],
+      "workflow": [
+        "Provide an isolated unlocked GNOME keyring for the test user; launch with --password-store=gnome-libsecret",
+        "Launch Element as a normal user in the Omnix X11 test session",
+        "Wait for a visible application window",
+        "Confirm the application remains running and capture its startup screen",
+        "No external account is used; messaging, calls and mail delivery are outside this check"
+      ],
+      "test": {
+        "repo": "Omnix-Linux/Omnix",
+        "path": "tests/apps-catalog.nix",
+        "check": "checks.x86_64-linux.apps-communication",
+        "url": "https://github.com/Omnix-Linux/Omnix/blob/e9960229758df5eec998d1266f90aff208e99c2d/tests/apps-catalog.nix"
+      },
+      "install": {
+        "label": "Try with Nix",
+        "snippet": "nix shell nixpkgs#element-desktop\nelement-desktop"
+      },
+      "verification": {
+        "status": "passing",
+        "verified_at": "2026-10-07",
+        "commit": "Omnix-Linux/Omnix@e9960229758df5eec998d1266f90aff208e99c2d",
+        "notes": "Fresh Omnix X11 VM as a normal user; native package from the locked nixpkgs revision. Visible desktop startup and an active process were checked. No account sign-in, messages, calls or mail delivery were tested. The VM supplied an isolated unlocked GNOME keyring and --password-store=gnome-libsecret; screenshot shows the sign-in screen.",
+        "log_excerpt": "machine: waiting for success: DISPLAY=:0 xdotool search --onlyvisible --class element\nmachine: must succeed: sleep 3; systemctl is-active check-element\nmachine # [   32.709551] dbus-run-session[1200]: Using storage mode 'encrypted' with backend 'gnome_libsecret'\nOMNIX-CATALOG-PASS element (scoped VM assertions)\ntest script finished in 59.08s"
+      },
+      "homepage": "https://element.io/",
+      "distribution": {
+        "via": "nixpkgs",
+        "release": "1.12.29",
+        "url": "https://github.com/NixOS/nixpkgs/tree/c59305bab2065cfecc4944690d9eedbb56f3a9fa/pkgs",
+        "license": "AGPL-3.0-or-later",
+        "attestation": "none",
+        "checked_at": "2026-10-07"
+      },
+      "known_gaps": [
+        "Startup requires a working desktop secret store; the VM supplies an unlocked GNOME keyring. Messaging and calls are not tested."
+      ],
+      "screenshot": "assets/app-shots/element.png"
+    },
+    {
+      "id": "thunderbird",
+      "section": "communication",
+      "name": "Thunderbird 156.0.1",
+      "icon": "assets/desktop-icons/thunderbird.png",
+      "category": "Email client",
+      "kind": "nixpkgs package",
+      "description": "Mozilla\u2019s email, calendar and contacts client. The test checks desktop startup as a normal user; account setup and mail delivery are not tested.",
+      "platforms": [
+        "x86_64-linux"
+      ],
+      "workflow": [
+        "Launch Thunderbird as a normal user in the Omnix X11 test session",
+        "Wait for a visible application window",
+        "Confirm the application remains running and capture its startup screen",
+        "No external account is used; messaging, calls and mail delivery are outside this check"
+      ],
+      "test": {
+        "repo": "Omnix-Linux/Omnix",
+        "path": "tests/apps-catalog.nix",
+        "check": "checks.x86_64-linux.apps-communication",
+        "url": "https://github.com/Omnix-Linux/Omnix/blob/e9960229758df5eec998d1266f90aff208e99c2d/tests/apps-catalog.nix"
+      },
+      "install": {
+        "label": "Try with Nix",
+        "snippet": "nix shell nixpkgs#thunderbird\nthunderbird"
+      },
+      "verification": {
+        "status": "passing",
+        "verified_at": "2026-10-07",
+        "commit": "Omnix-Linux/Omnix@e9960229758df5eec998d1266f90aff208e99c2d",
+        "notes": "Fresh Omnix X11 VM as a normal user; native package from the locked nixpkgs revision. Visible desktop startup and an active process were checked. No account sign-in, messages, calls or mail delivery were tested.",
+        "log_excerpt": "machine: waiting for success: DISPLAY=:0 xdotool search --onlyvisible --class thunderbird\nmachine: must succeed: sleep 3; systemctl is-active check-thunderbird\nOMNIX-CATALOG-PASS thunderbird (scoped VM assertions)\ntest script finished in 59.08s"
+      },
+      "homepage": "https://www.thunderbird.net/",
+      "distribution": {
+        "via": "nixpkgs",
+        "release": "156.0.1",
+        "url": "https://github.com/NixOS/nixpkgs/tree/c59305bab2065cfecc4944690d9eedbb56f3a9fa/pkgs",
+        "license": "MPL-2.0",
+        "attestation": "none",
+        "checked_at": "2026-10-07"
+      },
+      "screenshot": "assets/app-shots/thunderbird.png"
     }
   ],
   "candidates": []

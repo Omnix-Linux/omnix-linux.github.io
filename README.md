@@ -134,3 +134,9 @@ Candidates and apps can carry a `distribution` block: where the app is published
 App icons in `assets/app-icons/` come from each app's source repository: the ArtCraft apps (PhotoCraft, VectorCraft, FilmCraft, LightCraft, PrintCraft, EffectCraft, DesignCraft) from [github.com/storytold](https://github.com/storytold) under Apache-2.0. They're downscaled to 128 px WebP.
 
 The hero shader dims on a trigger rather than with the scroll position, with hysteresis. Two 1px markers sit in the hero: scrolling down, `html.hero-dimmed` is added once `.hero-dim-trigger` (20svh) passes above the top of `#page`; scrolling back up, it's removed as soon as `.hero-wake-trigger` (45svh) comes back, while more than half the hero is on screen. Between the two the state holds, so there's no thin band where the hero is mostly visible but the shader is still dark. The class drives a fixed 0.5s CSS fade to 8% opacity and back, from an IntersectionObserver in `coronal.js`. A fast flick past the hero therefore can't skip the fade. The wordmark and tagline keep their scroll-driven fade. `tests/shader-dim.test.cjs` pins this.
+
+### Terminal, browser and communication coverage
+
+The Apps catalog separates Terminals, Browsers and Communication. Terminal coverage includes Kitty, tmux, WezTerm, Alacritty, Ghostty and xterm; tmux is identified as a multiplexer. Browsers include Brave, Chrome, Chromium, Helium and Firefox. Communication includes Telegram, Signal, Slack, Discord, Element and Thunderbird.
+
+The coordinated Omnix `tests/apps-catalog.nix` checks test terminal PTYs, terminfo, shell input and tmux session/pane behavior; browser checks load an offline HTTP fixture and verify JavaScript execution; communication checks cover unprivileged desktop startup. Account sign-in, messages, calls and mail delivery are outside these checks. Existing Kitty, Brave, Telegram, Signal and Slack test records remain linked to their original workflows.

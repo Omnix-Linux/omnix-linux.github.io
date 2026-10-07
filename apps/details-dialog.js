@@ -69,6 +69,11 @@
     const moved = event.clientX !== pointerX || event.clientY !== pointerY;
     pointerX = event.clientX;
     pointerY = event.clientY;
+    if (moved && suppressed) {
+      suppressed = null;
+      const trigger = event.target instanceof Element && event.target.closest(".app > .more > summary");
+      if (trigger) open(trigger.parentElement, trigger);
+    }
     if (!active || !scrollHeld || !moved) return;
     scrollHeld = false;
     if (panel.contains(event.target) || active.trigger.contains(event.target) || inShotPreview(event.target)) clearTimeout(closeTimer);
@@ -94,6 +99,7 @@
     if (active && !panel.contains(event.target) && !active.trigger.contains(event.target) && !inShotPreview(event.target)) close();
   });
   document.addEventListener("keydown", event => {
+    if (event.key === "Tab") suppressed = null;
     if (event.key === "Escape" && active && (!shotPreview || shotPreview.hidden)) {
       event.preventDefault();
       close(true);
@@ -174,19 +180,19 @@
     trigger.addEventListener("pointerenter", event => {
       if (event.pointerType === "mouse") {
         // Hiding an overlay can reveal this control under a stationary pointer.
-        if (suppressed === trigger && event.clientX === pointerX && event.clientY === pointerY) return;
-        // A genuine new entry ends suppression from Escape or the close button.
+        if (suppressed === trigger) return;
+        // Pointer movement ends suppression from Escape or the close button.
         suppressed = null;
         open(disclosure, trigger);
       }
     });
-    trigger.addEventListener("pointerleave", () => { suppressed = null; scheduleClose(); });
+    trigger.addEventListener("pointerleave", scheduleClose);
     trigger.addEventListener("focus", () => {
-      if (restoringFocus) return;
+      if (restoringFocus || suppressed === trigger) return;
       suppressed = null;
       open(disclosure, trigger);
     });
-    trigger.addEventListener("blur", () => { suppressed = null; scheduleClose(); });
+    trigger.addEventListener("blur", scheduleClose);
     trigger.addEventListener("click", event => {
       event.preventDefault();
       if (active && active.trigger === trigger && pinned) { close(true); return; }
