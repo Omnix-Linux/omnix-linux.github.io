@@ -107,22 +107,46 @@
   .badge-unknown { color: #8a96ad; border-color: rgba(138, 150, 173, .4); background: rgba(138, 150, 173, .06); }
 
   /* App cards: two columns on wide screens, stacked on phones. */
-  .apps, .cands { list-style: none; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 340px), 1fr)); gap: 16px; margin: 28px 0 0; align-items: start; }
+  .apps, .cands { list-style: none; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 480px), 1fr)); gap: 12px; margin: 28px 0 0; align-items: start; }
   /* A card is identity plus one status colour; a stripe on the left repeats it at a glance. */
-  .app { display: flex; flex-direction: column; gap: 12px; min-width: 0; padding: 18px 20px; border: 1px solid var(--line); border-left: 4px solid var(--status, var(--line)); border-radius: 14px; background: var(--panel); }
+  .app { position: relative; display: grid; grid-template-columns: minmax(0, 1fr); align-items: start; min-width: 0; padding: 18px 20px; border: 1px solid var(--line); border-left: 4px solid var(--status, var(--line)); border-radius: 14px; background: var(--panel); }
   .status-passing { --status: var(--ok); }
   .status-patched { --status: var(--ok); }
   .status-known-gap { --status: var(--amber); }
   .status-failing { --status: var(--bad); }
   .status-unknown { --status: #5d6880; }
-  .more { border-top: 1px solid var(--line); padding-top: 4px; }
-  .more summary { cursor: pointer; list-style: none; display: flex; align-items: center; gap: 8px; min-height: 44px; font: 700 .76rem var(--font-mono); letter-spacing: .1em; text-transform: uppercase; color: var(--ice); }
-  .more summary::-webkit-details-marker { display: none; }
-  .more summary::before { content: "▸"; transition: transform .2s; }
-  .more[open] summary::before { transform: rotate(90deg); }
-  .more summary:focus-visible { outline: 2px solid var(--ice); outline-offset: 2px; border-radius: 4px; }
-  .more-body { display: flex; flex-direction: column; gap: 14px; padding-top: 6px; }
-  @media (prefers-reduced-motion: reduce) { .more summary::before { transition: none; } }
+  .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; border: 0; }
+  .app > .app-head { grid-column: 1; grid-row: 1; padding-right: 88px; min-height: 60px; }
+  .more, .screenshots { min-width: 0; }
+  .more:not([open]), .screenshots:not([open]) { height: 0; }
+  .more > summary, .screenshots > summary { position: absolute; top: 26px; right: 16px; width: 44px; height: 44px; cursor: pointer; list-style: none; display: grid; place-items: center; color: var(--ice); border-radius: 8px; }
+  .screenshots > summary { right: 60px; }
+  .more > summary::-webkit-details-marker, .screenshots > summary::-webkit-details-marker { display: none; }
+  .more > summary::before, .screenshots > summary::before { content: ""; width: 9px; height: 9px; border-right: 2px solid currentColor; border-bottom: 2px solid currentColor; transform: rotate(-45deg); }
+  .screenshots > summary::before { transform: rotate(45deg); }
+  .more[open] > summary::before { transform: rotate(135deg); }
+  .screenshots[open] > summary::before { transform: rotate(225deg); }
+  .more > summary:hover, .screenshots > summary:hover { background: rgba(126, 186, 228, .1); }
+  .more > summary:focus-visible, .screenshots > summary:focus-visible { outline: 2px solid var(--ice); outline-offset: 2px; }
+  .screenshots[open] { grid-column: 1; grid-row: 2; margin-top: 16px; }
+  .more[open] { grid-column: 1; grid-row: 3; margin-top: 16px; }
+  .more-body { display: flex; flex-direction: column; gap: 14px; border-top: 1px solid var(--line); padding-top: 16px; }
+  @media (min-width: 1000px) {
+    .app:has(> .more[open]) { grid-column: 1 / -1; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); column-gap: 24px; }
+    .app:has(> .more[open]) > .app-head { padding-right: 44px; }
+    .app:has(> .more[open]) > .screenshots > summary { right: calc(50% + 16px); }
+    .app > .more[open] { grid-column: 2; grid-row: 1 / span 3; margin-top: 0; padding: 0 48px 0 24px; border-left: 1px solid var(--line); }
+    .app > .more[open] .more-body { border-top: 0; padding-top: 0; }
+  }
+  @media (max-width: 520px) {
+    .app { padding: 16px 14px; }
+    .app > .app-head { display: grid; grid-template-columns: 40px minmax(0, 1fr); gap: 6px 10px; padding-right: 80px; }
+    .app-head .app-icon { width: 40px; height: 40px; grid-row: 1 / span 2; }
+    .app-head .badge { grid-column: 2; justify-self: start; margin-left: 0; }
+    .app h3 { font-size: .94rem; overflow-wrap: anywhere; }
+    .more > summary, .screenshots > summary { right: 8px; top: 24px; }
+    .screenshots > summary { right: 52px; }
+  }
   /* Sections: one collapsible block per group of apps, open by default. */
   .sec-index ul { list-style: none; display: flex; flex-wrap: wrap; gap: 8px; padding: 0; margin: 18px 0 0; }
   .chip { display: inline-flex; align-items: center; gap: 8px; min-height: 36px; padding: 4px 14px; border: 1px solid var(--line); border-radius: 999px; background: var(--panel); color: var(--ink); text-decoration: none; font: 600 .82rem var(--font-mono); }

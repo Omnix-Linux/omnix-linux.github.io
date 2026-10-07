@@ -103,7 +103,7 @@ Sections: the page groups apps into the sections listed, in order, in the regist
 
 Status rules:
 
-- Every card shows one status colour: green **Passing** or **Patched** (works because Omnix carries a fix of its own, cited in the card), yellow **Known gap**, red **Failing**, gray **Unknown** (`verification` is `null` because the test hasn't been run yet, or the app is a candidate with no test). The workflow, test, last run, log excerpt and install snippet sit in an expandable **Details** section.
+- Every card shows one status colour: green **Passing** or **Patched** (works because Omnix carries a fix of its own, cited in the card), yellow **Known gap**, red **Failing**, gray **Unknown** (`verification` is `null` because the test hasn't been run yet, or the app is a candidate with no test). Collapsed app cards show only the icon, name, category, status and arrow controls. The down arrow opens the test screenshot below the identity row; it appears only when a screenshot is available. The right arrow opens the description, distribution, workflow, test, last run, log excerpt and install snippet to the right on wide screens, or below on smaller screens. Both use independent native `<details>` controls with keyboard access and work without JavaScript.
 - `verification.status` must be `passing`, `patched`, `known-gap`, `failing` or `untested`; anything else fails the build.
 - `passing`, `patched`, `known-gap` and `failing` need `test.path` and `verification.verified_at`, or the build fails and writes nothing.
 - `candidates` are apps with no test yet. They always render as **Untested** and cannot carry a status.

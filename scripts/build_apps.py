@@ -235,9 +235,11 @@ def shot_html(app):
     if not shot:
         return ""
     when = (app.get("verification") or {}).get("verified_at", "")
-    return (f'<figure class="app-shot"><img src="../{e(shot)}" alt="{e(app["name"])} running on Omnix in the test VM" '
+    return (f'<details class="screenshots"><summary aria-label="Screenshots for {e(app["name"])}" '
+            f'title="Screenshots"><span class="sr-only">Screenshots</span></summary>'
+            f'<figure class="app-shot"><img src="../{e(shot)}" alt="{e(app["name"])} running on Omnix in the test VM" '
             f'width="1024" height="768" loading="lazy" decoding="async">'
-            f'<figcaption>Screenshot from the test run on {e(when)}</figcaption></figure>')
+            f'<figcaption>Screenshot from the test run on {e(when)}</figcaption></figure></details>')
 
 
 def render_app(app):
@@ -270,11 +272,11 @@ def render_app(app):
     {badge_html(status)}
   </header>
   {shot_html(app)}
-  <p class="app-desc">{e(app["description"])}</p>
-  {dist_html(app.get("distribution"), app.get("homepage"))}
   <details class="more">
-    <summary>Details</summary>
+    <summary aria-label="Details for {e(app['name'])}" title="Details"><span class="sr-only">Details</span></summary>
     <div class="more-body">
+      <p class="app-desc">{e(app["description"])}</p>
+{dist_html(app.get("distribution"), app.get("homepage"))}
       <div class="term"><div class="term-bar"><i></i><i></i><i></i><b>workflow an agent verifies</b></div><ol class="steps">{steps}</ol></div>
       {gaps}
       <dl class="evidence">

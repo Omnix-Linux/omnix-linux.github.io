@@ -107,22 +107,46 @@
   .badge-unknown { color: #8a96ad; border-color: rgba(138, 150, 173, .4); background: rgba(138, 150, 173, .06); }
 
   /* App cards: two columns on wide screens, stacked on phones. */
-  .apps, .cands { list-style: none; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 340px), 1fr)); gap: 16px; margin: 28px 0 0; align-items: start; }
+  .apps, .cands { list-style: none; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 480px), 1fr)); gap: 12px; margin: 28px 0 0; align-items: start; }
   /* A card is identity plus one status colour; a stripe on the left repeats it at a glance. */
-  .app { display: flex; flex-direction: column; gap: 12px; min-width: 0; padding: 18px 20px; border: 1px solid var(--line); border-left: 4px solid var(--status, var(--line)); border-radius: 14px; background: var(--panel); }
+  .app { position: relative; display: grid; grid-template-columns: minmax(0, 1fr); align-items: start; min-width: 0; padding: 18px 20px; border: 1px solid var(--line); border-left: 4px solid var(--status, var(--line)); border-radius: 14px; background: var(--panel); }
   .status-passing { --status: var(--ok); }
   .status-patched { --status: var(--ok); }
   .status-known-gap { --status: var(--amber); }
   .status-failing { --status: var(--bad); }
   .status-unknown { --status: #5d6880; }
-  .more { border-top: 1px solid var(--line); padding-top: 4px; }
-  .more summary { cursor: pointer; list-style: none; display: flex; align-items: center; gap: 8px; min-height: 44px; font: 700 .76rem var(--font-mono); letter-spacing: .1em; text-transform: uppercase; color: var(--ice); }
-  .more summary::-webkit-details-marker { display: none; }
-  .more summary::before { content: "▸"; transition: transform .2s; }
-  .more[open] summary::before { transform: rotate(90deg); }
-  .more summary:focus-visible { outline: 2px solid var(--ice); outline-offset: 2px; border-radius: 4px; }
-  .more-body { display: flex; flex-direction: column; gap: 14px; padding-top: 6px; }
-  @media (prefers-reduced-motion: reduce) { .more summary::before { transition: none; } }
+  .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; border: 0; }
+  .app > .app-head { grid-column: 1; grid-row: 1; padding-right: 88px; min-height: 60px; }
+  .more, .screenshots { min-width: 0; }
+  .more:not([open]), .screenshots:not([open]) { height: 0; }
+  .more > summary, .screenshots > summary { position: absolute; top: 26px; right: 16px; width: 44px; height: 44px; cursor: pointer; list-style: none; display: grid; place-items: center; color: var(--ice); border-radius: 8px; }
+  .screenshots > summary { right: 60px; }
+  .more > summary::-webkit-details-marker, .screenshots > summary::-webkit-details-marker { display: none; }
+  .more > summary::before, .screenshots > summary::before { content: ""; width: 9px; height: 9px; border-right: 2px solid currentColor; border-bottom: 2px solid currentColor; transform: rotate(-45deg); }
+  .screenshots > summary::before { transform: rotate(45deg); }
+  .more[open] > summary::before { transform: rotate(135deg); }
+  .screenshots[open] > summary::before { transform: rotate(225deg); }
+  .more > summary:hover, .screenshots > summary:hover { background: rgba(126, 186, 228, .1); }
+  .more > summary:focus-visible, .screenshots > summary:focus-visible { outline: 2px solid var(--ice); outline-offset: 2px; }
+  .screenshots[open] { grid-column: 1; grid-row: 2; margin-top: 16px; }
+  .more[open] { grid-column: 1; grid-row: 3; margin-top: 16px; }
+  .more-body { display: flex; flex-direction: column; gap: 14px; border-top: 1px solid var(--line); padding-top: 16px; }
+  @media (min-width: 1000px) {
+    .app:has(> .more[open]) { grid-column: 1 / -1; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); column-gap: 24px; }
+    .app:has(> .more[open]) > .app-head { padding-right: 44px; }
+    .app:has(> .more[open]) > .screenshots > summary { right: calc(50% + 16px); }
+    .app > .more[open] { grid-column: 2; grid-row: 1 / span 3; margin-top: 0; padding: 0 48px 0 24px; border-left: 1px solid var(--line); }
+    .app > .more[open] .more-body { border-top: 0; padding-top: 0; }
+  }
+  @media (max-width: 520px) {
+    .app { padding: 16px 14px; }
+    .app > .app-head { display: grid; grid-template-columns: 40px minmax(0, 1fr); gap: 6px 10px; padding-right: 80px; }
+    .app-head .app-icon { width: 40px; height: 40px; grid-row: 1 / span 2; }
+    .app-head .badge { grid-column: 2; justify-self: start; margin-left: 0; }
+    .app h3 { font-size: .94rem; overflow-wrap: anywhere; }
+    .more > summary, .screenshots > summary { right: 8px; top: 24px; }
+    .screenshots > summary { right: 52px; }
+  }
   /* Sections: one collapsible block per group of apps, open by default. */
   .sec-index ul { list-style: none; display: flex; flex-wrap: wrap; gap: 8px; padding: 0; margin: 18px 0 0; }
   .chip { display: inline-flex; align-items: center; gap: 8px; min-height: 36px; padding: 4px 14px; border: 1px solid var(--line); border-radius: 999px; background: var(--panel); color: var(--ink); text-decoration: none; font: 600 .82rem var(--font-mono); }
@@ -259,12 +283,12 @@
     <div class="app-title"><h3>FilmCraft 0.2.0</h3><p class="app-cat">Video editor</p></div>
     <span class="badge badge-passing">Passing</span>
   </header>
-  <figure class="app-shot"><img src="../assets/app-shots/filmcraft.webp" alt="FilmCraft 0.2.0 running on Omnix in the test VM" width="1024" height="768" loading="lazy" decoding="async"><figcaption>Screenshot from the test run on 2026-10-06</figcaption></figure>
-  <p class="app-desc">ArtCraft&#x27;s native Rust video editor, run from its unmodified GitHub release.</p>
-  <p class="dist" title="Checked 2026-10-06"><a href="https://github.com/storytold/filmcraft/releases/tag/v0.2.0">GitHub release v0.2.0</a> · <span class="dist-ok">SHA-256 checksums</span> · <span class="dist-warn">Not attested</span> · <span>Apache-2.0</span> · <a href="https://getartcraft.com/apps/filmcraft">Website</a></p>
+  <details class="screenshots"><summary aria-label="Screenshots for FilmCraft 0.2.0" title="Screenshots"><span class="sr-only">Screenshots</span></summary><figure class="app-shot"><img src="../assets/app-shots/filmcraft.webp" alt="FilmCraft 0.2.0 running on Omnix in the test VM" width="1024" height="768" loading="lazy" decoding="async"><figcaption>Screenshot from the test run on 2026-10-06</figcaption></figure></details>
   <details class="more">
-    <summary>Details</summary>
+    <summary aria-label="Details for FilmCraft 0.2.0" title="Details"><span class="sr-only">Details</span></summary>
     <div class="more-body">
+      <p class="app-desc">ArtCraft&#x27;s native Rust video editor, run from its unmodified GitHub release.</p>
+<p class="dist" title="Checked 2026-10-06"><a href="https://github.com/storytold/filmcraft/releases/tag/v0.2.0">GitHub release v0.2.0</a> · <span class="dist-ok">SHA-256 checksums</span> · <span class="dist-warn">Not attested</span> · <span>Apache-2.0</span> · <a href="https://getartcraft.com/apps/filmcraft">Website</a></p>
       <div class="term"><div class="term-bar"><i></i><i></i><i></i><b>workflow an agent verifies</b></div><ol class="steps"><li><code>Fetch filmcraft-0.2.0-linux-x86_64.tar.gz from the GitHub release, pinned to the sha256 in its SHA256SUMS.txt</code></li><li><code>filmcraft-cli --version and filmcraft --version report 0.2.0</code></li><li><code>Start FilmCraft in an X11 session through the Omnix FHS layer (no repackaging)</code></li><li><code>Its main window maps and the app is still running 10 s later</code></li><li><code>Take a screenshot of the editor</code></li></ol></div>
       
       <dl class="evidence">
@@ -292,12 +316,12 @@ sudo mkdir -p /opt/filmcraft &amp;&amp; sudo tar -xzf filmcraft-0.2.0-linux-x86_
     <div class="app-title"><h3>OBS Studio 33 (beta)</h3><p class="app-cat">Recording and streaming</p></div>
     <span class="badge badge-patched">Patched</span>
   </header>
-  <figure class="app-shot"><img src="../assets/app-shots/obs.webp" alt="OBS Studio 33 (beta) running on Omnix in the test VM" width="1024" height="768" loading="lazy" decoding="async"><figcaption>Screenshot from the test run on 2026-10-06</figcaption></figure>
-  <p class="app-desc">Screen recording and live streaming. Omnix builds OBS from its own fork&#x27;s master: upstream master plus Omnix&#x27;s fixes, synced from time to time.</p>
-  <p class="dist" title="Checked 2026-10-06"><a href="https://github.com/omnix-apps/obs-studio/commits/master">omnix-apps/obs-studio fork · master</a> · <span>GPL-2.0</span> · <a href="https://obsproject.com">Website</a></p>
+  <details class="screenshots"><summary aria-label="Screenshots for OBS Studio 33 (beta)" title="Screenshots"><span class="sr-only">Screenshots</span></summary><figure class="app-shot"><img src="../assets/app-shots/obs.webp" alt="OBS Studio 33 (beta) running on Omnix in the test VM" width="1024" height="768" loading="lazy" decoding="async"><figcaption>Screenshot from the test run on 2026-10-06</figcaption></figure></details>
   <details class="more">
-    <summary>Details</summary>
+    <summary aria-label="Details for OBS Studio 33 (beta)" title="Details"><span class="sr-only">Details</span></summary>
     <div class="more-body">
+      <p class="app-desc">Screen recording and live streaming. Omnix builds OBS from its own fork&#x27;s master: upstream master plus Omnix&#x27;s fixes, synced from time to time.</p>
+<p class="dist" title="Checked 2026-10-06"><a href="https://github.com/omnix-apps/obs-studio/commits/master">omnix-apps/obs-studio fork · master</a> · <span>GPL-2.0</span> · <a href="https://obsproject.com">Website</a></p>
       <div class="term"><div class="term-bar"><i></i><i></i><i></i><b>workflow an agent verifies</b></div><ol class="steps"><li><code>Build OBS from omnix-apps/obs-studio master (cb73236): upstream master plus Omnix&#x27;s shutdown and core-module-path fixes</code></li><li><code>obs --version runs</code></li><li><code>Start OBS in an X11 session; OpenGL loads (Mesa llvmpipe in the VM)</code></li><li><code>The main window maps and OBS is still running 15 s later; take a screenshot</code></li><li><code>OBS&#x27;s output shows every core module loading (x264, FFmpeg, PipeWire, X11 capture, browser, ...)</code></li><li><code>Quit OBS through the window manager: it must exit with Result=success and leave no core dump</code></li></ol></div>
       
       <dl class="evidence">
@@ -325,12 +349,12 @@ programs.obs-studio.enable = true;   # now Omnix&#x27;s OBS from the fork</pre>
     <div class="app-title"><h3>OpenCut 0.3.0</h3><p class="app-cat">Video editor</p></div>
     <span class="badge badge-passing">Passing</span>
   </header>
-  <figure class="app-shot"><img src="../assets/app-shots/opencut.webp" alt="OpenCut 0.3.0 running on Omnix in the test VM" width="1024" height="768" loading="lazy" decoding="async"><figcaption>Screenshot from the test run on 2026-10-06</figcaption></figure>
-  <p class="app-desc">Open-source browser video editor (Next.js), built from its v0.3.0 source, served locally and opened in Brave.</p>
-  <p class="dist" title="Checked 2026-10-06"><a href="https://github.com/OpenCut-app/OpenCut/releases/tag/v0.3.0">GitHub source (tag) · v0.3.0</a> · <span>MIT</span> · <a href="https://opencut.app">Website</a></p>
+  <details class="screenshots"><summary aria-label="Screenshots for OpenCut 0.3.0" title="Screenshots"><span class="sr-only">Screenshots</span></summary><figure class="app-shot"><img src="../assets/app-shots/opencut.webp" alt="OpenCut 0.3.0 running on Omnix in the test VM" width="1024" height="768" loading="lazy" decoding="async"><figcaption>Screenshot from the test run on 2026-10-06</figcaption></figure></details>
   <details class="more">
-    <summary>Details</summary>
+    <summary aria-label="Details for OpenCut 0.3.0" title="Details"><span class="sr-only">Details</span></summary>
     <div class="more-body">
+      <p class="app-desc">Open-source browser video editor (Next.js), built from its v0.3.0 source, served locally and opened in Brave.</p>
+<p class="dist" title="Checked 2026-10-06"><a href="https://github.com/OpenCut-app/OpenCut/releases/tag/v0.3.0">GitHub source (tag) · v0.3.0</a> · <span>MIT</span> · <a href="https://opencut.app">Website</a></p>
       <div class="term"><div class="term-bar"><i></i><i></i><i></i><b>workflow an agent verifies</b></div><ol class="steps"><li><code>Fetch the OpenCut v0.3.0 source tag from GitHub (no Linux binary, AppImage, flake or nixpkgs package exists); bun dependencies pinned by output hash</code></li><li><code>Build the Next.js app offline in Nix (next/font&#x27;s Google Fonts download answered with Next&#x27;s mock hook and the nixpkgs Inter font)</code></li><li><code>Start OpenCut&#x27;s own standalone server on 127.0.0.1:3000 with the upstream .env.example placeholders; /projects returns the app</code></li><li><code>Open /editor in Brave&#x27;s official Linux build in an X11 session (--no-sandbox as root, software GL via SwiftShader since the VM has no GPU)</code></li><li><code>The editor creates a new project and redirects to /editor/&lt;uuid&gt;; the welcome dialog shows</code></li><li><code>Dismiss it: the editor (assets, preview, properties, timeline) shows &quot;Untitled Project&quot;; take a screenshot</code></li></ol></div>
       
       <dl class="evidence">
@@ -358,12 +382,12 @@ cd apps/web &amp;&amp; bun run build &amp;&amp; bun run start   # then open http
     <div class="app-title"><h3>PhotoCraft 0.2.0</h3><p class="app-cat">Image editor</p></div>
     <span class="badge badge-passing">Passing</span>
   </header>
-  <figure class="app-shot"><img src="../assets/app-shots/photocraft.webp" alt="PhotoCraft 0.2.0 running on Omnix in the test VM" width="1024" height="768" loading="lazy" decoding="async"><figcaption>Screenshot from the test run on 2026-10-06</figcaption></figure>
-  <p class="app-desc">Layered raster editing in a native Rust app. Run from its unmodified GitHub release.</p>
-  <p class="dist" title="Checked 2026-10-06"><a href="https://github.com/storytold/photocraft/releases/tag/v0.2.0">GitHub release v0.2.0</a> · <span class="dist-ok">SHA-256 checksums</span> · <span class="dist-warn">Not attested</span> · <span>Apache-2.0</span> · <a href="https://getartcraft.com/apps/photocraft">Website</a></p>
+  <details class="screenshots"><summary aria-label="Screenshots for PhotoCraft 0.2.0" title="Screenshots"><span class="sr-only">Screenshots</span></summary><figure class="app-shot"><img src="../assets/app-shots/photocraft.webp" alt="PhotoCraft 0.2.0 running on Omnix in the test VM" width="1024" height="768" loading="lazy" decoding="async"><figcaption>Screenshot from the test run on 2026-10-06</figcaption></figure></details>
   <details class="more">
-    <summary>Details</summary>
+    <summary aria-label="Details for PhotoCraft 0.2.0" title="Details"><span class="sr-only">Details</span></summary>
     <div class="more-body">
+      <p class="app-desc">Layered raster editing in a native Rust app. Run from its unmodified GitHub release.</p>
+<p class="dist" title="Checked 2026-10-06"><a href="https://github.com/storytold/photocraft/releases/tag/v0.2.0">GitHub release v0.2.0</a> · <span class="dist-ok">SHA-256 checksums</span> · <span class="dist-warn">Not attested</span> · <span>Apache-2.0</span> · <a href="https://getartcraft.com/apps/photocraft">Website</a></p>
       <div class="term"><div class="term-bar"><i></i><i></i><i></i><b>workflow an agent verifies</b></div><ol class="steps"><li><code>Fetch photocraft-0.2.0-linux-x86_64.tar.gz from the GitHub release, pinned to the sha256 in its SHA256SUMS.txt</code></li><li><code>photocraft --version and photocraft-cli --version report 0.2.0</code></li><li><code>Start PhotoCraft in an X11 session through the Omnix FHS layer (no repackaging)</code></li><li><code>Its main window maps and the app is still running 10 s later</code></li><li><code>Take a screenshot</code></li></ol></div>
       
       <dl class="evidence">
@@ -391,12 +415,12 @@ sudo mkdir -p /opt/photocraft &amp;&amp; sudo tar -xzf photocraft-0.2.0-linux-x8
     <div class="app-title"><h3>VectorCraft 0.3.0</h3><p class="app-cat">Vector illustration</p></div>
     <span class="badge badge-passing">Passing</span>
   </header>
-  <figure class="app-shot"><img src="../assets/app-shots/vectorcraft.webp" alt="VectorCraft 0.3.0 running on Omnix in the test VM" width="1024" height="768" loading="lazy" decoding="async"><figcaption>Screenshot from the test run on 2026-10-06</figcaption></figure>
-  <p class="app-desc">Paths, shapes and type for illustration and logos. Run from its unmodified GitHub release.</p>
-  <p class="dist" title="Checked 2026-10-06"><a href="https://github.com/storytold/vectorcraft/releases/tag/v0.3.0">GitHub release v0.3.0</a> · <span class="dist-ok">SHA-256 checksums</span> · <span class="dist-warn">Not attested</span> · <span>Apache-2.0</span> · <a href="https://getartcraft.com/apps/vectorcraft">Website</a></p>
+  <details class="screenshots"><summary aria-label="Screenshots for VectorCraft 0.3.0" title="Screenshots"><span class="sr-only">Screenshots</span></summary><figure class="app-shot"><img src="../assets/app-shots/vectorcraft.webp" alt="VectorCraft 0.3.0 running on Omnix in the test VM" width="1024" height="768" loading="lazy" decoding="async"><figcaption>Screenshot from the test run on 2026-10-06</figcaption></figure></details>
   <details class="more">
-    <summary>Details</summary>
+    <summary aria-label="Details for VectorCraft 0.3.0" title="Details"><span class="sr-only">Details</span></summary>
     <div class="more-body">
+      <p class="app-desc">Paths, shapes and type for illustration and logos. Run from its unmodified GitHub release.</p>
+<p class="dist" title="Checked 2026-10-06"><a href="https://github.com/storytold/vectorcraft/releases/tag/v0.3.0">GitHub release v0.3.0</a> · <span class="dist-ok">SHA-256 checksums</span> · <span class="dist-warn">Not attested</span> · <span>Apache-2.0</span> · <a href="https://getartcraft.com/apps/vectorcraft">Website</a></p>
       <div class="term"><div class="term-bar"><i></i><i></i><i></i><b>workflow an agent verifies</b></div><ol class="steps"><li><code>Fetch vectorcraft-0.3.0-linux-x86_64.tar.gz from the GitHub release, pinned to the sha256 in its SHA256SUMS.txt</code></li><li><code>vectorcraft --version and vectorcraft-cli --version report 0.3.0</code></li><li><code>Start VectorCraft in an X11 session through the Omnix FHS layer (no repackaging)</code></li><li><code>Its main window maps and the app is still running 10 s later</code></li><li><code>Take a screenshot</code></li></ol></div>
       
       <dl class="evidence">
@@ -424,12 +448,12 @@ sudo mkdir -p /opt/vectorcraft &amp;&amp; sudo tar -xzf vectorcraft-0.3.0-linux-
     <div class="app-title"><h3>LightCraft 0.2.0</h3><p class="app-cat">Photo library and raw developer</p></div>
     <span class="badge badge-passing">Passing</span>
   </header>
-  <figure class="app-shot"><img src="../assets/app-shots/lightcraft.webp" alt="LightCraft 0.2.0 running on Omnix in the test VM" width="1024" height="768" loading="lazy" decoding="async"><figcaption>Screenshot from the test run on 2026-10-06</figcaption></figure>
-  <p class="app-desc">Catalogue and develop raw photos. Run from its unmodified GitHub release.</p>
-  <p class="dist" title="Checked 2026-10-06"><a href="https://github.com/storytold/lightcraft/releases/tag/v0.2.0">GitHub release v0.2.0</a> · <span class="dist-ok">SHA-256 checksums</span> · <span class="dist-warn">Not attested</span> · <span>Apache-2.0</span> · <a href="https://getartcraft.com/apps/lightcraft">Website</a></p>
+  <details class="screenshots"><summary aria-label="Screenshots for LightCraft 0.2.0" title="Screenshots"><span class="sr-only">Screenshots</span></summary><figure class="app-shot"><img src="../assets/app-shots/lightcraft.webp" alt="LightCraft 0.2.0 running on Omnix in the test VM" width="1024" height="768" loading="lazy" decoding="async"><figcaption>Screenshot from the test run on 2026-10-06</figcaption></figure></details>
   <details class="more">
-    <summary>Details</summary>
+    <summary aria-label="Details for LightCraft 0.2.0" title="Details"><span class="sr-only">Details</span></summary>
     <div class="more-body">
+      <p class="app-desc">Catalogue and develop raw photos. Run from its unmodified GitHub release.</p>
+<p class="dist" title="Checked 2026-10-06"><a href="https://github.com/storytold/lightcraft/releases/tag/v0.2.0">GitHub release v0.2.0</a> · <span class="dist-ok">SHA-256 checksums</span> · <span class="dist-warn">Not attested</span> · <span>Apache-2.0</span> · <a href="https://getartcraft.com/apps/lightcraft">Website</a></p>
       <div class="term"><div class="term-bar"><i></i><i></i><i></i><b>workflow an agent verifies</b></div><ol class="steps"><li><code>Fetch lightcraft-0.2.0-linux-x86_64.tar.gz from the GitHub release, pinned to the sha256 in its SHA256SUMS.txt</code></li><li><code>lightcraft --version and lightcraft-cli --version report 0.2.0</code></li><li><code>Start LightCraft in an X11 session through the Omnix FHS layer (no repackaging)</code></li><li><code>Its main window maps and the app is still running 10 s later</code></li><li><code>Take a screenshot</code></li></ol></div>
       
       <dl class="evidence">
@@ -457,12 +481,12 @@ sudo mkdir -p /opt/lightcraft &amp;&amp; sudo tar -xzf lightcraft-0.2.0-linux-x8
     <div class="app-title"><h3>EffectCraft 0.3.0</h3><p class="app-cat">Motion graphics and VFX</p></div>
     <span class="badge badge-passing">Passing</span>
   </header>
-  <figure class="app-shot"><img src="../assets/app-shots/effectcraft.webp" alt="EffectCraft 0.3.0 running on Omnix in the test VM" width="1024" height="768" loading="lazy" decoding="async"><figcaption>Screenshot from the test run on 2026-10-06</figcaption></figure>
-  <p class="app-desc">Compositing, motion graphics and visual effects. Run from its unmodified GitHub release.</p>
-  <p class="dist" title="Checked 2026-10-06"><a href="https://github.com/storytold/effectcraft/releases/tag/v0.3.0">GitHub release v0.3.0</a> · <span class="dist-ok">SHA-256 checksums</span> · <span class="dist-warn">Not attested</span> · <span>Apache-2.0</span> · <a href="https://getartcraft.com/apps/effectcraft">Website</a></p>
+  <details class="screenshots"><summary aria-label="Screenshots for EffectCraft 0.3.0" title="Screenshots"><span class="sr-only">Screenshots</span></summary><figure class="app-shot"><img src="../assets/app-shots/effectcraft.webp" alt="EffectCraft 0.3.0 running on Omnix in the test VM" width="1024" height="768" loading="lazy" decoding="async"><figcaption>Screenshot from the test run on 2026-10-06</figcaption></figure></details>
   <details class="more">
-    <summary>Details</summary>
+    <summary aria-label="Details for EffectCraft 0.3.0" title="Details"><span class="sr-only">Details</span></summary>
     <div class="more-body">
+      <p class="app-desc">Compositing, motion graphics and visual effects. Run from its unmodified GitHub release.</p>
+<p class="dist" title="Checked 2026-10-06"><a href="https://github.com/storytold/effectcraft/releases/tag/v0.3.0">GitHub release v0.3.0</a> · <span class="dist-ok">SHA-256 checksums</span> · <span class="dist-warn">Not attested</span> · <span>Apache-2.0</span> · <a href="https://getartcraft.com/apps/effectcraft">Website</a></p>
       <div class="term"><div class="term-bar"><i></i><i></i><i></i><b>workflow an agent verifies</b></div><ol class="steps"><li><code>Fetch effectcraft-0.3.0-linux-x86_64.tar.gz from the GitHub release, pinned to the sha256 in its SHA256SUMS.txt</code></li><li><code>effectcraft --version and effectcraft-cli --version report 0.3.0</code></li><li><code>Start EffectCraft in an X11 session through the Omnix FHS layer (no repackaging)</code></li><li><code>Its main window maps and the app is still running 10 s later</code></li><li><code>Take a screenshot</code></li></ol></div>
       
       <dl class="evidence">
@@ -504,12 +528,12 @@ sudo mkdir -p /opt/effectcraft &amp;&amp; sudo tar -xzf effectcraft-0.3.0-linux-
     <div class="app-title"><h3>PrintCraft 0.2.0</h3><p class="app-cat">PDF workbench</p></div>
     <span class="badge badge-passing">Passing</span>
   </header>
-  <figure class="app-shot"><img src="../assets/app-shots/printcraft.webp" alt="PrintCraft 0.2.0 running on Omnix in the test VM" width="1024" height="768" loading="lazy" decoding="async"><figcaption>Screenshot from the test run on 2026-10-06</figcaption></figure>
-  <p class="app-desc">Read, edit and assemble PDFs. Run from its unmodified GitHub release.</p>
-  <p class="dist" title="Checked 2026-10-06"><a href="https://github.com/storytold/printcraft/releases/tag/v0.2.0">GitHub release v0.2.0</a> · <span class="dist-ok">SHA-256 checksums</span> · <span class="dist-warn">Not attested</span> · <span>Apache-2.0</span> · <a href="https://getartcraft.com/apps/printcraft">Website</a></p>
+  <details class="screenshots"><summary aria-label="Screenshots for PrintCraft 0.2.0" title="Screenshots"><span class="sr-only">Screenshots</span></summary><figure class="app-shot"><img src="../assets/app-shots/printcraft.webp" alt="PrintCraft 0.2.0 running on Omnix in the test VM" width="1024" height="768" loading="lazy" decoding="async"><figcaption>Screenshot from the test run on 2026-10-06</figcaption></figure></details>
   <details class="more">
-    <summary>Details</summary>
+    <summary aria-label="Details for PrintCraft 0.2.0" title="Details"><span class="sr-only">Details</span></summary>
     <div class="more-body">
+      <p class="app-desc">Read, edit and assemble PDFs. Run from its unmodified GitHub release.</p>
+<p class="dist" title="Checked 2026-10-06"><a href="https://github.com/storytold/printcraft/releases/tag/v0.2.0">GitHub release v0.2.0</a> · <span class="dist-ok">SHA-256 checksums</span> · <span class="dist-warn">Not attested</span> · <span>Apache-2.0</span> · <a href="https://getartcraft.com/apps/printcraft">Website</a></p>
       <div class="term"><div class="term-bar"><i></i><i></i><i></i><b>workflow an agent verifies</b></div><ol class="steps"><li><code>Fetch printcraft-0.2.0-linux-x86_64.tar.gz from the GitHub release, pinned to the sha256 in its SHA256SUMS.txt</code></li><li><code>printcraft --version and printcraft-cli --version report 0.2.0</code></li><li><code>Start PrintCraft in an X11 session through the Omnix FHS layer (no repackaging)</code></li><li><code>Its main window maps and the app is still running 10 s later</code></li><li><code>Take a screenshot</code></li></ol></div>
       
       <dl class="evidence">
@@ -537,12 +561,12 @@ sudo mkdir -p /opt/printcraft &amp;&amp; sudo tar -xzf printcraft-0.2.0-linux-x8
     <div class="app-title"><h3>DesignCraft 0.2.0</h3><p class="app-cat">Page layout and publishing</p></div>
     <span class="badge badge-passing">Passing</span>
   </header>
-  <figure class="app-shot"><img src="../assets/app-shots/designcraft.webp" alt="DesignCraft 0.2.0 running on Omnix in the test VM" width="1024" height="768" loading="lazy" decoding="async"><figcaption>Screenshot from the test run on 2026-10-06</figcaption></figure>
-  <p class="app-desc">Lay out pages for print and screen. Run from its unmodified GitHub release.</p>
-  <p class="dist" title="Checked 2026-10-06"><a href="https://github.com/storytold/designcraft/releases/tag/v0.2.0">GitHub release v0.2.0</a> · <span class="dist-ok">SHA-256 checksums</span> · <span class="dist-warn">Not attested</span> · <span>Apache-2.0</span> · <a href="https://getartcraft.com/apps/designcraft">Website</a></p>
+  <details class="screenshots"><summary aria-label="Screenshots for DesignCraft 0.2.0" title="Screenshots"><span class="sr-only">Screenshots</span></summary><figure class="app-shot"><img src="../assets/app-shots/designcraft.webp" alt="DesignCraft 0.2.0 running on Omnix in the test VM" width="1024" height="768" loading="lazy" decoding="async"><figcaption>Screenshot from the test run on 2026-10-06</figcaption></figure></details>
   <details class="more">
-    <summary>Details</summary>
+    <summary aria-label="Details for DesignCraft 0.2.0" title="Details"><span class="sr-only">Details</span></summary>
     <div class="more-body">
+      <p class="app-desc">Lay out pages for print and screen. Run from its unmodified GitHub release.</p>
+<p class="dist" title="Checked 2026-10-06"><a href="https://github.com/storytold/designcraft/releases/tag/v0.2.0">GitHub release v0.2.0</a> · <span class="dist-ok">SHA-256 checksums</span> · <span class="dist-warn">Not attested</span> · <span>Apache-2.0</span> · <a href="https://getartcraft.com/apps/designcraft">Website</a></p>
       <div class="term"><div class="term-bar"><i></i><i></i><i></i><b>workflow an agent verifies</b></div><ol class="steps"><li><code>Fetch designcraft-0.2.0-linux-x86_64.tar.gz from the GitHub release, pinned to the sha256 in its SHA256SUMS.txt</code></li><li><code>designcraft --version and designcraft-cli --version report 0.2.0</code></li><li><code>Start DesignCraft in an X11 session through the Omnix FHS layer (no repackaging)</code></li><li><code>Its main window maps and the app is still running 10 s later</code></li><li><code>Take a screenshot</code></li></ol></div>
       
       <dl class="evidence">
@@ -584,12 +608,12 @@ sudo mkdir -p /opt/designcraft &amp;&amp; sudo tar -xzf designcraft-0.2.0-linux-
     <div class="app-title"><h3>Brave 1.96.61</h3><p class="app-cat">Browser</p></div>
     <span class="badge badge-passing">Passing</span>
   </header>
-  <figure class="app-shot"><img src="../assets/app-shots/brave.webp" alt="Brave 1.96.61 running on Omnix in the test VM" width="1024" height="768" loading="lazy" decoding="async"><figcaption>Screenshot from the test run on 2026-10-06</figcaption></figure>
-  <p class="app-desc">Brave&#x27;s official Linux build, run from its unmodified GitHub release zip.</p>
-  <p class="dist" title="Checked 2026-10-06"><a href="https://github.com/brave/brave-browser/releases/tag/v1.96.61">GitHub release v1.96.61</a> · <span class="dist-ok">SHA-256 checksums</span> · <span class="dist-warn">Not attested</span> · <span>MPL-2.0</span> · <a href="https://brave.com">Website</a></p>
+  <details class="screenshots"><summary aria-label="Screenshots for Brave 1.96.61" title="Screenshots"><span class="sr-only">Screenshots</span></summary><figure class="app-shot"><img src="../assets/app-shots/brave.webp" alt="Brave 1.96.61 running on Omnix in the test VM" width="1024" height="768" loading="lazy" decoding="async"><figcaption>Screenshot from the test run on 2026-10-06</figcaption></figure></details>
   <details class="more">
-    <summary>Details</summary>
+    <summary aria-label="Details for Brave 1.96.61" title="Details"><span class="sr-only">Details</span></summary>
     <div class="more-body">
+      <p class="app-desc">Brave&#x27;s official Linux build, run from its unmodified GitHub release zip.</p>
+<p class="dist" title="Checked 2026-10-06"><a href="https://github.com/brave/brave-browser/releases/tag/v1.96.61">GitHub release v1.96.61</a> · <span class="dist-ok">SHA-256 checksums</span> · <span class="dist-warn">Not attested</span> · <span>MPL-2.0</span> · <a href="https://brave.com">Website</a></p>
       <div class="term"><div class="term-bar"><i></i><i></i><i></i><b>workflow an agent verifies</b></div><ol class="steps"><li><code>Fetch brave-browser-1.96.61-linux-amd64.zip from the GitHub release, pinned to the sha256 in its .sha256 file</code></li><li><code>brave --version reports Brave Browser 154.1.96.61</code></li><li><code>Start Brave in an X11 session through the Omnix FHS layer (--no-sandbox because the test session is root, a fresh profile, --no-first-run)</code></li><li><code>A browser window opens on about:blank and stays up</code></li><li><code>Take a screenshot</code></li></ol></div>
       
       <dl class="evidence">
@@ -614,12 +638,12 @@ sudo mkdir -p /opt/brave &amp;&amp; sudo unzip -q brave-browser-1.96.61-linux-am
     <div class="app-title"><h3>Telegram Desktop 7.2.9</h3><p class="app-cat">Chat</p></div>
     <span class="badge badge-passing">Passing</span>
   </header>
-  <figure class="app-shot"><img src="../assets/app-shots/telegram.webp" alt="Telegram Desktop 7.2.9 running on Omnix in the test VM" width="1024" height="768" loading="lazy" decoding="async"><figcaption>Screenshot from the test run on 2026-10-06</figcaption></figure>
-  <p class="app-desc">Telegram&#x27;s official Linux build, run from its unmodified GitHub release tarball.</p>
-  <p class="dist" title="Checked 2026-10-06"><a href="https://github.com/telegramdesktop/tdesktop/releases/tag/v7.2.9">GitHub release v7.2.9</a> · <span class="dist-warn">No checksums</span> · <span class="dist-warn">Not attested</span> · <span>GPL-3.0</span> · <a href="https://desktop.telegram.org">Website</a></p>
+  <details class="screenshots"><summary aria-label="Screenshots for Telegram Desktop 7.2.9" title="Screenshots"><span class="sr-only">Screenshots</span></summary><figure class="app-shot"><img src="../assets/app-shots/telegram.webp" alt="Telegram Desktop 7.2.9 running on Omnix in the test VM" width="1024" height="768" loading="lazy" decoding="async"><figcaption>Screenshot from the test run on 2026-10-06</figcaption></figure></details>
   <details class="more">
-    <summary>Details</summary>
+    <summary aria-label="Details for Telegram Desktop 7.2.9" title="Details"><span class="sr-only">Details</span></summary>
     <div class="more-body">
+      <p class="app-desc">Telegram&#x27;s official Linux build, run from its unmodified GitHub release tarball.</p>
+<p class="dist" title="Checked 2026-10-06"><a href="https://github.com/telegramdesktop/tdesktop/releases/tag/v7.2.9">GitHub release v7.2.9</a> · <span class="dist-warn">No checksums</span> · <span class="dist-warn">Not attested</span> · <span>GPL-3.0</span> · <a href="https://desktop.telegram.org">Website</a></p>
       <div class="term"><div class="term-bar"><i></i><i></i><i></i><b>workflow an agent verifies</b></div><ol class="steps"><li><code>Fetch td-setup-linux-x64-7.2.9.tar.xz from the GitHub release, pinned by sha256 (Telegram publishes no checksum file)</code></li><li><code>Start Telegram in an X11 session through the Omnix FHS layer, no flags</code></li><li><code>The welcome window opens and stays up</code></li><li><code>Take a screenshot</code></li></ol></div>
       
       <dl class="evidence">
@@ -643,12 +667,12 @@ test script finished in 42.36s</pre></dd></div>
     <div class="app-title"><h3>Signal Desktop 8.26.0</h3><p class="app-cat">Chat</p></div>
     <span class="badge badge-passing">Passing</span>
   </header>
-  <figure class="app-shot"><img src="../assets/app-shots/signal.webp" alt="Signal Desktop 8.26.0 running on Omnix in the test VM" width="1024" height="768" loading="lazy" decoding="async"><figcaption>Screenshot from the test run on 2026-10-06</figcaption></figure>
-  <p class="app-desc">End-to-end encrypted messenger, from nixpkgs (Signal publishes only an apt repository).</p>
-  <p class="dist" title="Checked 2026-10-06"><a href="https://search.nixos.org/packages?channel=unstable&amp;query=signal-desktop">nixpkgs · signal-desktop</a> · <span>AGPL-3.0</span> · <a href="https://signal.org/download/">Website</a></p>
+  <details class="screenshots"><summary aria-label="Screenshots for Signal Desktop 8.26.0" title="Screenshots"><span class="sr-only">Screenshots</span></summary><figure class="app-shot"><img src="../assets/app-shots/signal.webp" alt="Signal Desktop 8.26.0 running on Omnix in the test VM" width="1024" height="768" loading="lazy" decoding="async"><figcaption>Screenshot from the test run on 2026-10-06</figcaption></figure></details>
   <details class="more">
-    <summary>Details</summary>
+    <summary aria-label="Details for Signal Desktop 8.26.0" title="Details"><span class="sr-only">Details</span></summary>
     <div class="more-body">
+      <p class="app-desc">End-to-end encrypted messenger, from nixpkgs (Signal publishes only an apt repository).</p>
+<p class="dist" title="Checked 2026-10-06"><a href="https://search.nixos.org/packages?channel=unstable&amp;query=signal-desktop">nixpkgs · signal-desktop</a> · <span>AGPL-3.0</span> · <a href="https://signal.org/download/">Website</a></p>
       <div class="term"><div class="term-bar"><i></i><i></i><i></i><b>workflow an agent verifies</b></div><ol class="steps"><li><code>Install nixpkgs signal-desktop on the Omnix base</code></li><li><code>Start Signal in an X11 session (--no-sandbox because the test session is root)</code></li><li><code>The Signal window opens and stays up; with no network in the VM it shows its can&#x27;t-connect page</code></li><li><code>Take a screenshot</code></li></ol></div>
       
       <dl class="evidence">
@@ -670,12 +694,12 @@ test script finished in 40.05s</pre></dd></div>
     <div class="app-title"><h3>Slack 4.51.180</h3><p class="app-cat">Chat</p></div>
     <span class="badge badge-passing">Passing</span>
   </header>
-  <figure class="app-shot"><img src="../assets/app-shots/slack.webp" alt="Slack 4.51.180 running on Omnix in the test VM" width="1024" height="768" loading="lazy" decoding="async"><figcaption>Screenshot from the test run on 2026-10-06</figcaption></figure>
-  <p class="app-desc">Team chat, from nixpkgs (unfree; Slack publishes only .deb and .rpm).</p>
-  <p class="dist" title="Checked 2026-10-06"><a href="https://search.nixos.org/packages?channel=unstable&amp;query=slack">nixpkgs · slack</a> · <span>Proprietary</span> · <a href="https://slack.com/downloads/linux">Website</a></p>
+  <details class="screenshots"><summary aria-label="Screenshots for Slack 4.51.180" title="Screenshots"><span class="sr-only">Screenshots</span></summary><figure class="app-shot"><img src="../assets/app-shots/slack.webp" alt="Slack 4.51.180 running on Omnix in the test VM" width="1024" height="768" loading="lazy" decoding="async"><figcaption>Screenshot from the test run on 2026-10-06</figcaption></figure></details>
   <details class="more">
-    <summary>Details</summary>
+    <summary aria-label="Details for Slack 4.51.180" title="Details"><span class="sr-only">Details</span></summary>
     <div class="more-body">
+      <p class="app-desc">Team chat, from nixpkgs (unfree; Slack publishes only .deb and .rpm).</p>
+<p class="dist" title="Checked 2026-10-06"><a href="https://search.nixos.org/packages?channel=unstable&amp;query=slack">nixpkgs · slack</a> · <span>Proprietary</span> · <a href="https://slack.com/downloads/linux">Website</a></p>
       <div class="term"><div class="term-bar"><i></i><i></i><i></i><b>workflow an agent verifies</b></div><ol class="steps"><li><code>Install nixpkgs slack on the Omnix base (unfree allowed for Slack only)</code></li><li><code>Start Slack as an ordinary user with its sandbox on, no flags</code></li><li><code>The Slack window opens and stays up; with no network in the VM it shows its cannot-connect page</code></li><li><code>Take a screenshot</code></li></ol></div>
       
       <dl class="evidence">
@@ -714,11 +738,11 @@ environment.systemPackages = [ pkgs.slack ];</pre>
     <span class="badge badge-passing">Passing</span>
   </header>
   
-  <p class="app-desc">The official linux-x64 tarball from nodejs.org, unpacked and run as shipped.</p>
-  
   <details class="more">
-    <summary>Details</summary>
+    <summary aria-label="Details for Node.js 22.12" title="Details"><span class="sr-only">Details</span></summary>
     <div class="more-body">
+      <p class="app-desc">The official linux-x64 tarball from nodejs.org, unpacked and run as shipped.</p>
+
       <div class="term"><div class="term-bar"><i></i><i></i><i></i><b>workflow an agent verifies</b></div><ol class="steps"><li><code>Unpack the official node-v22.12.0-linux-x64.tar.xz into /opt/node</code></li><li><code>/opt/node/bin/node -e &#x27;require(&quot;zlib&quot;).gzipSync(&quot;x&quot;)&#x27;</code></li><li><code>systemd-run --wait --pipe /opt/node/bin/node -e &#x27;console.log(1)&#x27;  (a service without nix-ld&#x27;s session variables)</code></li></ol></div>
       
       <dl class="evidence">
@@ -745,11 +769,11 @@ curl -fsSL https://nodejs.org/dist/v22.12.0/node-v22.12.0-linux-x64.tar.xz \
     <span class="badge badge-patched">Patched</span>
   </header>
   
-  <p class="app-desc">astral-sh&#x27;s python-build-standalone build, unpacked and run as shipped.</p>
-  
   <details class="more">
-    <summary>Details</summary>
+    <summary aria-label="Details for Python 3.12.8" title="Details"><span class="sr-only">Details</span></summary>
     <div class="more-body">
+      <p class="app-desc">astral-sh&#x27;s python-build-standalone build, unpacked and run as shipped.</p>
+
       <div class="term"><div class="term-bar"><i></i><i></i><i></i><b>workflow an agent verifies</b></div><ol class="steps"><li><code>Unpack cpython-3.12.8+20241206-x86_64-unknown-linux-gnu-install_only.tar.gz into /opt/python</code></li><li><code>/opt/python/bin/python3 -c &#x27;import ssl, sqlite3, ctypes&#x27;</code></li><li><code>ctypes.util.find_library(&quot;z&quot;) resolves through ldconfig</code></li><li><code>python3 -c &#x27;import zoneinfo; zoneinfo.ZoneInfo(&quot;Europe/Moscow&quot;)&#x27;</code></li><li><code>Run a script through #!/usr/bin/python3 with this interpreter on PATH: it prints 1 (needs Omnix&#x27;s envfs readlink fix)</code></li></ol></div>
       
       <dl class="evidence">
@@ -776,12 +800,12 @@ curl -fsSL https://github.com/astral-sh/python-build-standalone/releases/downloa
     <div class="app-title"><h3>kitty 0.49.2</h3><p class="app-cat">Terminal</p></div>
     <span class="badge badge-passing">Passing</span>
   </header>
-  <figure class="app-shot"><img src="../assets/app-shots/kitty.webp" alt="kitty 0.49.2 running on Omnix in the test VM" width="1024" height="768" loading="lazy" decoding="async"><figcaption>Screenshot from the test run on 2026-10-06</figcaption></figure>
-  <p class="app-desc">The GPU-accelerated terminal, run from its unmodified GitHub release.</p>
-  <p class="dist" title="Checked 2026-10-06"><a href="https://github.com/kovidgoyal/kitty/releases/tag/v0.49.2">GitHub release v0.49.2</a> · <span class="dist-warn">No checksums</span> · <span class="dist-warn">Not attested</span> · <span>GPL-3.0</span> · <a href="https://sw.kovidgoyal.net/kitty/">Website</a></p>
+  <details class="screenshots"><summary aria-label="Screenshots for kitty 0.49.2" title="Screenshots"><span class="sr-only">Screenshots</span></summary><figure class="app-shot"><img src="../assets/app-shots/kitty.webp" alt="kitty 0.49.2 running on Omnix in the test VM" width="1024" height="768" loading="lazy" decoding="async"><figcaption>Screenshot from the test run on 2026-10-06</figcaption></figure></details>
   <details class="more">
-    <summary>Details</summary>
+    <summary aria-label="Details for kitty 0.49.2" title="Details"><span class="sr-only">Details</span></summary>
     <div class="more-body">
+      <p class="app-desc">The GPU-accelerated terminal, run from its unmodified GitHub release.</p>
+<p class="dist" title="Checked 2026-10-06"><a href="https://github.com/kovidgoyal/kitty/releases/tag/v0.49.2">GitHub release v0.49.2</a> · <span class="dist-warn">No checksums</span> · <span class="dist-warn">Not attested</span> · <span>GPL-3.0</span> · <a href="https://sw.kovidgoyal.net/kitty/">Website</a></p>
       <div class="term"><div class="term-bar"><i></i><i></i><i></i><b>workflow an agent verifies</b></div><ol class="steps"><li><code>Fetch kitty-0.49.2-x86_64.txz from the GitHub release, pinned by sha256</code></li><li><code>kitty --version reports kitty 0.49.2</code></li><li><code>Check the standard X11 data paths exist: /usr/share/X11/xkb and /usr/share/X11/locale (the Omnix desktop preset provides them)</code></li><li><code>Start the unmodified kitty in an X11 session through the Omnix FHS layer; OpenGL 4.6 (Mesa llvmpipe) loads</code></li><li><code>It opens a window and runs a shell (uname -a)</code></li><li><code>Take a screenshot</code></li></ol></div>
       
       <dl class="evidence">
@@ -823,11 +847,11 @@ curl -fsSL https://github.com/kovidgoyal/kitty/releases/download/v0.49.2/kitty-0
     <span class="badge badge-passing">Passing</span>
   </header>
   
-  <p class="app-desc">Omnix&#x27;s KDE Plasma desktop, booted to a real Plasma Wayland session.</p>
-  
   <details class="more">
-    <summary>Details</summary>
+    <summary aria-label="Details for KDE Plasma - Atrium" title="Details"><span class="sr-only">Details</span></summary>
     <div class="more-body">
+      <p class="app-desc">Omnix&#x27;s KDE Plasma desktop, booted to a real Plasma Wayland session.</p>
+
       <div class="term"><div class="term-bar"><i></i><i></i><i></i><b>workflow an agent verifies</b></div><ol class="steps"><li><code>Boot to the display manager and auto-login a new user</code></li><li><code>plasmashell and kwin_wayland start for that user</code></li><li><code>Distribution defaults reach the user: Atrium look-and-feel, key repeat delay 250, per-screen virtual desktops</code></li><li><code>GTK libraries are present (/usr/lib/libgtk-3.so.0)</code></li><li><code>Take a screenshot of the session</code></li></ol></div>
       
       <dl class="evidence">
@@ -859,11 +883,11 @@ modules = [
     <span class="badge badge-passing">Passing</span>
   </header>
   
-  <p class="app-desc">Omarchy&#x27;s own Hyprland config, themes and scripts on the Omnix base, pinned to a stable release.</p>
-  
   <details class="more">
-    <summary>Details</summary>
+    <summary aria-label="Details for Hyprland - Omarchy (stable)" title="Details"><span class="sr-only">Details</span></summary>
     <div class="more-body">
+      <p class="app-desc">Omarchy&#x27;s own Hyprland config, themes and scripts on the Omnix base, pinned to a stable release.</p>
+
       <div class="term"><div class="term-bar"><i></i><i></i><i></i><b>workflow an agent verifies</b></div><ol class="steps"><li><code>Boot to the display manager and auto-login a new user</code></li><li><code>The user&#x27;s config is seeded from Omarchy&#x27;s templates (~/.config/hypr/hyprland.lua, omarchy-theme-set on PATH)</code></li><li><code>Hyprland starts on Omarchy&#x27;s Lua config and opens its instance socket</code></li><li><code>hyprctl version</code></li><li><code>Omarchy&#x27;s autostart runs: omarchy-hyprland-monitor-watch</code></li><li><code>Take a screenshot of the session</code></li></ol></div>
       
       <dl class="evidence">
