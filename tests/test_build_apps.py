@@ -109,7 +109,7 @@ class Render(unittest.TestCase):
     def test_passing_shows_date_commit_and_test_link(self):
         page = self.render({"sections": SECTIONS, "apps": [app(verification=ver("passing", commit="0123456789abcdef"))]})
         self.assertIn("2026-10-01", page)
-        self.assertIn("<code>0123456789ab</code>", page)
+        self.assertIn("<code>0123456789abcdef</code>", page)
         self.assertIn("https://github.com/Omnix-Linux/Omnix/blob/main/tests/fhs.nix", page)
 
     def test_escapes_and_inlines_data(self):
@@ -119,6 +119,26 @@ class Render(unittest.TestCase):
         self.assertNotIn("/*__APPS_DATA__*/", page)
         blob = page.split('<script id="apps-data" type="application/json">', 1)[1].split("</script>", 1)[0]
         self.assertEqual(json.loads(blob)["apps"][0]["workflow"], ["a </script> b"])
+
+    def test_issue_8_validation_preview_identifies_the_automated_run(self):
+        a = app(screenshot="assets/app-shots/filmcraft.webp", verification=ver("passing"))
+        card = ba.render_app(a)
+        self.assertIn('class="validation-preview"', card)
+        self.assertIn('aria-controls="validation-window"', card)
+        self.assertIn('Test run', card)
+        self.assertIn('Automated test run', card)
+        self.assertIn('2026-10-01', card)
+        self.assertNotIn('<details class="screenshots">', card)
+
+    def test_issue_8_important_information_precedes_closed_evidence_accordions(self):
+        card = ba.render_app(app(verification=ver("passing")))
+        self.assertIn('<span>Details</span>', card)
+        self.assertIn('<details class="evidence-fold">', card)
+        self.assertLess(card.index('class="app-desc"'), card.index('class="evidence-fold"'))
+        for label in ('Install', 'Verified workflow', 'Validation details', 'Package source'):
+            self.assertIn(label, card)
+        self.assertNotIn('class="evidence-fold" open', card)
+        self.assertNotIn('class="validation-preview"', card)
 
     def test_build_refuses_invalid_registry_and_writes_nothing(self):
         with tempfile.TemporaryDirectory() as d:
