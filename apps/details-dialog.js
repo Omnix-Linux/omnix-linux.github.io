@@ -47,14 +47,14 @@
     const below = topEdge + height - card.bottom - gap - edge;
     const above = card.top - topEdge - gap - edge;
     const expanded = panel.classList.contains("is-expanded");
+    const panelWidth = Math.min(card.width * 0.8, width - edge * 2);
+    panel.style.width = panelWidth + "px";
     const needed = expanded ? 160 : Math.min(card.height, panel.scrollHeight + 2);
     const onBottom = below >= needed || below >= above;
-    const panelWidth = Math.min(card.width, width - edge * 2);
-    panel.style.width = panelWidth + "px";
     panel.style.height = "auto";
     const available = Math.max(44, onBottom ? below : above);
     panel.style.maxHeight = (expanded ? available : Math.min(card.height, available)) + "px";
-    panel.style.left = Math.max(leftEdge + edge, Math.min(card.left, leftEdge + width - panelWidth - edge)) + "px";
+    panel.style.left = Math.max(leftEdge + edge, Math.min(card.right - panelWidth, leftEdge + width - panelWidth - edge)) + "px";
     panel.style.top = (onBottom ? card.bottom + gap : card.top - panel.getBoundingClientRect().height - gap) + "px";
   }
 
