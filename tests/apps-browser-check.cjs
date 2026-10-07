@@ -125,6 +125,13 @@ const base = process.env.APPS_BASE_URL || 'http://127.0.0.1:4187';
         if (await fold.getAttribute('open') !== null) await fold.locator(':scope > summary').click();
         await fold.locator(':scope > summary').click();
         assert.equal(await fold.getAttribute('open'), '');
+        if (label === 'Validation details') {
+          const row = fold.locator('.evidence > div').first();
+          const labelBox = await row.locator('dt').boundingBox();
+          const valueBox = await row.locator('dd').boundingBox();
+          assert(Math.abs(valueBox.x - labelBox.x) < 1 && Math.abs(valueBox.width - labelBox.width) < 1, 'evidence wastes width on a label column');
+          assert(valueBox.y >= labelBox.y + labelBox.height - 1, 'evidence label must sit above its full-width value');
+        }
         if (label === 'Install') {
           await fold.locator('.copy').click();
           assert.equal(await page.evaluate(() => window.copied[0]), await fold.locator('pre').textContent());
