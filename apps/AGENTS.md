@@ -8,3 +8,5 @@ These rules apply to this page and its generator/template in `scripts/build_apps
 - Keep previews anchored to their app, at 80% of its width with right edges aligned. Opening or expanding them must not move cards or change page height. Unpinned previews must not obstruct normal scrolling.
 - Verify desktop and phone layouts in Playwright, including hover transfer/re-entry, keyboard and touch access, dismissal, copy controls, and unchanged page layout.
 - Regenerate `apps/index.html` from the template/generator instead of editing the generated page directly. Version changed interaction scripts so cached copies do not hide fixes.
+
+- Keep preview and expanded descriptions at a consistent readable size. Use a compact app identity, subdued metadata, and flat disclosure rows with clear chevrons and 44px interaction targets. Avoid repeated “Details” headings and nested boxes around every section.

@@ -49,8 +49,8 @@
     const expanded = panel.classList.contains("is-expanded");
     const panelWidth = Math.min(card.width * 0.8, width - edge * 2);
     panel.style.width = panelWidth + "px";
-    const needed = expanded ? 160 : Math.min(card.height, panel.scrollHeight + 2);
-    const onBottom = below >= needed || below >= above;
+    const needed = expanded ? panel.scrollHeight + 2 : Math.min(card.height, panel.scrollHeight + 2);
+    const onBottom = below >= needed || (above < needed && below >= above);
     panel.style.height = "auto";
     const available = Math.max(44, onBottom ? below : above);
     panel.style.maxHeight = (expanded ? available : Math.min(card.height, available)) + "px";
@@ -112,7 +112,16 @@
     close(false, false);
     const body = disclosure.querySelector(":scope > .more-body");
     excerpt.textContent = body.querySelector(".app-desc").textContent;
-    title.textContent = disclosure.closest(".app").querySelector("h3").textContent + " — Details";
+    const app = disclosure.closest(".app");
+    panel.style.setProperty("--status", getComputedStyle(app).getPropertyValue("--status").trim() || "#9cadc8");
+    const icon = app.querySelector(".app-icon").cloneNode(true);
+    icon.className = "details-app-icon";
+    icon.setAttribute("aria-hidden", "true");
+    if (icon.tagName === "IMG") icon.alt = "";
+    const name = document.createElement("span");
+    name.className = "details-name";
+    name.textContent = app.querySelector("h3").textContent;
+    title.replaceChildren(icon, name);
     active = { disclosure, trigger, body };
     pinned = pin;
     content.append(body);
