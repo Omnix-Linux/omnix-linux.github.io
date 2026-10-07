@@ -107,28 +107,27 @@
   .badge-unknown { color: #8a96ad; border-color: rgba(138, 150, 173, .4); background: rgba(138, 150, 173, .06); }
 
   h2.eyebrow { font-size: var(--step--1); font-weight: 500; margin: 0 0 12px; }
-  /* Compact identity rows; all app information expands downward in place. */
-  .apps, .cands { list-style: none; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 520px), 1fr)); gap: 10px; margin: 18px 0 0; align-items: start; }
+  /* Compact identity rows with one combined status/details control. */
+  .apps, .cands { list-style: none; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 360px), 1fr)); gap: 10px; margin: 18px 0 0; align-items: start; }
   .app { position: relative; min-width: 0; padding: 12px 14px; border: 1px solid var(--line); border-left: 3px solid var(--status, var(--line)); border-radius: 12px; background: var(--panel); }
   .status-passing { --status: var(--ok); }
   .status-patched { --status: var(--ok); }
   .status-known-gap { --status: var(--amber); }
   .status-failing { --status: var(--bad); }
   .status-unknown { --status: #5d6880; }
-  .app > .app-head { display: grid; grid-template-columns: 40px minmax(0, 1fr) 64px 100px 48px; gap: 10px; align-items: center; min-height: 52px; }
-  .app-head .app-icon { width: 40px; height: 40px; }
+  .app > .app-head { display: grid; grid-template-columns: 36px minmax(0, 1fr); gap: 10px; align-items: center; min-height: 52px; padding-right: 120px; }
+  .app-head .app-icon { width: 36px; height: 36px; }
   .app-head .app-title { min-width: 0; }
-  .app-head h3 { font-size: .96rem; overflow-wrap: anywhere; }
-  .app-head .badge { margin: 0; font-size: .65rem; padding: 3px 8px; }
-  .app-head .app-cat { font-size: .7rem; }
-  .app > .app-head .badge { grid-column: 4; justify-self: center; margin-left: 0; }
-  .app > .app-head .validation-preview { grid-column: 5; }
-  .more > summary { position: absolute; top: 16px; right: 182px; min-width: 64px; height: 44px; cursor: pointer; list-style: none; display: flex; align-items: center; justify-content: center; gap: 8px; color: var(--ice); border-radius: 8px; font: 600 .7rem var(--font-mono); }
+  .app-head h3 { font-size: .86rem; overflow-wrap: anywhere; }
+  .app-head .app-cat { font-size: .68rem; }
+  .app-head .badge { margin-left: auto; }
+  .cand > .app-head { grid-template-columns: 36px minmax(0, 1fr) auto; padding-right: 0; }
+  .more > summary { position: absolute; top: 16px; right: 14px; min-width: 110px; height: 44px; box-sizing: border-box; cursor: pointer; list-style: none; display: flex; align-items: center; justify-content: center; gap: 6px; padding: 0 9px; font-size: .61rem; }
   .more > summary::-webkit-details-marker { display: none; }
   .more > summary::after { content: ""; width: 6px; height: 6px; border-right: 2px solid currentColor; border-bottom: 2px solid currentColor; transform: rotate(45deg); }
   .more[open] > summary::after, .more > summary[aria-expanded="true"]::after { transform: rotate(225deg); }
   .more > summary:hover { background: rgba(126, 186, 228, .1); }
-  .more > summary:focus-visible, .validation-preview:focus-visible { outline: 2px solid var(--ice); outline-offset: 2px; }
+  .more > summary:focus-visible, .validation-shot:focus-visible { outline: 2px solid var(--ice); outline-offset: 2px; }
   .more-body { display: flex; flex-direction: column; gap: 12px; border-top: 1px solid var(--line); margin-top: 12px; padding-top: 14px; }
   .details-dialog { position: fixed; inset: auto; margin: 0; z-index: 20; box-sizing: border-box; width: min(640px, calc(100vw - 24px)); max-height: calc(100dvh - 32px); overflow: auto; padding: 12px 14px; border: 1px solid rgba(126, 186, 228, .28); border-radius: 12px; background: linear-gradient(135deg, #111827, #0b1020); color: var(--ink); box-shadow: 0 12px 32px rgba(0, 0, 0, .5); }
   .details-dialog:not([hidden]) { animation: details-enter 140ms ease-out; }
@@ -171,35 +170,18 @@
   .evidence-fold > summary:focus-visible, .run-log > summary:focus-visible { outline: 2px solid var(--ice); outline-offset: -2px; }
   .evidence-fold > :not(summary) { margin-bottom: 12px; }
   .validation-caption { color: var(--muted); font-size: .8rem; }
-  .validation-preview { display: none; width: 48px; min-height: 48px; padding: 3px; border: 1px solid var(--line); border-radius: 7px; background: rgba(4, 5, 12, .6); color: var(--muted); cursor: pointer; }
-  .previews-ready .validation-preview { display: grid; place-items: center; gap: 3px; }
-  .validation-preview img { width: 40px; height: 28px; object-fit: cover; border-radius: 3px; }
-  .validation-preview span { white-space: nowrap; font: .53rem var(--font-mono); }
-  .validation-preview:hover, .validation-preview[aria-expanded="true"] { border-color: var(--ice); color: var(--ice); }
-  .validation-window { position: fixed; inset: auto; box-sizing: border-box; width: min(540px, calc(100vw - 24px)); max-height: calc(100dvh - 100px); overflow: auto; margin: 0; padding: 16px; border: 1px solid var(--ice); border-radius: 12px; background: #0b1020; color: var(--ink); box-shadow: 0 20px 60px rgba(0, 0, 0, .65); z-index: 10; }
-  .validation-window[hidden] { display: none; }
-  .validation-window::backdrop { background: transparent; pointer-events: none; }
-  .validation-window h3 { font: 700 .95rem/1.4 var(--font-mono); margin: 0 40px 8px 0; }
-  .validation-window .preview-context { font: .75rem/1.6 var(--font-mono); color: var(--ice); margin: 0 0 12px; }
-  .validation-window figure { margin: 0; }
-  .validation-window figure { display: flex; flex-direction: column; }
-  .validation-window img { width: 100%; max-height: min(38dvh, 280px); object-fit: contain; display: block; background: #000; border-radius: 6px; }
-  .validation-window figcaption { order: -1; color: var(--muted); font-size: .8rem; margin: 0 0 10px; }
-  .validation-window a { color: var(--ice); font-size: .8rem; display: inline-block; margin-top: 10px; }
-  .preview-close { position: absolute; right: 8px; top: 8px; width: 44px; height: 44px; border: 0; border-radius: 8px; background: transparent; color: var(--ink); font-size: 1.5rem; cursor: pointer; }
-  .preview-close:hover { background: rgba(126, 186, 228, .1); }
-  .preview-close:focus-visible { outline: 2px solid var(--ice); outline-offset: -2px; }
+  .details-overview { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 10px; align-items: start; }
+  .validation-shot { display: grid; gap: 4px; width: 88px; text-align: center; color: var(--muted); text-decoration: none; font: .55rem var(--font-mono); }
+  .validation-shot img { width: 88px; height: 56px; object-fit: cover; border: 1px solid var(--line); border-radius: 6px; }
+  .validation-shot:hover { color: var(--ice); }
   @media (max-width: 640px) {
-    .app > .app-head { grid-template-columns: 32px 26px minmax(0, 1fr) 48px; gap: 6px; padding-right: 0; min-height: 82px; }
-    .app-head .app-icon { width: 32px; height: 32px; grid-column: 1; grid-row: 1; }
-    .app > .app-head h3 { font-size: .88rem; }
-    .app-head .app-title { grid-column: 2 / -1; grid-row: 1; }
-    .app > .app-head .badge { grid-column: 3; grid-row: 2; justify-self: center; }
-    .app > .app-head .badge { margin-left: 0; }
-    .app > .app-head .validation-preview { grid-column: 4; grid-row: 2; min-height: 44px; padding: 2px; gap: 2px; }
-    .validation-preview img { width: 36px; height: 24px; }
-    .validation-preview span { font: .53rem/1 var(--font-mono); }
-    .more > summary { top: auto; left: 14px; right: auto; margin-top: -46px; }
+    .app > .app-head { grid-template-columns: 32px minmax(0, 1fr); gap: 8px; padding-right: 98px; }
+    .app-head .app-icon { width: 32px; height: 32px; }
+    .app > .app-head h3 { font-size: .8rem; }
+    .more > summary { min-width: 88px; padding: 0 6px; font-size: .56rem; }
+    .details-overview { grid-template-columns: minmax(0, 1fr); gap: 4px; }
+    .validation-shot { grid-template-columns: 64px auto; align-items: center; width: fit-content; margin-bottom: 8px; }
+    .validation-shot img { width: 64px; height: 40px; }
   }
   /* Sections remain expanded so every app is available for scanning. */
   .sec-index ul { list-style: none; display: flex; flex-wrap: wrap; gap: 8px; padding: 0; margin: 18px 0 0; }
@@ -299,7 +281,7 @@
     <div class="eyebrow">Apps on Omnix · <!--__APP_COUNT__--> tested</div>
     <h1>Apps tested <em>on Omnix.</em></h1>
     <p class="lede">Browse apps we’ve run in an Omnix virtual machine. Open <strong>Details</strong> for installation, tested workflows and the evidence behind each status.</p>
-    <p class="lede disclosure-help">The <strong>Test run</strong> thumbnails show automated validation screenshots. Hover, focus or tap one to preview the recorded run.</p>
+    <p class="lede disclosure-help">Hover, focus or tap an app’s <strong>status</strong> to open Details. <strong>Test run</strong> images inside show its recorded automated validation; select an image to view it in full.</p>
     <p class="meta"><span>Registry: <a href="https://github.com/Omnix-Linux/omnix-linux.github.io/blob/main/apps/registry.json">apps/registry.json</a></span><span class="legend">Status: <span class="badge badge-passing">Passing</span> <span class="badge badge-patched">Patched</span> <span class="badge badge-known-gap">Known gap</span> <span class="badge badge-failing">Failing</span> <span class="badge badge-unknown">Unknown</span></span></p>
 
     <section aria-labelledby="lineup">
@@ -349,14 +331,6 @@
   <div id="details-content" class="details-content"></div>
 </aside>
 <script src="details-dialog.js?v=scroll-hover-dismiss-2" defer></script>
-<aside id="validation-window" class="validation-window" popover="manual" role="region" aria-labelledby="validation-title" hidden>
-  <button type="button" class="preview-close" aria-label="Close validation preview">×</button>
-  <h3 id="validation-title">Automated test run</h3>
-  <p class="preview-context"></p>
-  <figure><img alt=""><figcaption>Captured during an automated test in an Omnix virtual machine. This validates the recorded workflow, not every feature of the app.</figcaption></figure>
-  <a class="preview-test-link">Read the automated test</a>
-</aside>
-<script src="validation-preview.js" defer></script>
 <script id="apps-data" type="application/json">/*__APPS_DATA__*/null</script>
 <script>
 (() => {

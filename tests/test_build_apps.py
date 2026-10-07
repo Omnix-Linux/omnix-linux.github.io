@@ -103,7 +103,7 @@ class Render(unittest.TestCase):
     def test_null_verification_shows_gray_unknown(self):
         page = self.render({"sections": SECTIONS, "apps": [app()]})
         self.assertIn('class="app status-unknown"', page)
-        self.assertIn('<span class="badge badge-unknown">Unknown</span>', page)
+        self.assertIn('<span>Unknown</span>', page)
         self.assertNotIn('class="badge badge-passing">Passing</span> on', page)
 
     def test_passing_shows_date_commit_and_test_link(self):
@@ -120,19 +120,19 @@ class Render(unittest.TestCase):
         blob = page.split('<script id="apps-data" type="application/json">', 1)[1].split("</script>", 1)[0]
         self.assertEqual(json.loads(blob)["apps"][0]["workflow"], ["a </script> b"])
 
-    def test_issue_8_validation_preview_identifies_the_automated_run(self):
+    def test_test_run_image_is_inside_details_and_identifies_the_automated_run(self):
         a = app(screenshot="assets/app-shots/filmcraft.webp", verification=ver("passing"))
         card = ba.render_app(a)
-        self.assertIn('class="validation-preview"', card)
-        self.assertIn('aria-controls="validation-window"', card)
+        self.assertIn('class="validation-shot"', card)
+        self.assertLess(card.index('class="more-body"'), card.index('class="validation-shot"'))
         self.assertIn('Test run', card)
-        self.assertIn('Automated test run', card)
+        self.assertIn('automated test run', card)
         self.assertIn('2026-10-01', card)
         self.assertNotIn('<details class="screenshots">', card)
 
     def test_issue_8_important_information_precedes_closed_evidence_accordions(self):
         card = ba.render_app(app(verification=ver("passing")))
-        self.assertIn('<span>Details</span>', card)
+        self.assertIn('<span>Passing</span>', card)
         self.assertIn('<details class="evidence-fold">', card)
         self.assertLess(card.index('class="app-desc"'), card.index('class="evidence-fold"'))
         for label in ('Install', 'Verified workflow', 'Validation details', 'Package source'):
