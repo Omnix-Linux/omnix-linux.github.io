@@ -137,7 +137,8 @@ class Render(unittest.TestCase):
         self.assertLess(card.index('class="app-desc"'), card.index('class="evidence-fold"'))
         for label in ('Install', 'Verified workflow', 'Validation details', 'Package source'):
             self.assertIn(label, card)
-        self.assertNotIn('class="evidence-fold" open', card)
+        self.assertEqual(card.count('class="evidence-fold" open'), 1)
+        self.assertLess(card.index('<summary>Package source</summary>'), card.index('<summary>Install</summary>'))
         self.assertNotIn('class="validation-preview"', card)
 
     def test_build_refuses_invalid_registry_and_writes_nothing(self):

@@ -7,8 +7,6 @@
   if (!supportsPopover) panel.removeAttribute("popover");
   const content = panel.querySelector(".details-content");
   const title = panel.querySelector("h3");
-  const moreButton = panel.querySelector(".details-more");
-  const excerpt = panel.querySelector(".details-excerpt");
   const closeButton = panel.querySelector(".details-close");
   let active = null, pinned = false, closeTimer = 0, suppressed = null, restoringFocus = false;
 
@@ -18,8 +16,6 @@
     const { disclosure, trigger, body } = active;
     active = null;
     pinned = false;
-    panel.classList.remove("is-expanded");
-    moreButton.setAttribute("aria-expanded", "false");
     if (suppress) suppressed = trigger;
     // Return focus before hiding so the browser never restores it into hidden evidence.
     if (restoreFocus || panel.contains(document.activeElement)) {
@@ -46,28 +42,26 @@
     if (card.bottom <= topEdge || card.top >= topEdge + height) { close(panel.contains(document.activeElement)); return; }
     const below = topEdge + height - card.bottom - gap - edge;
     const above = card.top - topEdge - gap - edge;
-    const expanded = panel.classList.contains("is-expanded");
     const panelWidth = Math.min(card.width * 0.8, width - edge * 2);
     panel.style.width = panelWidth + "px";
-    const needed = expanded ? panel.scrollHeight + 2 : Math.min(card.height, panel.scrollHeight + 2);
+    const needed = panel.scrollHeight + 2;
     const onBottom = below >= needed || (above < needed && below >= above);
     panel.style.height = "auto";
     const available = Math.max(44, onBottom ? below : above);
-    panel.style.maxHeight = (expanded ? available : Math.min(card.height, available)) + "px";
+    panel.style.maxHeight = available + "px";
     panel.style.left = Math.max(leftEdge + edge, Math.min(card.right - panelWidth, leftEdge + width - panelWidth - edge)) + "px";
     panel.style.top = (onBottom ? card.bottom + gap : card.top - panel.getBoundingClientRect().height - gap) + "px";
   }
 
-  moreButton.addEventListener("click", () => {
-    if (!active) return;
-    pinned = true;
-    panel.classList.add("is-expanded");
-    moreButton.setAttribute("aria-expanded", "true");
-    position();
-    closeButton.focus({ preventScroll: true });
-  });
-  // A wheel gesture over a transient preview should scroll the page, not trap it.
-  panel.addEventListener("wheel", () => { if (!pinned) close(false, false); }, { passive: true });
+  // Casual hover must not capture page scrolling. Deliberate interaction pins evidence.
+  panel.addEventListener("pointerdown", () => { if (active) pinned = true; });
+  panel.addEventListener("wheel", event => {
+    if (pinned) return;
+    event.preventDefault();
+    const unit = event.deltaMode === 1 ? 16 : event.deltaMode === 2 ? innerHeight : 1;
+    close(false, false);
+    window.scrollBy({ left: event.deltaX * unit, top: event.deltaY * unit, behavior: "instant" });
+  }, { passive: false });
   closeButton.addEventListener("click", () => close(true));
   document.addEventListener("pointerdown", event => {
     if (active && !panel.contains(event.target) && !active.trigger.contains(event.target)) close();
@@ -111,7 +105,6 @@
     if (active && active.trigger === trigger) { pinned = pinned || pin; return; }
     close(false, false);
     const body = disclosure.querySelector(":scope > .more-body");
-    excerpt.textContent = body.querySelector(".app-desc").textContent;
     const app = disclosure.closest(".app");
     panel.style.setProperty("--status", getComputedStyle(app).getPropertyValue("--status").trim() || "#9cadc8");
     const icon = app.querySelector(".app-icon").cloneNode(true);
@@ -158,7 +151,7 @@
       if (active && active.trigger === trigger && pinned) { close(true); return; }
       suppressed = null;
       open(disclosure, trigger, true);
-      moreButton.focus({ preventScroll: true });
+      closeButton.focus({ preventScroll: true });
     });
   }
 })();

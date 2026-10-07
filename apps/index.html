@@ -148,7 +148,7 @@
   .details-dialog .gap { font-size: .78rem; margin: 0 0 8px; }
   .details-dialog .evidence-fold { border: 0; border-top: 1px solid rgba(126, 186, 228, .12); border-radius: 0; padding: 0; }
   .details-dialog .evidence-fold > summary { min-height: 44px; font: 600 .84rem var(--font-body); padding: 0 2px; justify-content: space-between; }
-  .details-dialog .evidence-fold > summary::before { content: none; }
+  .details-dialog .evidence-fold > summary::before, .details-dialog .evidence-fold[open] > summary::before { content: none; }
   .details-dialog .evidence-fold > summary::after { content: ""; width: 6px; height: 6px; margin-right: 4px; border-right: 1.5px solid var(--muted); border-bottom: 1.5px solid var(--muted); transform: rotate(45deg); }
   .details-dialog .evidence-fold[open] > summary::after { transform: rotate(225deg); }
   .details-dialog .evidence-fold > summary:hover { color: var(--ice); }
@@ -160,17 +160,6 @@
 
   .details-dialog a { color: var(--ice); }
   .details-dialog .details-close { position: sticky; top: 0; float: right; width: 44px; height: 44px; margin: -10px -10px 0 0; border: 0; border-radius: 8px; background: transparent; color: var(--muted); font-size: 1.1rem; cursor: pointer; }
-  /* Apps policy: content uses the width; expansion belongs on a thin bottom edge. */
-  .details-peek { display: block; }
-  .details-excerpt { margin: 0; font-size: .82rem; line-height: 1.5; color: #becbdd; display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; overflow: hidden; }
-  .details-more { position: absolute; bottom: 0; left: 0; width: 100%; height: 22px; padding: 0; border: 0; border-top: 1px solid rgba(126, 186, 228, .12); background: rgba(126, 186, 228, .035); color: var(--ice); cursor: pointer; display: grid; place-items: center; }
-  .details-more svg { width: 16px; height: 16px; }
-  .details-more:hover { background: rgba(126, 186, 228, .14); }
-  .details-more:focus-visible { outline: 2px solid var(--ice); outline-offset: -2px; }
-  .details-dialog:not(.is-expanded) { padding: 10px 48px 26px 12px; overflow: hidden; }
-  .details-dialog:not(.is-expanded) .details-close { position: absolute; top: 0; right: 2px; float: none; margin: 0; }
-  .details-dialog:not(.is-expanded) h3, .details-dialog:not(.is-expanded) .details-content { display: none; }
-  .details-dialog.is-expanded .details-peek { display: none; }
   .details-close:focus-visible { outline: 2px solid var(--ice); }
   .validation-summary { display: flex; flex-wrap: wrap; gap: 4px 12px; margin: 0; color: var(--ice); font: .72rem/1.6 var(--font-mono); }
   .validation-summary span { color: var(--muted); }
@@ -201,7 +190,6 @@
   .preview-close:hover { background: rgba(126, 186, 228, .1); }
   .preview-close:focus-visible { outline: 2px solid var(--ice); outline-offset: -2px; }
   @media (max-width: 640px) {
-    .details-excerpt { -webkit-line-clamp: 3; }
     .app > .app-head { grid-template-columns: 32px 26px minmax(0, 1fr) 48px; gap: 6px; padding-right: 0; min-height: 82px; }
     .app-head .app-icon { width: 32px; height: 32px; grid-column: 1; grid-row: 1; }
     .app > .app-head h3 { font-size: .88rem; }
@@ -349,7 +337,7 @@
       <p class="app-desc">ArtCraft&#x27;s native Rust video editor, run from its unmodified GitHub release.</p>
 
       <p class="validation-summary"><span class="validation-result">Passing</span><span class="validation-date">Tested <time datetime="2026-10-06">2026-10-06</time></span><span>x86_64-linux</span></p>
-      <details class="evidence-fold">
+      <details class="evidence-fold" open>
         <summary>Package source</summary>
         <p class="dist" title="Checked 2026-10-06"><a href="https://github.com/storytold/filmcraft/releases/tag/v0.2.0">GitHub release v0.2.0</a> · <span class="dist-ok">SHA-256 checksums</span> · <span class="dist-warn">Not attested</span> · <span>Apache-2.0</span> · <a href="https://getartcraft.com/apps/filmcraft">Website</a></p>
       </details>
@@ -395,7 +383,7 @@ test script finished in 28.79s</pre></details></dd></div>
       <p class="app-desc">Screen recording and live streaming. Omnix builds OBS from its own fork&#x27;s master: upstream master plus Omnix&#x27;s fixes, synced from time to time.</p>
 
       <p class="validation-summary"><span class="validation-result">Patched</span><span class="validation-date">Tested <time datetime="2026-10-06">2026-10-06</time></span><span>x86_64-linux</span></p>
-      <details class="evidence-fold">
+      <details class="evidence-fold" open>
         <summary>Package source</summary>
         <p class="dist" title="Checked 2026-10-06"><a href="https://github.com/omnix-apps/obs-studio/commits/master">omnix-apps/obs-studio fork · master</a> · <span>GPL-2.0</span> · <a href="https://obsproject.com">Website</a></p>
       </details>
@@ -441,7 +429,7 @@ test script finished in 39.11s</pre></details></dd></div>
       <p class="app-desc">Open-source browser video editor (Next.js), built from its v0.3.0 source, served locally and opened in Brave.</p>
 
       <p class="validation-summary"><span class="validation-result">Passing</span><span class="validation-date">Tested <time datetime="2026-10-06">2026-10-06</time></span><span>x86_64-linux</span></p>
-      <details class="evidence-fold">
+      <details class="evidence-fold" open>
         <summary>Package source</summary>
         <p class="dist" title="Checked 2026-10-06"><a href="https://github.com/OpenCut-app/OpenCut/releases/tag/v0.3.0">GitHub source (tag) · v0.3.0</a> · <span>MIT</span> · <a href="https://opencut.app">Website</a></p>
       </details>
@@ -487,7 +475,7 @@ test script finished in 57.35s</pre></details></dd></div>
       <p class="app-desc">Layered raster editing in a native Rust app. Run from its unmodified GitHub release.</p>
 
       <p class="validation-summary"><span class="validation-result">Passing</span><span class="validation-date">Tested <time datetime="2026-10-06">2026-10-06</time></span><span>x86_64-linux</span></p>
-      <details class="evidence-fold">
+      <details class="evidence-fold" open>
         <summary>Package source</summary>
         <p class="dist" title="Checked 2026-10-06"><a href="https://github.com/storytold/photocraft/releases/tag/v0.2.0">GitHub release v0.2.0</a> · <span class="dist-ok">SHA-256 checksums</span> · <span class="dist-warn">Not attested</span> · <span>Apache-2.0</span> · <a href="https://getartcraft.com/apps/photocraft">Website</a></p>
       </details>
@@ -533,7 +521,7 @@ test script finished in 28.84s</pre></details></dd></div>
       <p class="app-desc">Paths, shapes and type for illustration and logos. Run from its unmodified GitHub release.</p>
 
       <p class="validation-summary"><span class="validation-result">Passing</span><span class="validation-date">Tested <time datetime="2026-10-06">2026-10-06</time></span><span>x86_64-linux</span></p>
-      <details class="evidence-fold">
+      <details class="evidence-fold" open>
         <summary>Package source</summary>
         <p class="dist" title="Checked 2026-10-06"><a href="https://github.com/storytold/vectorcraft/releases/tag/v0.3.0">GitHub release v0.3.0</a> · <span class="dist-ok">SHA-256 checksums</span> · <span class="dist-warn">Not attested</span> · <span>Apache-2.0</span> · <a href="https://getartcraft.com/apps/vectorcraft">Website</a></p>
       </details>
@@ -579,7 +567,7 @@ test script finished in 27.65s</pre></details></dd></div>
       <p class="app-desc">Catalogue and develop raw photos. Run from its unmodified GitHub release.</p>
 
       <p class="validation-summary"><span class="validation-result">Passing</span><span class="validation-date">Tested <time datetime="2026-10-06">2026-10-06</time></span><span>x86_64-linux</span></p>
-      <details class="evidence-fold">
+      <details class="evidence-fold" open>
         <summary>Package source</summary>
         <p class="dist" title="Checked 2026-10-06"><a href="https://github.com/storytold/lightcraft/releases/tag/v0.2.0">GitHub release v0.2.0</a> · <span class="dist-ok">SHA-256 checksums</span> · <span class="dist-warn">Not attested</span> · <span>Apache-2.0</span> · <a href="https://getartcraft.com/apps/lightcraft">Website</a></p>
       </details>
@@ -625,7 +613,7 @@ test script finished in 27.68s</pre></details></dd></div>
       <p class="app-desc">Compositing, motion graphics and visual effects. Run from its unmodified GitHub release.</p>
 
       <p class="validation-summary"><span class="validation-result">Passing</span><span class="validation-date">Tested <time datetime="2026-10-06">2026-10-06</time></span><span>x86_64-linux</span></p>
-      <details class="evidence-fold">
+      <details class="evidence-fold" open>
         <summary>Package source</summary>
         <p class="dist" title="Checked 2026-10-06"><a href="https://github.com/storytold/effectcraft/releases/tag/v0.3.0">GitHub release v0.3.0</a> · <span class="dist-ok">SHA-256 checksums</span> · <span class="dist-warn">Not attested</span> · <span>Apache-2.0</span> · <a href="https://getartcraft.com/apps/effectcraft">Website</a></p>
       </details>
@@ -685,7 +673,7 @@ test script finished in 31.65s</pre></details></dd></div>
       <p class="app-desc">Read, edit and assemble PDFs. Run from its unmodified GitHub release.</p>
 
       <p class="validation-summary"><span class="validation-result">Passing</span><span class="validation-date">Tested <time datetime="2026-10-06">2026-10-06</time></span><span>x86_64-linux</span></p>
-      <details class="evidence-fold">
+      <details class="evidence-fold" open>
         <summary>Package source</summary>
         <p class="dist" title="Checked 2026-10-06"><a href="https://github.com/storytold/printcraft/releases/tag/v0.2.0">GitHub release v0.2.0</a> · <span class="dist-ok">SHA-256 checksums</span> · <span class="dist-warn">Not attested</span> · <span>Apache-2.0</span> · <a href="https://getartcraft.com/apps/printcraft">Website</a></p>
       </details>
@@ -731,7 +719,7 @@ test script finished in 29.18s</pre></details></dd></div>
       <p class="app-desc">Lay out pages for print and screen. Run from its unmodified GitHub release.</p>
 
       <p class="validation-summary"><span class="validation-result">Passing</span><span class="validation-date">Tested <time datetime="2026-10-06">2026-10-06</time></span><span>x86_64-linux</span></p>
-      <details class="evidence-fold">
+      <details class="evidence-fold" open>
         <summary>Package source</summary>
         <p class="dist" title="Checked 2026-10-06"><a href="https://github.com/storytold/designcraft/releases/tag/v0.2.0">GitHub release v0.2.0</a> · <span class="dist-ok">SHA-256 checksums</span> · <span class="dist-warn">Not attested</span> · <span>Apache-2.0</span> · <a href="https://getartcraft.com/apps/designcraft">Website</a></p>
       </details>
@@ -791,7 +779,7 @@ test script finished in 29.02s</pre></details></dd></div>
       <p class="app-desc">Brave&#x27;s official Linux build, run from its unmodified GitHub release zip.</p>
 
       <p class="validation-summary"><span class="validation-result">Passing</span><span class="validation-date">Tested <time datetime="2026-10-06">2026-10-06</time></span><span>x86_64-linux</span></p>
-      <details class="evidence-fold">
+      <details class="evidence-fold" open>
         <summary>Package source</summary>
         <p class="dist" title="Checked 2026-10-06"><a href="https://github.com/brave/brave-browser/releases/tag/v1.96.61">GitHub release v1.96.61</a> · <span class="dist-ok">SHA-256 checksums</span> · <span class="dist-warn">Not attested</span> · <span>MPL-2.0</span> · <a href="https://brave.com">Website</a></p>
       </details>
@@ -834,7 +822,7 @@ test script finished in 41.12s</pre></details></dd></div>
       <p class="app-desc">Telegram&#x27;s official Linux build, run from its unmodified GitHub release tarball.</p>
 
       <p class="validation-summary"><span class="validation-result">Passing</span><span class="validation-date">Tested <time datetime="2026-10-06">2026-10-06</time></span><span>x86_64-linux</span></p>
-      <details class="evidence-fold">
+      <details class="evidence-fold" open>
         <summary>Package source</summary>
         <p class="dist" title="Checked 2026-10-06"><a href="https://github.com/telegramdesktop/tdesktop/releases/tag/v7.2.9">GitHub release v7.2.9</a> · <span class="dist-warn">No checksums</span> · <span class="dist-warn">Not attested</span> · <span>GPL-3.0</span> · <a href="https://desktop.telegram.org">Website</a></p>
       </details>
@@ -876,7 +864,7 @@ test script finished in 42.36s</pre></details></dd></div>
       <p class="app-desc">End-to-end encrypted messenger, from nixpkgs (Signal publishes only an apt repository).</p>
 
       <p class="validation-summary"><span class="validation-result">Passing</span><span class="validation-date">Tested <time datetime="2026-10-06">2026-10-06</time></span><span>x86_64-linux</span></p>
-      <details class="evidence-fold">
+      <details class="evidence-fold" open>
         <summary>Package source</summary>
         <p class="dist" title="Checked 2026-10-06"><a href="https://search.nixos.org/packages?channel=unstable&amp;query=signal-desktop">nixpkgs · signal-desktop</a> · <span>AGPL-3.0</span> · <a href="https://signal.org/download/">Website</a></p>
       </details>
@@ -916,7 +904,7 @@ test script finished in 40.05s</pre></details></dd></div>
       <p class="app-desc">Team chat, from nixpkgs (unfree; Slack publishes only .deb and .rpm).</p>
 
       <p class="validation-summary"><span class="validation-result">Passing</span><span class="validation-date">Tested <time datetime="2026-10-06">2026-10-06</time></span><span>x86_64-linux</span></p>
-      <details class="evidence-fold">
+      <details class="evidence-fold" open>
         <summary>Package source</summary>
         <p class="dist" title="Checked 2026-10-06"><a href="https://search.nixos.org/packages?channel=unstable&amp;query=slack">nixpkgs · slack</a> · <span>Proprietary</span> · <a href="https://slack.com/downloads/linux">Website</a></p>
       </details>
@@ -972,7 +960,7 @@ test script finished in 39.02s</pre></details></dd></div>
       <p class="app-desc">The official linux-x64 tarball from nodejs.org, unpacked and run as shipped.</p>
 
       <p class="validation-summary"><span class="validation-result">Passing</span><span class="validation-date">Tested <time datetime="2026-10-06">2026-10-06</time></span><span>x86_64-linux</span></p>
-      <details class="evidence-fold">
+      <details class="evidence-fold" open>
         <summary>Package source</summary>
         <p class="app-desc">No package source recorded.</p>
       </details>
@@ -1016,7 +1004,7 @@ test script finished in 28.14s</pre></details></dd></div>
       <p class="app-desc">astral-sh&#x27;s python-build-standalone build, unpacked and run as shipped.</p>
 
       <p class="validation-summary"><span class="validation-result">Patched</span><span class="validation-date">Tested <time datetime="2026-10-06">2026-10-06</time></span><span>x86_64-linux</span></p>
-      <details class="evidence-fold">
+      <details class="evidence-fold" open>
         <summary>Package source</summary>
         <p class="app-desc">No package source recorded.</p>
       </details>
@@ -1061,7 +1049,7 @@ test script finished in 28.14s</pre></details></dd></div>
       <p class="app-desc">The GPU-accelerated terminal, run from its unmodified GitHub release.</p>
 
       <p class="validation-summary"><span class="validation-result">Passing</span><span class="validation-date">Tested <time datetime="2026-10-06">2026-10-06</time></span><span>x86_64-linux</span></p>
-      <details class="evidence-fold">
+      <details class="evidence-fold" open>
         <summary>Package source</summary>
         <p class="dist" title="Checked 2026-10-06"><a href="https://github.com/kovidgoyal/kitty/releases/tag/v0.49.2">GitHub release v0.49.2</a> · <span class="dist-warn">No checksums</span> · <span class="dist-warn">Not attested</span> · <span>GPL-3.0</span> · <a href="https://sw.kovidgoyal.net/kitty/">Website</a></p>
       </details>
@@ -1120,7 +1108,7 @@ test script finished in 39.77s</pre></details></dd></div>
       <p class="app-desc">Omnix&#x27;s KDE Plasma desktop, booted to a real Plasma Wayland session.</p>
 
       <p class="validation-summary"><span class="validation-result">Passing</span><span class="validation-date">Tested <time datetime="2026-10-06">2026-10-06</time></span><span>x86_64-linux</span></p>
-      <details class="evidence-fold">
+      <details class="evidence-fold" open>
         <summary>Package source</summary>
         <p class="app-desc">No package source recorded.</p>
       </details>
@@ -1169,7 +1157,7 @@ test script finished in 72.29s</pre></details></dd></div>
       <p class="app-desc">Omarchy&#x27;s own Hyprland config, themes and scripts on the Omnix base, pinned to a stable release.</p>
 
       <p class="validation-summary"><span class="validation-result">Passing</span><span class="validation-date">Tested <time datetime="2026-10-06">2026-10-06</time></span><span>x86_64-linux</span></p>
-      <details class="evidence-fold">
+      <details class="evidence-fold" open>
         <summary>Package source</summary>
         <p class="app-desc">No package source recorded.</p>
       </details>
@@ -1246,11 +1234,11 @@ test script finished in 70.94s</pre></details></dd></div>
 </footer>
 <aside id="app-details" class="details-dialog" popover="manual" role="dialog" aria-labelledby="app-details-title" hidden>
   <button type="button" class="details-close" aria-label="Close app details">×</button>
-  <div class="details-peek"><p class="details-excerpt"></p><button type="button" class="details-more" aria-expanded="false" aria-controls="details-content" aria-label="Expand full app details"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="m4 3 4 4 4-4M4 8l4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg></button></div>
+
   <h3 id="app-details-title">App details</h3>
   <div id="details-content" class="details-content"></div>
 </aside>
-<script src="details-dialog.js?v=polish-1" defer></script>
+<script src="details-dialog.js?v=full-hover-1" defer></script>
 <aside id="validation-window" class="validation-window" popover="manual" role="region" aria-labelledby="validation-title" hidden>
   <button type="button" class="preview-close" aria-label="Close validation preview">×</button>
   <h3 id="validation-title">Automated test run</h3>
