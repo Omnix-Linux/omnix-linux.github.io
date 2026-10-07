@@ -126,10 +126,17 @@
   .more > summary { position: absolute; top: 16px; right: 182px; min-width: 64px; height: 44px; cursor: pointer; list-style: none; display: flex; align-items: center; justify-content: center; gap: 8px; color: var(--ice); border-radius: 8px; font: 600 .7rem var(--font-mono); }
   .more > summary::-webkit-details-marker { display: none; }
   .more > summary::after { content: ""; width: 6px; height: 6px; border-right: 2px solid currentColor; border-bottom: 2px solid currentColor; transform: rotate(45deg); }
-  .more[open] > summary::after { transform: rotate(225deg); }
+  .more[open] > summary::after, .more > summary[aria-expanded="true"]::after { transform: rotate(225deg); }
   .more > summary:hover { background: rgba(126, 186, 228, .1); }
   .more > summary:focus-visible, .validation-preview:focus-visible { outline: 2px solid var(--ice); outline-offset: 2px; }
   .more-body { display: flex; flex-direction: column; gap: 12px; border-top: 1px solid var(--line); margin-top: 12px; padding-top: 14px; }
+  .details-dialog { box-sizing: border-box; width: min(640px, calc(100vw - 24px)); max-height: calc(100dvh - 32px); overflow: auto; padding: 20px; border: 1px solid var(--ice); border-radius: 12px; background: #0b1020; color: var(--ink); box-shadow: 0 20px 60px rgba(0, 0, 0, .65); }
+  .details-dialog::backdrop { background: rgba(4, 5, 12, .55); }
+  .details-dialog h3 { margin: 0 44px 0 0; font: 700 1rem/1.4 var(--font-mono); }
+  .details-dialog .more-body { min-width: 0; }
+  .details-dialog a { color: var(--ice); }
+  .details-dialog .details-close { position: sticky; top: 0; float: right; width: 44px; height: 44px; margin: -10px -10px 0 0; border: 0; border-radius: 8px; background: #0b1020; color: var(--ink); font-size: 1.5rem; cursor: pointer; }
+  .details-close:focus-visible { outline: 2px solid var(--ice); }
   .validation-summary { display: flex; flex-wrap: wrap; gap: 4px 12px; margin: 0; color: var(--ice); font: .72rem/1.6 var(--font-mono); }
   .validation-summary span { color: var(--muted); }
   .evidence-fold { min-width: 0; border: 1px solid var(--line); border-radius: 8px; padding: 0 12px; }
@@ -170,26 +177,20 @@
     .validation-preview span { font: .53rem/1 var(--font-mono); }
     .more > summary { top: auto; left: 14px; right: auto; margin-top: -46px; }
   }
-  /* Sections: one collapsible block per group of apps, open by default. */
+  /* Sections remain expanded so every app is available for scanning. */
   .sec-index ul { list-style: none; display: flex; flex-wrap: wrap; gap: 8px; padding: 0; margin: 18px 0 0; }
   .chip { display: inline-flex; align-items: center; gap: 8px; min-height: 36px; padding: 4px 14px; border: 1px solid var(--line); border-radius: 999px; background: var(--panel); color: var(--ink); text-decoration: none; font: 600 .82rem var(--font-mono); }
   .chip:hover { border-color: var(--ice); color: var(--ice); }
   .chip:focus-visible { outline: 2px solid var(--ice); outline-offset: 2px; }
   .chip-n { color: var(--muted); font-weight: 700; }
   .app-section { margin-top: 24px; scroll-margin-top: calc(var(--header-height) + 16px); }
-  .sec > summary { cursor: pointer; list-style: none; display: flex; align-items: flex-start; gap: 12px; padding-bottom: 10px; border-bottom: 1px solid var(--line); }
-  .sec > summary::-webkit-details-marker { display: none; }
-  .sec > summary::before { content: "▸"; flex: none; margin-top: 1.55em; color: var(--ice); font-size: 1.1rem; line-height: 1; transition: transform .2s; }
-  .sec[open] > summary::before { transform: rotate(90deg); }
-  .sec > summary:focus-visible { outline: 2px solid var(--ice); outline-offset: 4px; border-radius: 6px; }
-  .sec > summary:hover .sec-title { color: var(--ice); }
+  .sec-heading { padding-bottom: 10px; border-bottom: 1px solid var(--line); }
   .sec-head { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
   .sec-title { font-family: var(--font-display); font-weight: 800; font-size: var(--step-1, 1.4rem); line-height: 1.2; letter-spacing: -0.015em; margin: 2px 0 0; }
   .sec-blurb { color: var(--muted); }
   .sec-summary { font: 600 .78rem var(--font-mono); letter-spacing: .04em; color: var(--muted); }
   .sec .apps { margin-top: 12px; }
   .cands-note { color: var(--muted); margin: 20px 0 0; }
-  @media (prefers-reduced-motion: reduce) { .sec > summary::before { transition: none; } }
   .app-head { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
   .app-icon { flex: none; width: 48px; height: 48px; border-radius: 12px; object-fit: contain; }
   .app-icon-svg { display: grid; place-items: center; color: var(--ice); background: rgba(126, 186, 228, .08); border: 1px solid var(--line); }
@@ -289,15 +290,15 @@
         </ul>
       </nav>
       <section class="app-section" id="section-media" aria-labelledby="section-media-title">
-        <details class="sec" open>
-          <summary>
+        <div class="sec">
+          <div class="sec-heading">
             <span class="sec-head">
               <span class="eyebrow">Section 01</span>
               <h3 class="sec-title" id="section-media-title">Media and creative</h3>
               <span class="sec-blurb">Video editing, recording and streaming, photo editing and raw development, illustration and visual effects.</span>
               <span class="sec-summary">7 apps · 6 passing · 1 patched</span>
             </span>
-          </summary>
+          </div>
         <div class="apps">
 <article class="app status-passing" id="filmcraft">
   <header class="app-head">
@@ -622,18 +623,18 @@ test script finished in 31.65s</pre></details></dd></div>
   </details>
 </article>
         </div>
-        </details>
+        </div>
       </section>
       <section class="app-section" id="section-documents" aria-labelledby="section-documents-title">
-        <details class="sec" open>
-          <summary>
+        <div class="sec">
+          <div class="sec-heading">
             <span class="sec-head">
               <span class="eyebrow">Section 02</span>
               <h3 class="sec-title" id="section-documents-title">Documents and publishing</h3>
               <span class="sec-blurb">PDF editing and page layout for print and screen.</span>
               <span class="sec-summary">2 apps · 2 passing</span>
             </span>
-          </summary>
+          </div>
         <div class="apps">
 <article class="app status-passing" id="printcraft">
   <header class="app-head">
@@ -728,18 +729,18 @@ test script finished in 29.02s</pre></details></dd></div>
   </details>
 </article>
         </div>
-        </details>
+        </div>
       </section>
       <section class="app-section" id="section-internet" aria-labelledby="section-internet-title">
-        <details class="sec" open>
-          <summary>
+        <div class="sec">
+          <div class="sec-heading">
             <span class="sec-head">
               <span class="eyebrow">Section 03</span>
               <h3 class="sec-title" id="section-internet-title">Internet and communication</h3>
               <span class="sec-blurb">Browsing, messaging and team chat.</span>
               <span class="sec-summary">4 apps · 4 passing</span>
             </span>
-          </summary>
+          </div>
         <div class="apps">
 <article class="app status-passing" id="brave">
   <header class="app-head">
@@ -909,18 +910,18 @@ test script finished in 39.02s</pre></details></dd></div>
   </details>
 </article>
         </div>
-        </details>
+        </div>
       </section>
       <section class="app-section" id="section-developer" aria-labelledby="section-developer-title">
-        <details class="sec" open>
-          <summary>
+        <div class="sec">
+          <div class="sec-heading">
             <span class="sec-head">
               <span class="eyebrow">Section 04</span>
               <h3 class="sec-title" id="section-developer-title">Developer tools</h3>
               <span class="sec-blurb">Runtimes and the terminal, straight from upstream.</span>
               <span class="sec-summary">3 apps · 2 passing · 1 patched</span>
             </span>
-          </summary>
+          </div>
         <div class="apps">
 <article class="app status-passing" id="nodejs">
   <header class="app-head">
@@ -1057,18 +1058,18 @@ test script finished in 39.77s</pre></details></dd></div>
   </details>
 </article>
         </div>
-        </details>
+        </div>
       </section>
       <section class="app-section" id="section-desktops" aria-labelledby="section-desktops-title">
-        <details class="sec" open>
-          <summary>
+        <div class="sec">
+          <div class="sec-heading">
             <span class="sec-head">
               <span class="eyebrow">Section 05</span>
               <h3 class="sec-title" id="section-desktops-title">Desktops</h3>
               <span class="sec-blurb">The desktop sessions Omnix ships, each booted to a real session.</span>
               <span class="sec-summary">2 apps · 2 passing</span>
             </span>
-          </summary>
+          </div>
         <div class="apps">
 <article class="app status-passing" id="atrium">
   <header class="app-head">
@@ -1169,7 +1170,7 @@ test script finished in 70.94s</pre></details></dd></div>
   </details>
 </article>
         </div>
-        </details>
+        </div>
       </section>
     </section>
 
@@ -1207,6 +1208,12 @@ test script finished in 70.94s</pre></details></dd></div>
     </div>
   </div>
 </footer>
+<dialog id="app-details" class="details-dialog" aria-labelledby="app-details-title">
+  <button type="button" class="details-close" aria-label="Close app details" autofocus>×</button>
+  <h3 id="app-details-title">App details</h3>
+  <div class="details-content"></div>
+</dialog>
+<script src="details-dialog.js" defer></script>
 <aside id="validation-window" class="validation-window" popover="manual" role="region" aria-labelledby="validation-title" hidden>
   <button type="button" class="preview-close" aria-label="Close validation preview">×</button>
   <h3 id="validation-title">Automated test run</h3>
