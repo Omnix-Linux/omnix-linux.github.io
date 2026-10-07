@@ -36,6 +36,11 @@
       "blurb": "Photo editing, raw development, image libraries and vector illustration."
     },
     {
+      "id": "office",
+      "title": "Office",
+      "blurb": "Office suites, writing, spreadsheets, email, calendars, notes and references. New entries await compatibility testing."
+    },
+    {
       "id": "documents",
       "title": "Documents and publishing",
       "blurb": "PDF editing and page layout for print and screen."
@@ -48,7 +53,7 @@
     {
       "id": "communication",
       "title": "Communication",
-      "blurb": "Messaging, team chat, Matrix and email clients. Desktop startup is tested; account-based messaging and calls are not."
+      "blurb": "Messaging, team chat and Matrix clients. Desktop startup is tested; account-based messaging and calls are not."
     },
     {
       "id": "terminals",
@@ -1411,8 +1416,204 @@
       "screenshot": "assets/app-shots/element.png"
     },
     {
+      "id": "libreoffice",
+      "section": "office",
+      "name": "LibreOffice",
+      "icon": "assets/desktop-icons/libreoffice.svg",
+      "category": "Office suite",
+      "kind": "nixpkgs package",
+      "description": "Writer documents, Calc spreadsheets, Impress presentations, Draw diagrams, Base databases and Math formulas.",
+      "platforms": [
+        "x86_64-linux"
+      ],
+      "workflow": [],
+      "test": null,
+      "install": {
+        "label": "Try with Nix",
+        "snippet": "nix shell nixpkgs#libreoffice\nlibreoffice"
+      },
+      "verification": null,
+      "homepage": "https://www.libreoffice.org/",
+      "distribution": {
+        "via": "nixpkgs",
+        "release": "26.8.0.3",
+        "url": "https://github.com/NixOS/nixpkgs/blob/c59305bab2065cfecc4944690d9eedbb56f3a9fa/pkgs/applications/office/libreoffice/default.nix",
+        "attestation": "none",
+        "checked_at": "2026-10-07",
+        "license": "MPL-2.0 / LGPL-3.0-or-later / Apache-2.0"
+      }
+    },
+    {
+      "id": "onlyoffice",
+      "section": "office",
+      "name": "ONLYOFFICE Desktop Editors",
+      "icon": "assets/desktop-icons/onlyoffice.svg",
+      "category": "Office suite",
+      "kind": "nixpkgs package",
+      "description": "Desktop editors for documents, spreadsheets, presentations and PDFs.",
+      "platforms": [
+        "x86_64-linux"
+      ],
+      "workflow": [],
+      "test": null,
+      "install": {
+        "label": "Try with Nix",
+        "snippet": "nix shell nixpkgs#onlyoffice-desktopeditors\nonlyoffice-desktopeditors"
+      },
+      "verification": null,
+      "homepage": "https://www.onlyoffice.com/desktop",
+      "distribution": {
+        "via": "nixpkgs",
+        "release": "9.1.0",
+        "url": "https://github.com/NixOS/nixpkgs/blob/c59305bab2065cfecc4944690d9eedbb56f3a9fa/pkgs/by-name/on/onlyoffice-desktopeditors/package.nix",
+        "attestation": "none",
+        "checked_at": "2026-10-07",
+        "license": "AGPL-3.0-or-later"
+      }
+    },
+    {
+      "id": "calligra",
+      "section": "office",
+      "name": "Calligra",
+      "icon": "assets/desktop-icons/calligra.svg",
+      "category": "Office suite",
+      "kind": "nixpkgs package",
+      "description": "KDE office tools: Words for documents, Sheets for spreadsheets, Stage for presentations and Karbon for vector drawings.",
+      "platforms": [
+        "x86_64-linux"
+      ],
+      "workflow": [],
+      "test": null,
+      "install": {
+        "label": "Try with Nix",
+        "snippet": "nix shell nixpkgs#kdePackages.calligra\ncalligrawords"
+      },
+      "verification": null,
+      "homepage": "https://calligra.org/",
+      "distribution": {
+        "via": "nixpkgs",
+        "release": "26.08.1",
+        "url": "https://github.com/NixOS/nixpkgs/blob/c59305bab2065cfecc4944690d9eedbb56f3a9fa/pkgs/kde/gear/calligra/default.nix",
+        "attestation": "none",
+        "checked_at": "2026-10-07",
+        "license": "BSD-2-Clause / BSD-3-Clause / BSD-3-Clause / BSL-1.0 / CC0-1.0 / CPL-1.0 / GPL-2.0-only / GPL-2.0-or-later / GPL-3.0-only / GPL-3.0-or-later / LGPL-2.0-only / LGPL-2.0-or-later / LGPL-2.1-only / LGPL-2.1-or-later / GPL-3.0-or-later"
+      }
+    },
+    {
+      "id": "wps-office",
+      "section": "office",
+      "name": "WPS Office",
+      "icon": "assets/desktop-icons/wps-office.svg",
+      "category": "Office suite",
+      "kind": "Proprietary nixpkgs package",
+      "description": "Writer, Spreadsheets, Presentation and PDF tools for Linux. Proprietary software.",
+      "platforms": [
+        "x86_64-linux"
+      ],
+      "workflow": [],
+      "test": null,
+      "install": {
+        "label": "Try with Nix",
+        "snippet": "NIXPKGS_ALLOW_UNFREE=1 nix shell --impure nixpkgs#wpsoffice\nwps"
+      },
+      "verification": null,
+      "homepage": "https://www.wps.com/office/linux/",
+      "distribution": {
+        "via": "nixpkgs",
+        "release": "11.1.0.11723",
+        "url": "https://github.com/NixOS/nixpkgs/blob/c59305bab2065cfecc4944690d9eedbb56f3a9fa/pkgs/by-name/wp/wpsoffice/package.nix",
+        "attestation": "none",
+        "checked_at": "2026-10-07",
+        "license": "unfree"
+      }
+    },
+    {
+      "id": "freeoffice",
+      "section": "office",
+      "name": "SoftMaker FreeOffice",
+      "icon": "assets/desktop-icons/freeoffice.svg",
+      "category": "Office suite",
+      "kind": "Proprietary nixpkgs package",
+      "description": "TextMaker documents, PlanMaker spreadsheets and Presentations. Proprietary software, free for personal and business use.",
+      "platforms": [
+        "x86_64-linux"
+      ],
+      "workflow": [],
+      "test": null,
+      "install": {
+        "label": "Try with Nix",
+        "snippet": "NIXPKGS_ALLOW_UNFREE=1 nix shell --impure nixpkgs#freeoffice\nfreeoffice-textmaker"
+      },
+      "verification": null,
+      "homepage": "https://www.freeoffice.com/en/",
+      "distribution": {
+        "via": "nixpkgs",
+        "release": "2024.1234",
+        "url": "https://github.com/NixOS/nixpkgs/blob/c59305bab2065cfecc4944690d9eedbb56f3a9fa/pkgs/applications/office/softmaker/generic.nix",
+        "attestation": "none",
+        "checked_at": "2026-10-07",
+        "license": "unfree"
+      }
+    },
+    {
+      "id": "gnumeric",
+      "section": "office",
+      "name": "Gnumeric",
+      "icon": "assets/desktop-icons/gnumeric.svg",
+      "category": "Spreadsheets",
+      "kind": "nixpkgs package",
+      "description": "A standalone spreadsheet application for calculations, data analysis and charts.",
+      "platforms": [
+        "x86_64-linux"
+      ],
+      "workflow": [],
+      "test": null,
+      "install": {
+        "label": "Try with Nix",
+        "snippet": "nix shell nixpkgs#gnumeric\ngnumeric"
+      },
+      "verification": null,
+      "homepage": "https://www.gnumeric.org/",
+      "distribution": {
+        "via": "nixpkgs",
+        "release": "1.12.61",
+        "url": "https://github.com/NixOS/nixpkgs/blob/c59305bab2065cfecc4944690d9eedbb56f3a9fa/pkgs/by-name/gn/gnumeric/package.nix",
+        "attestation": "none",
+        "checked_at": "2026-10-07",
+        "license": "GPL-2.0-or-later"
+      }
+    },
+    {
+      "id": "abiword",
+      "section": "office",
+      "name": "AbiWord",
+      "icon": "assets/desktop-icons/abiword.svg",
+      "category": "Word processing",
+      "kind": "nixpkgs package",
+      "description": "A lightweight standalone word processor for writing and editing documents.",
+      "platforms": [
+        "x86_64-linux"
+      ],
+      "workflow": [],
+      "test": null,
+      "install": {
+        "label": "Try with Nix",
+        "snippet": "nix shell nixpkgs#abiword\nabiword"
+      },
+      "verification": null,
+      "homepage": "https://gitlab.gnome.org/World/AbiWord/",
+      "distribution": {
+        "via": "nixpkgs",
+        "release": "3.0.8",
+        "url": "https://github.com/NixOS/nixpkgs/blob/c59305bab2065cfecc4944690d9eedbb56f3a9fa/pkgs/by-name/ab/abiword/package.nix",
+        "attestation": "none",
+        "checked_at": "2026-10-07",
+        "license": "GPL-3.0"
+      }
+    },
+    {
       "id": "thunderbird",
-      "section": "communication",
+      "section": "office",
       "name": "Thunderbird 156.0.1",
       "icon": "assets/desktop-icons/thunderbird.png",
       "category": "Email client",
@@ -1454,6 +1655,146 @@
         "checked_at": "2026-10-07"
       },
       "screenshot": "assets/app-shots/thunderbird.png"
+    },
+    {
+      "id": "evolution",
+      "section": "office",
+      "name": "Evolution",
+      "icon": "assets/desktop-icons/evolution.svg",
+      "category": "Email, calendar and contacts",
+      "kind": "nixpkgs package",
+      "description": "Email, calendars, contacts, memos and tasks in a GNOME productivity client.",
+      "platforms": [
+        "x86_64-linux"
+      ],
+      "workflow": [],
+      "test": null,
+      "install": {
+        "label": "Try with Nix",
+        "snippet": "nix shell nixpkgs#evolution\nevolution"
+      },
+      "verification": null,
+      "homepage": "https://help.gnome.org/evolution/",
+      "distribution": {
+        "via": "nixpkgs",
+        "release": "3.60.2",
+        "url": "https://github.com/NixOS/nixpkgs/blob/c59305bab2065cfecc4944690d9eedbb56f3a9fa/pkgs/by-name/ev/evolution/package.nix",
+        "attestation": "none",
+        "checked_at": "2026-10-07",
+        "license": "LGPL-2.0-or-later"
+      }
+    },
+    {
+      "id": "kontact",
+      "section": "office",
+      "name": "Kontact",
+      "icon": "assets/desktop-icons/kontact.svg",
+      "category": "Email, calendar and contacts",
+      "kind": "nixpkgs package",
+      "description": "KDE personal information manager integrating email, calendars, contacts and other productivity tools.",
+      "platforms": [
+        "x86_64-linux"
+      ],
+      "workflow": [],
+      "test": null,
+      "install": {
+        "label": "Try with Nix",
+        "snippet": "nix shell nixpkgs#kdePackages.kontact\nkontact"
+      },
+      "verification": null,
+      "homepage": "https://apps.kde.org/kontact/",
+      "distribution": {
+        "via": "nixpkgs",
+        "release": "26.08.1",
+        "url": "https://github.com/NixOS/nixpkgs/blob/c59305bab2065cfecc4944690d9eedbb56f3a9fa/pkgs/kde/gear/kontact/default.nix",
+        "attestation": "none",
+        "checked_at": "2026-10-07",
+        "license": "BSD-3-Clause / CC0-1.0 / GPL-2.0-or-later / LGPL-2.0-only / LGPL-2.0-or-later / MIT"
+      }
+    },
+    {
+      "id": "geary",
+      "section": "office",
+      "name": "Geary",
+      "icon": "assets/desktop-icons/geary.svg",
+      "category": "Email",
+      "kind": "nixpkgs package",
+      "description": "A GNOME email client organized around conversations.",
+      "platforms": [
+        "x86_64-linux"
+      ],
+      "workflow": [],
+      "test": null,
+      "install": {
+        "label": "Try with Nix",
+        "snippet": "nix shell nixpkgs#geary\ngeary"
+      },
+      "verification": null,
+      "homepage": "https://gitlab.gnome.org/GNOME/geary",
+      "distribution": {
+        "via": "nixpkgs",
+        "release": "46.0",
+        "url": "https://github.com/NixOS/nixpkgs/blob/c59305bab2065cfecc4944690d9eedbb56f3a9fa/pkgs/by-name/ge/geary/package.nix",
+        "attestation": "none",
+        "checked_at": "2026-10-07",
+        "license": "LGPL-2.1-or-later"
+      }
+    },
+    {
+      "id": "joplin",
+      "section": "office",
+      "name": "Joplin",
+      "icon": "assets/desktop-icons/joplin.svg",
+      "category": "Notes and tasks",
+      "kind": "nixpkgs package",
+      "description": "Markdown and rich-text notes, attachments and to-do lists, with optional synchronization.",
+      "platforms": [
+        "x86_64-linux"
+      ],
+      "workflow": [],
+      "test": null,
+      "install": {
+        "label": "Try with Nix",
+        "snippet": "nix shell nixpkgs#joplin-desktop\njoplin-desktop"
+      },
+      "verification": null,
+      "homepage": "https://joplinapp.org/",
+      "distribution": {
+        "via": "nixpkgs",
+        "release": "3.7.21",
+        "url": "https://github.com/NixOS/nixpkgs/blob/c59305bab2065cfecc4944690d9eedbb56f3a9fa/pkgs/by-name/jo/joplin-desktop/package.nix",
+        "attestation": "none",
+        "checked_at": "2026-10-07",
+        "license": "AGPL-3.0-or-later"
+      }
+    },
+    {
+      "id": "zotero",
+      "section": "office",
+      "name": "Zotero",
+      "icon": "assets/desktop-icons/zotero.svg",
+      "category": "Reference management",
+      "kind": "nixpkgs package",
+      "description": "Collect, organize, annotate and cite research; integrates with LibreOffice for bibliographies.",
+      "platforms": [
+        "x86_64-linux"
+      ],
+      "workflow": [],
+      "test": null,
+      "install": {
+        "label": "Try with Nix",
+        "snippet": "nix shell nixpkgs#zotero\nzotero"
+      },
+      "verification": null,
+      "homepage": "https://www.zotero.org/",
+      "distribution": {
+        "via": "nixpkgs",
+        "release": "10.0.2",
+        "url": "https://github.com/NixOS/nixpkgs/blob/c59305bab2065cfecc4944690d9eedbb56f3a9fa/pkgs/by-name/zo/zotero/package.nix",
+        "attestation": "none",
+        "checked_at": "2026-10-07",
+        "license": "AGPL-3.0-only"
+      }
     }
   ],
   "candidates": []

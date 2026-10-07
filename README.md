@@ -101,7 +101,7 @@ Tests: `python3 -m unittest discover -s tests -p 'test_*.py'` covers normalizati
 
 Presentation policy: [apps/AGENTS.md](apps/AGENTS.md) requires every space to serve a clear purpose. Use content-sized layouts, give descriptions the available width, and show the compact Details menu directly on hover/focus.
 
-Sections: the page groups apps into the sections listed, in order, in the registry's `sections` array (`{id, title, blurb}`): today Video, Image, Documents and publishing, Browsers, Communication, Terminals, Developer tools and Desktops. Every app and candidate needs a `section` naming one of those ids; an unknown or missing id fails the build. Each section stays expanded as a regular block with its title, a one-line blurb and a summary such as "7 apps · 7 passing", followed by its cards; a row of anchor chips with counts under the lineup heading jumps to each section. A section with no apps or candidates is not rendered, and candidates appear in their own section marked Unknown. To add a group, append it to `sections` and point apps at it.
+Sections: the page groups apps into the sections listed, in order, in the registry's `sections` array (`{id, title, blurb}`): today Video, Image, Office, Documents and publishing, Browsers, Communication, Terminals, Developer tools and Desktops. Every app and candidate needs a `section` naming one of those ids; an unknown or missing id fails the build. Each section stays expanded as a regular block with its title, a one-line blurb and a summary such as "7 apps · 7 passing", followed by its cards; a row of anchor chips with counts under the lineup heading jumps to each section. A section with no apps or candidates is not rendered, and candidates appear in their own section marked Unknown. To add a group, append it to `sections` and point apps at it.
 
 Status rules:
 
@@ -140,3 +140,7 @@ The hero shader dims on a trigger rather than with the scroll position, with hys
 The Apps catalog separates Terminals, Browsers and Communication. Terminal coverage includes Kitty, tmux, WezTerm, Alacritty, Ghostty and xterm; tmux is identified as a multiplexer. Browsers include Brave, Chrome, Chromium, Helium and Firefox. Communication includes Telegram, Signal, Slack, Discord, Element and Thunderbird.
 
 The coordinated Omnix `tests/apps-catalog.nix` checks test terminal PTYs, terminfo, shell input and tmux session/pane behavior; browser checks load an offline HTTP fixture and verify JavaScript execution; communication checks cover unprivileged desktop startup. Account sign-in, messages, calls and mail delivery are outside these checks. Existing Kitty, Brave, Telegram, Signal and Slack test records remain linked to their original workflows.
+
+### Office coverage
+
+Office includes suites (LibreOffice, ONLYOFFICE, Calligra, WPS Office and SoftMaker FreeOffice), standalone tools (Gnumeric and AbiWord), email and calendars (Thunderbird, Evolution, Kontact and Geary), notes (Joplin), and references (Zotero). LibreOffice's six components are described under its single suite entry. Thunderbird moves from Communication with its recorded startup evidence preserved. The twelve new entries have no recorded compatibility result, so their status is Unknown; the page's tested count includes only actual recorded runs. Empty workflow disclosures are omitted.
