@@ -140,6 +140,15 @@
   .details-dialog .more-body { min-width: 0; }
   .details-dialog a { color: var(--ice); }
   .details-dialog .details-close { position: sticky; top: 0; float: right; width: 44px; height: 44px; margin: -10px -10px 0 0; border: 0; border-radius: 8px; background: #0b1020; color: var(--ink); font-size: 1.5rem; cursor: pointer; }
+  .details-peek { display: grid; grid-template-columns: minmax(0, 1fr) 64px; gap: 10px; align-items: center; height: 100%; }
+  .details-excerpt { margin: 0; color: var(--muted); font-size: .8rem; line-height: 1.45; display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; overflow: hidden; }
+  .details-more { min-height: 44px; padding: 0 8px; border: 1px solid var(--line); border-radius: 7px; background: transparent; color: var(--ice); cursor: pointer; font: 600 .7rem var(--font-mono); }
+  .details-more:hover { border-color: var(--ice); }
+  .details-more:focus-visible { outline: 2px solid var(--ice); outline-offset: 2px; }
+  .details-dialog:not(.is-expanded) { padding: 12px 56px 12px 12px; overflow: hidden; }
+  .details-dialog:not(.is-expanded) .details-close { position: absolute; top: 50%; right: 6px; float: none; margin: -22px 0 0; }
+  .details-dialog:not(.is-expanded) h3, .details-dialog:not(.is-expanded) .details-content { display: none; }
+  .details-dialog.is-expanded .details-peek { display: none; }
   .details-close:focus-visible { outline: 2px solid var(--ice); }
   .validation-summary { display: flex; flex-wrap: wrap; gap: 4px 12px; margin: 0; color: var(--ice); font: .72rem/1.6 var(--font-mono); }
   .validation-summary span { color: var(--muted); }
@@ -170,6 +179,8 @@
   .preview-close:hover { background: rgba(126, 186, 228, .1); }
   .preview-close:focus-visible { outline: 2px solid var(--ice); outline-offset: -2px; }
   @media (max-width: 640px) {
+    .details-peek { grid-template-columns: 1fr; grid-template-rows: minmax(0, 1fr) 44px; gap: 4px; }
+    .details-more { justify-self: end; width: 64px; }
     .app > .app-head { grid-template-columns: 32px 26px minmax(0, 1fr) 48px; gap: 6px; padding-right: 0; min-height: 82px; }
     .app-head .app-icon { width: 32px; height: 32px; grid-column: 1; grid-row: 1; }
     .app > .app-head h3 { font-size: .88rem; }
@@ -1214,10 +1225,11 @@ test script finished in 70.94s</pre></details></dd></div>
 </footer>
 <aside id="app-details" class="details-dialog" popover="manual" role="dialog" aria-labelledby="app-details-title" hidden>
   <button type="button" class="details-close" aria-label="Close app details">×</button>
+  <div class="details-peek"><p class="details-excerpt"></p><button type="button" class="details-more" aria-expanded="false" aria-controls="details-content">More ▾</button></div>
   <h3 id="app-details-title">App details</h3>
-  <div class="details-content"></div>
+  <div id="details-content" class="details-content"></div>
 </aside>
-<script src="details-dialog.js?v=hover-2" defer></script>
+<script src="details-dialog.js?v=peek-1" defer></script>
 <aside id="validation-window" class="validation-window" popover="manual" role="region" aria-labelledby="validation-title" hidden>
   <button type="button" class="preview-close" aria-label="Close validation preview">×</button>
   <h3 id="validation-title">Automated test run</h3>
