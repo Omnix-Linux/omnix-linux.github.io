@@ -4,6 +4,8 @@
 
 The Omnix website, served at https://www.omnix-linux.com.
 
+The homepage's **Omarchy Plugins** section (`#plugins`) introduces upstream plugin capabilities, links to the community catalog and [Autarchy's support issue](https://github.com/Omnix-Linux/Autarchy/issues/2), and labels Omnix integration as under development. KDE Plasma support is an investigation requiring an adapted host; it is not native Plasma widget compatibility. Keep these claims and `llms.txt` aligned with verified runtime results.
+
 A static page (`index.html`) with an OffscreenCanvas GPU worker. The oversized O uses [Coronal](https://fragcoord.xyz/s/3otcb9tt) by [@Xor](https://fragcoord.xyz/u/Xor), derived from [3D Fire](https://fragcoord.xyz/s/3zoe0vgo). `coronal.js` handles DOM placement and worker lifecycle; `coronal-webgpu.js` contains the preferred WebGPU/WGSL renderer; `coronal-shader.js` supplies the WebGL fallback. `shader-worker.js` owns the transferred canvas and all GPU resources, with no three.js dependency or per-frame main-thread rendering.
 
 The worker keeps two RGBA GPU textures (framebuffers on WebGL) for the previous and current shader samples. A cheap texture pass crossfades those samples at up to 60fps; the full shader runs at 20fps on desktop and 15fps at mobile viewport sizes. Scrolling below the hero dims the shader for readability without reducing its frame rate or pixel budget. Crossfading adds about one shader-sample interval of latency. No pixels, ImageBitmaps, or per-frame messages are copied back to the main thread.

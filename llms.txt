@@ -11,6 +11,7 @@
   - Minimal: the base alone.
 - Rollback: every system update is a boot-menu entry. Rolling back restores system apps, libraries, settings and the compatibility layer; files and personal settings in the home folder are not changed.
 - Themes: Hyprland - Omarchy includes Omarchy's built-in themes (Tokyo Night, Catppuccin, Gruvbox, Nord, Rosé Pine and more); Super + Ctrl + Shift + Space switches theme immediately, with no rebuild.
+- Omarchy Plugins: upstream supports bar widgets, panels, background services and replacement bars. The Hyprland flavor includes the host; verified plugin lifecycle support on Omnix is under development. Plugins run with user access, and system rollback does not restore personal plugin files. KDE Plasma Wayland support would require an adapted host; native Plasma widget compatibility is not provided, and Hyprland-dependent plugins need porting.
 - Switching desktops: the installed system is a flake the user owns in /etc/nixos; the desktop is one input in it. Change it and rebuild; the previous desktop stays in the boot menu.
 - Independent: not affiliated with or endorsed by Omarchy, 37signals, Basecamp or the NixOS Foundation.
 
@@ -22,6 +23,8 @@
 - [Report a bug](https://github.com/Omnix-Linux/Omnix/issues/new?template=bug.yml): one form for the installer, base, desktops and local AI
 - [Soldr](https://github.com/zackees/soldr): on Omnix, `cargo` is aliased to `soldr cargo`, so the usual commands drive a build that fetches and pins the right toolchain and caches every compilation. The cache is content-addressed and shared across branches and pull requests, for roughly 2x faster cross-PR builds, Cross-compilation is a first-class citizen: the tools are built in, so one command cross-compiles a macOS binary from Linux (also `win-x64`, `linux-x64-musl`) without renting a runner. Developed by the same person behind Omnix. Beta software; pin the release.
 - [Hyprland - Omarchy flavor](https://github.com/Omnix-Linux/Autarchy)
+- [Omarchy Plugins section](https://www.omnix-linux.com/#plugins)
+- [Plugin support research and roadmap](https://github.com/Omnix-Linux/Autarchy/issues/2)
 - [KDE Plasma - Atrium flavor](https://github.com/Omnix-Linux/Atrium)
 - [Try Omnix Docker app](https://github.com/Omnix-Linux/docker-vm/blob/feat/omnix-demo/docs/OMNIX.md)
 

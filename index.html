@@ -343,6 +343,14 @@
   code, .mono { font-family: var(--font-mono); font-size: 0.92em; }
   .lede code { color: var(--ink); background: rgba(126, 186, 228, 0.1); padding: 1px 6px; border-radius: 4px; }
 
+  /* Plugin compatibility: status stays visible alongside the capabilities. */
+  .plugin-status { color: var(--ice); font-family: var(--font-mono); font-size: var(--step--1); }
+  .plugin-links { margin-top: 26px; }
+  .plugin-capabilities { display: grid; gap: 14px; margin: 0; }
+  .plugin-capabilities > div { padding: 22px; border: 1px solid var(--line); border-radius: 14px; background: var(--panel); }
+  .plugin-capabilities dt { color: var(--ink); font-weight: 600; margin-bottom: 8px; }
+  .plugin-capabilities dd { color: var(--muted); margin: 0; }
+
   /* Hero */
   /* Hysteresis: the shader dims once 20svh of the hero has scrolled away, but wakes as soon as
      you scroll back above 45svh, before the wordmark is fully back, so there's no thin band
@@ -714,6 +722,7 @@
   <a href="#top" aria-label="Omnix"></a>
   <a href="#who" aria-label="Why Omnix"></a>
   <a href="#flavors" aria-label="Choose your desktop"></a>
+  <a href="#plugins" aria-label="Omarchy Plugins"></a>
   <a href="#ml" aria-label="Private AI on your own GPU, running instantly"></a>
   <a href="#rollback" aria-label="Every update can be undone"></a>
   <a href="#runs" aria-label="Linux apps working on NixOS"></a>
@@ -771,6 +780,36 @@
         <div class="preview-monitors"></div>
         <p class="preview-caption" aria-live="polite">Hyprland - Omarchy · interactive illustration · colors from Omarchy’s themes</p>
       </div>
+    </div>
+  </section>
+
+  <section id="plugins" aria-labelledby="plugins-heading">
+    <div class="split">
+      <div>
+        <div class="eyebrow">Omarchy Plugins</div>
+        <h2 id="plugins-heading">Make your desktop <em>your own.</em></h2>
+        <p class="plugin-status">Omnix integration · under development</p>
+        <p class="lede">Omarchy’s plugin system lets you add bar widgets, open custom panels, run background services, or replace the whole bar. Community plugins are shared as Git repositories and managed from Omarchy’s plugin menu.</p>
+        <p class="lede">Hyprland - Omarchy already includes the plugin host. We’re working toward verified installation, updates and removal on Omnix, with support tracked in our public roadmap.</p>
+        <div class="cta plugin-links">
+          <a class="btn primary" href="https://plugins.omarchy.org/">Browse Omarchy plugins</a>
+          <a class="btn" href="https://github.com/Omnix-Linux/Autarchy/issues/2">Follow plugin support</a>
+        </div>
+      </div>
+      <dl class="plugin-capabilities">
+        <div>
+          <dt>Widgets, panels and services</dt>
+          <dd>Add the tools you want to Omarchy’s shell, or clone a built-in widget to customize it. Each plugin may need extra apps or services.</dd>
+        </div>
+        <div>
+          <dt>What about KDE Plasma?</dt>
+          <dd>Some plugins could work in a separate, adapted plugin host on Plasma Wayland. This is still being investigated. They cannot be installed directly as Plasma widgets, and plugins that depend on Hyprland need porting.</dd>
+        </div>
+        <div>
+          <dt>Your plugins, your files</dt>
+          <dd>Community plugins run with your user account’s access, so review their source before enabling them. System rollbacks leave your personal plugin files and settings in place.</dd>
+        </div>
+      </dl>
     </div>
   </section>
 
