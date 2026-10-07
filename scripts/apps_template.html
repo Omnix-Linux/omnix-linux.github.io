@@ -130,24 +130,44 @@
   .more > summary:hover { background: rgba(126, 186, 228, .1); }
   .more > summary:focus-visible, .validation-preview:focus-visible { outline: 2px solid var(--ice); outline-offset: 2px; }
   .more-body { display: flex; flex-direction: column; gap: 12px; border-top: 1px solid var(--line); margin-top: 12px; padding-top: 14px; }
-  .details-dialog { position: fixed; inset: auto; margin: 0; z-index: 20; box-sizing: border-box; width: min(640px, calc(100vw - 24px)); max-height: calc(100dvh - 32px); overflow: auto; padding: 20px; border: 1px solid var(--ice); border-radius: 12px; background: #0b1020; color: var(--ink); box-shadow: 0 20px 60px rgba(0, 0, 0, .65); }
+  .details-dialog { position: fixed; inset: auto; margin: 0; z-index: 20; box-sizing: border-box; width: min(640px, calc(100vw - 24px)); max-height: calc(100dvh - 32px); overflow: auto; padding: 12px 14px; border: 1px solid rgba(126, 186, 228, .28); border-radius: 12px; background: linear-gradient(135deg, #111827, #0b1020); color: var(--ink); box-shadow: 0 12px 32px rgba(0, 0, 0, .5); }
   .details-dialog:not([hidden]) { animation: details-enter 140ms ease-out; }
   @keyframes details-enter { from { opacity: 0; transform: translateY(-6px); } to { opacity: 1; transform: translateY(0); } }
   @media (prefers-reduced-motion: reduce) { .details-dialog:not([hidden]) { animation: none; } }
   .details-dialog[hidden] { display: none; }
   .details-dialog::backdrop { background: transparent; pointer-events: none; }
-  .details-dialog h3 { margin: 0 44px 0 0; font: 700 1rem/1.4 var(--font-mono); }
-  .details-dialog .more-body { min-width: 0; }
+  .details-dialog h3 { display: flex; align-items: center; gap: 8px; margin: 0 36px 0 0; font: 600 .78rem/1.5 var(--font-mono); letter-spacing: -.02em; }
+  .details-app-icon { width: 20px; height: 20px; border-radius: 5px; flex: none; object-fit: contain; }
+  .details-app-icon svg { width: 16px; height: 16px; }
+  .details-name { min-width: 0; overflow-wrap: anywhere; }
+  .details-dialog .more-body { min-width: 0; gap: 0; border-top: 0; margin-top: 8px; padding-top: 0; }
+  .details-dialog .app-desc { font-size: .82rem; line-height: 1.5; color: #becbdd; margin-bottom: 8px; }
+  .details-dialog .validation-summary { font-size: .64rem; line-height: 1.6; gap: 2px 8px; margin-bottom: 8px; color: var(--muted); }
+  .details-dialog .validation-date { white-space: nowrap; }
+  .details-dialog .validation-result::before { content: ""; display: inline-block; width: 4px; height: 4px; margin-right: 5px; border-radius: 50%; background: var(--status, var(--muted)); vertical-align: middle; }
+  .details-dialog .gap { font-size: .78rem; margin: 0 0 8px; }
+  .details-dialog .evidence-fold { border: 0; border-top: 1px solid rgba(126, 186, 228, .12); border-radius: 0; padding: 0; }
+  .details-dialog .evidence-fold > summary { min-height: 44px; font: 600 .84rem var(--font-body); padding: 0 2px; justify-content: space-between; }
+  .details-dialog .evidence-fold > summary::before { content: none; }
+  .details-dialog .evidence-fold > summary::after { content: ""; width: 6px; height: 6px; margin-right: 4px; border-right: 1.5px solid var(--muted); border-bottom: 1.5px solid var(--muted); transform: rotate(45deg); }
+  .details-dialog .evidence-fold[open] > summary::after { transform: rotate(225deg); }
+  .details-dialog .evidence-fold > summary:hover { color: var(--ice); }
+  .details-dialog .evidence-fold[open] { padding-bottom: 6px; }
+  .details-dialog .evidence-fold > :not(summary) { font-size: .75rem; margin-bottom: 6px; }
+  .details-dialog .steps { padding: 6px 0 6px 22px; }
+  .details-dialog .evidence { font-size: .75rem; }
+  .details-dialog .snip { border-radius: 6px; }
+
   .details-dialog a { color: var(--ice); }
-  .details-dialog .details-close { position: sticky; top: 0; float: right; width: 44px; height: 44px; margin: -10px -10px 0 0; border: 0; border-radius: 8px; background: #0b1020; color: var(--ink); font-size: 1.5rem; cursor: pointer; }
+  .details-dialog .details-close { position: sticky; top: 0; float: right; width: 44px; height: 44px; margin: -10px -10px 0 0; border: 0; border-radius: 8px; background: transparent; color: var(--muted); font-size: 1.1rem; cursor: pointer; }
   /* Apps policy: content uses the width; expansion belongs on a thin bottom edge. */
   .details-peek { display: block; }
-  .details-excerpt { margin: 0; color: var(--muted); font-size: .8rem; line-height: 1.45; display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; overflow: hidden; }
-  .details-more { position: absolute; bottom: 0; left: 0; width: 100%; height: 22px; padding: 0; border: 0; border-top: 1px solid var(--line); background: rgba(126, 186, 228, .04); color: var(--ice); cursor: pointer; display: grid; place-items: center; }
+  .details-excerpt { margin: 0; font-size: .82rem; line-height: 1.5; color: #becbdd; display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; overflow: hidden; }
+  .details-more { position: absolute; bottom: 0; left: 0; width: 100%; height: 22px; padding: 0; border: 0; border-top: 1px solid rgba(126, 186, 228, .12); background: rgba(126, 186, 228, .035); color: var(--ice); cursor: pointer; display: grid; place-items: center; }
   .details-more svg { width: 16px; height: 16px; }
   .details-more:hover { background: rgba(126, 186, 228, .14); }
   .details-more:focus-visible { outline: 2px solid var(--ice); outline-offset: -2px; }
-  .details-dialog:not(.is-expanded) { padding: 10px 48px 28px 12px; overflow: hidden; }
+  .details-dialog:not(.is-expanded) { padding: 10px 48px 26px 12px; overflow: hidden; }
   .details-dialog:not(.is-expanded) .details-close { position: absolute; top: 0; right: 2px; float: none; margin: 0; }
   .details-dialog:not(.is-expanded) h3, .details-dialog:not(.is-expanded) .details-content { display: none; }
   .details-dialog.is-expanded .details-peek { display: none; }
@@ -340,7 +360,7 @@
   <h3 id="app-details-title">App details</h3>
   <div id="details-content" class="details-content"></div>
 </aside>
-<script src="details-dialog.js?v=right-80-1" defer></script>
+<script src="details-dialog.js?v=polish-1" defer></script>
 <aside id="validation-window" class="validation-window" popover="manual" role="region" aria-labelledby="validation-title" hidden>
   <button type="button" class="preview-close" aria-label="Close validation preview">×</button>
   <h3 id="validation-title">Automated test run</h3>

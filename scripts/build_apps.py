@@ -258,7 +258,9 @@ def render_app(app):
     else:
         test_line = "<span>No test yet</span>"
     if status and ver.get("verified_at"):
-        summary = f'{e(STATUS_LABELS[status])} · tested {e(ver["verified_at"])}'
+        summary = (f'<span class="validation-result">{e(STATUS_LABELS[status])}</span>'
+                   f'<span class="validation-date">Tested <time datetime="{e(ver["verified_at"])}">'
+                   f'{e(ver["verified_at"][:10])}</time></span>')
         last = f'{badge_html(status)} on {e(ver["verified_at"])}'
         if ver.get("commit"):
             last += f'<span class="notes">Revision: <code>{e(ver["commit"])}</code></span>'
