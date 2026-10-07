@@ -15,6 +15,7 @@
   function position() {
     if (!active || preview.hidden) return;
     const trigger = active.getBoundingClientRect();
+    if (trigger.bottom <= 0 || trigger.top >= innerHeight) { close(); return; }
     const gap = 8, edge = 12;
     const box = preview.getBoundingClientRect();
     const viewport = window.visualViewport;
@@ -117,8 +118,10 @@
   document.addEventListener("pointerdown", event => {
     if (active && !preview.contains(event.target) && !active.contains(event.target)) close();
   });
-  // Scrolling changes the anchor; closing avoids a floating window losing context.
-  document.addEventListener("scroll", event => { if (active && !preview.contains(event.target)) close(); }, true);
+  // Keep the preview attached when its card moves; ignore scrolling inside panels.
+  document.addEventListener("scroll", event => {
+    if (active && (event.target === document || (event.target instanceof Element && event.target.contains(active)))) position();
+  }, true);
   window.addEventListener("resize", () => { if (active) close(); });
   image.addEventListener("load", position);
   document.documentElement.classList.add("previews-ready");
