@@ -19,7 +19,8 @@ test('every app has the required fields and an existing icon', () => {
   for (const a of reg.apps) {
     for (const k of ['id', 'name', 'icon', 'category', 'kind', 'description']) assert.equal(typeof a[k], 'string', `${a.id}.${k}`);
     assert.ok(!ids.has(a.id)); ids.add(a.id);
-    assert.ok(Array.isArray(a.workflow) && a.workflow.length > 0, a.id);
+    assert.ok(Array.isArray(a.workflow), a.id);
+    if (['passing', 'patched', 'known-gap', 'failing'].includes(a.verification?.status)) assert.ok(a.workflow.length > 0, a.id);
     assert.ok(a.install && a.install.label && a.install.snippet, a.id);
     if (a.icon.startsWith('assets/')) assert.ok(fs.existsSync(path.join(root, a.icon)), a.icon);
   }

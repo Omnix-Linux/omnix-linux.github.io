@@ -112,6 +112,12 @@ class Render(unittest.TestCase):
         self.assertIn("<code>0123456789abcdef</code>", page)
         self.assertIn("https://github.com/Omnix-Linux/Omnix/blob/main/tests/fhs.nix", page)
 
+    def test_app_count_only_claims_recorded_test_results(self):
+        entries = [app(id="verified", verification=ver("passing")), app(id="pending", verification=None)]
+        page = self.render({"sections": SECTIONS, "apps": entries})
+        self.assertIn("1 app tested", page)
+        self.assertNotIn("2 apps tested", page)
+
     def test_escapes_and_inlines_data(self):
         page = self.render({"sections": SECTIONS, "apps": [app(description="<script>x</script>", workflow=["a </script> b"])]})
         self.assertIn("&lt;script&gt;x&lt;/script&gt;", page)

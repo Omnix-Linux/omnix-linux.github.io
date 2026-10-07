@@ -246,6 +246,8 @@ def render_app(app):
     ver = app.get("verification") or {}
     test = app["test"]
     steps = "".join(f"<li><code>{e(s)}</code></li>" for s in app["workflow"])
+    workflow_html = (f'      <details class="evidence-fold"><summary>Verified workflow</summary><ol class="steps">{steps}</ol></details>'
+                     if steps else "")
     gaps = "".join(f'<p class="gap"><strong>Documented gap</strong>{e(g)}</p>' for g in app.get("known_gaps", []))
     if test:
         test_line = (f'<a href="{e(test["url"])}">{e(test["repo"])}/{e(test["path"])}</a>'
@@ -295,10 +297,7 @@ def render_app(app):
           <pre id="{snippet_id}">{e(app["install"]["snippet"])}</pre>
         </div>
       </details>
-      <details class="evidence-fold">
-        <summary>Verified workflow</summary>
-        <ol class="steps">{steps}</ol>
-      </details>
+{workflow_html}
       <details class="evidence-fold">
         <summary>Validation details</summary>
         <dl class="evidence">
@@ -396,7 +395,7 @@ def render_index(groups):
 
 def render(reg, template):
     apps = reg["apps"]
-    count = plural(len(apps), "app")
+    count = plural(sum(status_of(app) in TESTED_STATUSES for app in apps), "app")
     blob = json.dumps({k: v for k, v in reg.items() if k != "_schema"}, separators=(",", ":"),
                       ensure_ascii=False).replace("</", "<\\/")
     groups = grouped_sections(reg)
