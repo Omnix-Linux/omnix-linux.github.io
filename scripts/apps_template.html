@@ -176,6 +176,17 @@
   .validation-shot { display: grid; gap: 4px; width: 88px; text-align: center; color: var(--muted); text-decoration: none; font: .55rem var(--font-mono); }
   .validation-shot img { width: 88px; height: 56px; object-fit: cover; border: 1px solid var(--line); border-radius: 6px; }
   .validation-shot:hover { color: var(--ice); }
+  .test-run-preview { position: fixed; inset: auto; margin: 0; z-index: 30; box-sizing: border-box; padding: 8px; border: 1px solid var(--line); border-radius: 10px; background: #0b1020; color: var(--ink); box-shadow: 0 16px 48px rgba(0, 0, 0, .6); }
+  .test-run-preview[hidden] { display: none; }
+  .test-run-preview::backdrop { background: transparent; pointer-events: none; }
+  .shot-toolbar { display: flex; align-items: center; gap: 8px; min-height: 44px; font: .68rem var(--font-mono); }
+  .shot-caption { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--muted); }
+  .shot-toolbar a { color: var(--ice); }
+  .shot-toolbar button { min-width: 44px; height: 44px; padding: 0 8px; border: 0; border-radius: 6px; background: transparent; color: var(--ice); font: inherit; cursor: pointer; }
+  .shot-toolbar button:hover { background: rgba(126, 186, 228, .1); }
+  .shot-toolbar button:focus-visible, .shot-toolbar a:focus-visible { outline: 2px solid var(--ice); outline-offset: -2px; }
+  .shot-viewport { overflow: auto; border-radius: 4px; background: #000; }
+  .shot-viewport img { display: block; max-width: none; margin: auto; }
   @media (max-width: 640px) {
     .app > .app-head { grid-template-columns: 32px minmax(0, 1fr); gap: 8px; padding-right: 98px; }
     .app-head .app-icon { width: 32px; height: 32px; }
@@ -283,7 +294,7 @@
     <div class="eyebrow">Apps on Omnix · <!--__APP_COUNT__--> tested</div>
     <h1>Apps tested <em>on Omnix.</em></h1>
     <p class="lede">Browse apps we’ve run in an Omnix virtual machine. Open <strong>Details</strong> for installation, tested workflows and the evidence behind each status.</p>
-    <p class="lede disclosure-help">Hover, focus or tap an app’s <strong>status</strong> to open Details. <strong>Test run</strong> images inside show its recorded automated validation; select an image to view it in full.</p>
+    <p class="lede disclosure-help">Hover, focus or tap an app’s <strong>status</strong> to open Details. <strong>Test run</strong> images inside show its recorded automated validation; hover or focus an image to preview it, or tap to keep it open.</p>
     <p class="meta"><span>Registry: <a href="https://github.com/Omnix-Linux/omnix-linux.github.io/blob/main/apps/registry.json">apps/registry.json</a></span><span class="legend">Status: <span class="badge badge-passing">Passing</span> <span class="badge badge-patched">Patched</span> <span class="badge badge-known-gap">Known gap</span> <span class="badge badge-failing">Failing</span> <span class="badge badge-unknown">Unknown</span></span></p>
 
     <section aria-labelledby="lineup">
@@ -332,7 +343,17 @@
   <h3 id="app-details-title">App details</h3>
   <div id="details-content" class="details-content"></div>
 </aside>
-<script src="details-dialog.js?v=scroll-hover-dismiss-2" defer></script>
+<aside id="test-run-preview" class="test-run-preview" popover="manual" role="dialog" aria-label="Recorded test run screenshot" hidden>
+  <div class="shot-toolbar">
+    <span class="shot-caption"></span>
+    <a class="shot-original" target="_blank" rel="noopener">Original ↗</a>
+    <button type="button" class="shot-size" aria-label="Show actual size" aria-pressed="false">1:1</button>
+    <button type="button" class="shot-close" aria-label="Close screenshot preview">×</button>
+  </div>
+  <div class="shot-viewport"><img alt=""></div>
+</aside>
+<script src="details-dialog.js?v=image-preview-4" defer></script>
+<script src="test-run-preview.js?v=1" defer></script>
 <script id="apps-data" type="application/json">/*__APPS_DATA__*/null</script>
 <script>
 (() => {
