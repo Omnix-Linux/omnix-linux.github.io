@@ -373,16 +373,16 @@ def render_section(section, apps, cands, number=1):
 {cards}
         </div>''' if apps else ""
     return f'''      <section class="app-section" id="section-{sid}" aria-labelledby="section-{sid}-title">
-        <details class="sec" open>
-          <summary>
+        <div class="sec">
+          <div class="sec-heading">
             <span class="sec-head">
               <span class="eyebrow">Section {number:02d}</span>
               <h3 class="sec-title" id="section-{sid}-title">{e(section["title"])}</h3>
               <span class="sec-blurb">{e(section["blurb"])}</span>
               <span class="sec-summary">{e(section_summary(apps, cands))}</span>
             </span>
-          </summary>{grid}{cand_html}
-        </details>
+          </div>{grid}{cand_html}
+        </div>
       </section>'''
 
 

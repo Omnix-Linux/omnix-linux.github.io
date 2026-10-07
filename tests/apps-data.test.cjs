@@ -89,7 +89,7 @@ test('apps are grouped into the registry sections, in order, each app exactly on
   assert.deepEqual(rendered, used, 'non-empty sections, in registry order');
   const chips = [...html.matchAll(/<a class="chip" href="#section-([a-z0-9-]+)">/g)].map(m => m[1]);
   assert.deepEqual(chips, used);
-  assert.equal((html.match(/<details class="sec" open>/g) || []).length, used.length);
+  assert.equal((html.match(/<div class="sec">/g) || []).length, used.length);
   for (const id of used) {
     const block = html.split(`id="section-${id}"`)[1].split('</section>')[0];
     const members = reg.apps.filter(a => a.section === id);

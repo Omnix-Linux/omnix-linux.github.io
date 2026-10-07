@@ -234,7 +234,7 @@ class Sections(unittest.TestCase):
         self.assertLess(page.index('href="#section-demo"'), page.index('href="#section-other"'))
         self.assertNotIn("section-empty", page)
         self.assertNotIn("Nothing here", page.split('<script id="apps-data"', 1)[0])
-        self.assertEqual(page.count('<details class="sec" open>'), 2)
+        self.assertEqual(page.count('<div class="sec">'), 2)
 
     def test_summary_counts(self):
         apps = [app(id="a", verification=ver("passing")), app(id="b", verification=ver("passing")),
