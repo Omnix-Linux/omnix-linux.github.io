@@ -106,46 +106,67 @@
   .badge-failing { color: var(--bad); border-color: rgba(252, 165, 165, .45); background: rgba(252, 165, 165, .08); }
   .badge-unknown { color: #8a96ad; border-color: rgba(138, 150, 173, .4); background: rgba(138, 150, 173, .06); }
 
-  /* App cards: two columns on wide screens, stacked on phones. */
-  .apps, .cands { list-style: none; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 480px), 1fr)); gap: 12px; margin: 28px 0 0; align-items: start; }
-  /* A card is identity plus one status colour; a stripe on the left repeats it at a glance. */
-  .app { position: relative; display: grid; grid-template-columns: minmax(0, 1fr); align-items: start; min-width: 0; padding: 18px 20px; border: 1px solid var(--line); border-left: 4px solid var(--status, var(--line)); border-radius: 14px; background: var(--panel); }
+  h2.eyebrow { font-size: var(--step--1); font-weight: 500; margin: 0 0 12px; }
+  /* Compact identity rows; all app information expands downward in place. */
+  .apps, .cands { list-style: none; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 520px), 1fr)); gap: 10px; margin: 18px 0 0; align-items: start; }
+  .app { position: relative; min-width: 0; padding: 12px 14px; border: 1px solid var(--line); border-left: 3px solid var(--status, var(--line)); border-radius: 12px; background: var(--panel); }
   .status-passing { --status: var(--ok); }
   .status-patched { --status: var(--ok); }
   .status-known-gap { --status: var(--amber); }
   .status-failing { --status: var(--bad); }
   .status-unknown { --status: #5d6880; }
-  .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; border: 0; }
-  .app > .app-head { grid-column: 1; grid-row: 1; padding-right: 88px; min-height: 60px; }
-  .more, .screenshots { min-width: 0; }
-  .more:not([open]), .screenshots:not([open]) { height: 0; }
-  .more > summary, .screenshots > summary { position: absolute; top: 26px; right: 16px; width: 44px; height: 44px; cursor: pointer; list-style: none; display: grid; place-items: center; color: var(--ice); border-radius: 8px; }
-  .screenshots > summary { right: 60px; }
-  .more > summary::-webkit-details-marker, .screenshots > summary::-webkit-details-marker { display: none; }
-  .more > summary::before, .screenshots > summary::before { content: ""; width: 9px; height: 9px; border-right: 2px solid currentColor; border-bottom: 2px solid currentColor; transform: rotate(-45deg); }
-  .screenshots > summary::before { transform: rotate(45deg); }
-  .more[open] > summary::before { transform: rotate(135deg); }
-  .screenshots[open] > summary::before { transform: rotate(225deg); }
-  .more > summary:hover, .screenshots > summary:hover { background: rgba(126, 186, 228, .1); }
-  .more > summary:focus-visible, .screenshots > summary:focus-visible { outline: 2px solid var(--ice); outline-offset: 2px; }
-  .screenshots[open] { grid-column: 1; grid-row: 2; margin-top: 16px; }
-  .more[open] { grid-column: 1; grid-row: 3; margin-top: 16px; }
-  .more-body { display: flex; flex-direction: column; gap: 14px; border-top: 1px solid var(--line); padding-top: 16px; }
-  @media (min-width: 1000px) {
-    .app:has(> .more[open]) { grid-column: 1 / -1; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); column-gap: 24px; }
-    .app:has(> .more[open]) > .app-head { padding-right: 44px; }
-    .app:has(> .more[open]) > .screenshots > summary { right: calc(50% + 16px); }
-    .app > .more[open] { grid-column: 2; grid-row: 1 / span 3; margin-top: 0; padding: 0 48px 0 24px; border-left: 1px solid var(--line); }
-    .app > .more[open] .more-body { border-top: 0; padding-top: 0; }
-  }
-  @media (max-width: 520px) {
-    .app { padding: 16px 14px; }
-    .app > .app-head { display: grid; grid-template-columns: 40px minmax(0, 1fr); gap: 6px 10px; padding-right: 80px; }
-    .app-head .app-icon { width: 40px; height: 40px; grid-row: 1 / span 2; }
-    .app-head .badge { grid-column: 2; justify-self: start; margin-left: 0; }
-    .app h3 { font-size: .94rem; overflow-wrap: anywhere; }
-    .more > summary, .screenshots > summary { right: 8px; top: 24px; }
-    .screenshots > summary { right: 52px; }
+  .app > .app-head { display: grid; grid-template-columns: 40px minmax(0, 1fr) auto auto; gap: 10px; align-items: center; padding-right: 72px; min-height: 52px; }
+  .app-head .app-icon { width: 40px; height: 40px; }
+  .app-head .app-title { min-width: 0; }
+  .app-head h3 { font-size: .96rem; overflow-wrap: anywhere; }
+  .app-head .badge { margin: 0; font-size: .65rem; padding: 3px 8px; }
+  .app-head .app-cat { font-size: .7rem; }
+  .more > summary { position: absolute; top: 16px; right: 12px; min-width: 64px; height: 44px; cursor: pointer; list-style: none; display: flex; align-items: center; justify-content: center; gap: 8px; color: var(--ice); border-radius: 8px; font: 600 .7rem var(--font-mono); }
+  .more > summary::-webkit-details-marker { display: none; }
+  .more > summary::after { content: ""; width: 6px; height: 6px; border-right: 2px solid currentColor; border-bottom: 2px solid currentColor; transform: rotate(45deg); }
+  .more[open] > summary::after { transform: rotate(225deg); }
+  .more > summary:hover { background: rgba(126, 186, 228, .1); }
+  .more > summary:focus-visible, .validation-preview:focus-visible { outline: 2px solid var(--ice); outline-offset: 2px; }
+  .more-body { display: flex; flex-direction: column; gap: 12px; border-top: 1px solid var(--line); margin-top: 12px; padding-top: 14px; }
+  .validation-summary { display: flex; flex-wrap: wrap; gap: 4px 12px; margin: 0; color: var(--ice); font: .72rem/1.6 var(--font-mono); }
+  .validation-summary span { color: var(--muted); }
+  .evidence-fold { min-width: 0; border: 1px solid var(--line); border-radius: 8px; padding: 0 12px; }
+  .evidence-fold > summary, .run-log > summary { cursor: pointer; min-height: 44px; display: flex; align-items: center; gap: 8px; list-style: none; color: var(--ink); font: 600 .76rem var(--font-mono); }
+  .evidence-fold > summary::before, .run-log > summary::before { content: "▸"; color: var(--ice); }
+  .evidence-fold[open] > summary::before, .run-log[open] > summary::before { content: "▾"; }
+  .evidence-fold > summary::-webkit-details-marker, .run-log > summary::-webkit-details-marker { display: none; }
+  .evidence-fold > summary:focus-visible, .run-log > summary:focus-visible { outline: 2px solid var(--ice); outline-offset: -2px; }
+  .evidence-fold > :not(summary) { margin-bottom: 12px; }
+  .validation-caption { color: var(--muted); font-size: .8rem; }
+  .validation-preview { display: none; width: 48px; min-height: 48px; padding: 3px; border: 1px solid var(--line); border-radius: 7px; background: rgba(4, 5, 12, .6); color: var(--muted); cursor: pointer; }
+  .previews-ready .validation-preview { display: grid; place-items: center; gap: 3px; }
+  .validation-preview img { width: 40px; height: 28px; object-fit: cover; border-radius: 3px; }
+  .validation-preview span { white-space: nowrap; font: .53rem var(--font-mono); }
+  .validation-preview:hover, .validation-preview[aria-expanded="true"] { border-color: var(--ice); color: var(--ice); }
+  .validation-window { position: fixed; inset: auto; box-sizing: border-box; width: min(540px, calc(100vw - 24px)); max-height: calc(100dvh - 100px); overflow: auto; margin: 0; padding: 16px; border: 1px solid var(--ice); border-radius: 12px; background: #0b1020; color: var(--ink); box-shadow: 0 20px 60px rgba(0, 0, 0, .65); z-index: 10; }
+  .validation-window[hidden] { display: none; }
+  .validation-window::backdrop { background: transparent; pointer-events: none; }
+  .validation-window h3 { font: 700 .95rem/1.4 var(--font-mono); margin: 0 40px 8px 0; }
+  .validation-window .preview-context { font: .75rem/1.6 var(--font-mono); color: var(--ice); margin: 0 0 12px; }
+  .validation-window figure { margin: 0; }
+  .validation-window figure { display: flex; flex-direction: column; }
+  .validation-window img { width: 100%; max-height: min(38dvh, 280px); object-fit: contain; display: block; background: #000; border-radius: 6px; }
+  .validation-window figcaption { order: -1; color: var(--muted); font-size: .8rem; margin: 0 0 10px; }
+  .validation-window a { color: var(--ice); font-size: .8rem; display: inline-block; margin-top: 10px; }
+  .preview-close { position: absolute; right: 8px; top: 8px; width: 44px; height: 44px; border: 0; border-radius: 8px; background: transparent; color: var(--ink); font-size: 1.5rem; cursor: pointer; }
+  .preview-close:hover { background: rgba(126, 186, 228, .1); }
+  .preview-close:focus-visible { outline: 2px solid var(--ice); outline-offset: -2px; }
+  @media (max-width: 640px) {
+    .app > .app-head { grid-template-columns: 32px minmax(0, 1fr) 48px 64px; gap: 6px; padding-right: 0; min-height: 82px; }
+    .app-head .app-icon { width: 32px; height: 32px; grid-column: 1; grid-row: 1; }
+    .app > .app-head h3 { font-size: .88rem; }
+    .app-head .app-title { grid-column: 2 / -1; grid-row: 1; }
+    .app-head .badge { grid-column: 1 / span 2; grid-row: 2; justify-self: start; }
+    .app > .app-head .badge { margin-left: 0; }
+    .validation-preview { grid-column: 3; grid-row: 2; min-height: 44px; padding: 2px; gap: 2px; }
+    .validation-preview img { width: 36px; height: 24px; }
+    .validation-preview span { font: .53rem/1 var(--font-mono); }
+    .more > summary { top: auto; right: 12px; margin-top: -46px; }
   }
   /* Sections: one collapsible block per group of apps, open by default. */
   .sec-index ul { list-style: none; display: flex; flex-wrap: wrap; gap: 8px; padding: 0; margin: 18px 0 0; }
@@ -153,7 +174,7 @@
   .chip:hover { border-color: var(--ice); color: var(--ice); }
   .chip:focus-visible { outline: 2px solid var(--ice); outline-offset: 2px; }
   .chip-n { color: var(--muted); font-weight: 700; }
-  .app-section { margin-top: clamp(32px, 5svh, 56px); scroll-margin-top: calc(var(--header-height) + 16px); }
+  .app-section { margin-top: 24px; scroll-margin-top: calc(var(--header-height) + 16px); }
   .sec > summary { cursor: pointer; list-style: none; display: flex; align-items: flex-start; gap: 12px; padding-bottom: 10px; border-bottom: 1px solid var(--line); }
   .sec > summary::-webkit-details-marker { display: none; }
   .sec > summary::before { content: "▸"; flex: none; margin-top: 1.55em; color: var(--ice); font-size: 1.1rem; line-height: 1; transition: transform .2s; }
@@ -164,7 +185,7 @@
   .sec-title { font-family: var(--font-display); font-weight: 800; font-size: var(--step-1, 1.4rem); line-height: 1.2; letter-spacing: -0.015em; margin: 2px 0 0; }
   .sec-blurb { color: var(--muted); }
   .sec-summary { font: 600 .78rem var(--font-mono); letter-spacing: .04em; color: var(--muted); }
-  .sec .apps { margin-top: 20px; }
+  .sec .apps { margin-top: 12px; }
   .cands-note { color: var(--muted); margin: 20px 0 0; }
   @media (prefers-reduced-motion: reduce) { .sec > summary::before { transition: none; } }
   .app-head { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
@@ -249,14 +270,13 @@
 <main>
   <div class="wide">
     <div class="eyebrow">Apps on Omnix · <!--__APP_COUNT__--> tested</div>
-    <h1>Decentralized <em>app distribution.</em></h1>
-    <p class="lede">Attestation and signing allow apps to be distributed through GitHub. A release carries a signed attestation that ties each binary to the source and the build that produced it, so you can verify an app without a central app store.</p>
-    <p class="lede">Every app here also comes with a workflow an agent runs in a booted NixOS VM: the real binary, the real commands, the real session. A status only appears after that test has run, and each card shows when it last ran and against which commit. Re-run the test after an update and the card tells you whether your workflow survived it.</p>
+    <h1>Apps tested <em>on Omnix.</em></h1>
+    <p class="lede">Browse apps we’ve run in an Omnix virtual machine. Open <strong>Details</strong> for installation, tested workflows and the evidence behind each status.</p>
+    <p class="lede disclosure-help">The <strong>Test run</strong> thumbnails show automated validation screenshots. Hover, focus or tap one to preview the recorded run.</p>
     <p class="meta"><span>Registry: <a href="https://github.com/Omnix-Linux/omnix-linux.github.io/blob/main/apps/registry.json">apps/registry.json</a></span><span class="legend">Status: <span class="badge badge-passing">Passing</span> <span class="badge badge-patched">Patched</span> <span class="badge badge-known-gap">Known gap</span> <span class="badge badge-failing">Failing</span> <span class="badge badge-unknown">Unknown</span></span></p>
 
     <section aria-labelledby="lineup">
-      <div class="eyebrow">The lineup</div>
-      <h2 id="lineup">Tested workflows, <em>with the evidence</em></h2>
+      <h2 id="lineup" class="eyebrow">Browse apps by category</h2>
 <!--__SECTION_INDEX__-->
 <!--__APP_SECTIONS__-->
     </section>
@@ -295,6 +315,14 @@
     </div>
   </div>
 </footer>
+<aside id="validation-window" class="validation-window" popover="manual" role="region" aria-labelledby="validation-title" hidden>
+  <button type="button" class="preview-close" aria-label="Close validation preview">×</button>
+  <h3 id="validation-title">Automated test run</h3>
+  <p class="preview-context"></p>
+  <figure><img alt=""><figcaption>Captured during an automated test in an Omnix virtual machine. This validates the recorded workflow, not every feature of the app.</figcaption></figure>
+  <a class="preview-test-link">Read the automated test</a>
+</aside>
+<script src="validation-preview.js" defer></script>
 <script id="apps-data" type="application/json">/*__APPS_DATA__*/null</script>
 <script>
 (() => {

@@ -234,12 +234,16 @@ def shot_html(app):
     shot = app.get("screenshot")
     if not shot:
         return ""
-    when = (app.get("verification") or {}).get("verified_at", "")
-    return (f'<details class="screenshots"><summary aria-label="Screenshots for {e(app["name"])}" '
-            f'title="Screenshots"><span class="sr-only">Screenshots</span></summary>'
-            f'<figure class="app-shot"><img src="../{e(shot)}" alt="{e(app["name"])} running on Omnix in the test VM" '
-            f'width="1024" height="768" loading="lazy" decoding="async">'
-            f'<figcaption>Screenshot from the test run on {e(when)}</figcaption></figure></details>')
+    ver = app.get("verification") or {}
+    status = STATUS_LABELS[status_of(app)]
+    test_url = (app.get("test") or {}).get("url", "")
+    return (f'<button class="validation-preview" type="button" aria-controls="validation-window" '
+            f'aria-expanded="false" aria-label="Automated test run for {e(app["name"])}" '
+            f'data-app-name="{e(app["name"])}" data-result="{e(status)}" '
+            f'data-run-date="{e(ver.get("verified_at", ""))}" data-shot="../{e(shot)}" '
+            f'data-test-url="{e(test_url)}">'
+            f'<img src="../{e(shot)}" alt="" width="40" height="28" loading="lazy" decoding="async">'
+            f'<span>Test run</span></button>')
 
 
 def render_app(app):
@@ -253,41 +257,59 @@ def render_app(app):
                      f'<code class="check">nix build github:{e(test["repo"])}#{e(test["check"])}</code>')
     else:
         test_line = "<span>No test yet</span>"
-    if status:
-        commit = ver.get("commit")
-        commit_html = f'<code>{e(commit[:12])}</code>' if commit else "unknown commit"
-        last = f'{badge_html(status)} on {e(ver["verified_at"]) if ver.get("verified_at") else "unknown date"} at {commit_html}'
+    if status and ver.get("verified_at"):
+        summary = f'{e(STATUS_LABELS[status])} · tested {e(ver["verified_at"])}'
+        last = f'{badge_html(status)} on {e(ver["verified_at"])}'
+        if ver.get("commit"):
+            last += f'<span class="notes">Revision: <code>{e(ver["commit"])}</code></span>'
         if ver.get("notes"):
             last += f'<span class="notes">{e(ver["notes"])}</span>'
         if ver.get("log_excerpt"):
-            last += f'<pre class="log">{e(ver["log_excerpt"])}</pre>'
+            last += f'<details class="run-log"><summary>Test log</summary><pre class="log">{e(ver["log_excerpt"])}</pre></details>'
     else:
+        summary = "Not yet validated"
         last = "Not run for this page yet. The status appears once a maintainer or agent runs the test and records the result."
+    shot = app.get("screenshot")
+    shot_link = (f'<p class="validation-caption">Automated test run in an Omnix virtual machine. '
+                 f'<a href="../{e(shot)}">View the recorded screenshot</a>.</p>') if shot else ""
+    distribution = dist_html(app.get("distribution"), app.get("homepage")) or '<p class="app-desc">No package source recorded.</p>'
     snippet_id = f"snip-{app['id']}"
-    # The card itself is just identity and status; the evidence folds away.
     return f'''<article class="app status-{STATUS_CLASS[status]}" id="{e(app["id"])}">
   <header class="app-head">
     {icon_html(app["icon"], app["name"])}
     <div class="app-title"><h3>{e(app["name"])}</h3><p class="app-cat">{e(app["category"])}</p></div>
     {badge_html(status)}
+{shot_html(app)}
   </header>
-  {shot_html(app)}
   <details class="more">
-    <summary aria-label="Details for {e(app['name'])}" title="Details"><span class="sr-only">Details</span></summary>
+    <summary aria-label="Details for {e(app['name'])}"><span>Details</span></summary>
     <div class="more-body">
       <p class="app-desc">{e(app["description"])}</p>
-{dist_html(app.get("distribution"), app.get("homepage"))}
-      <div class="term"><div class="term-bar"><i></i><i></i><i></i><b>workflow an agent verifies</b></div><ol class="steps">{steps}</ol></div>
-      {gaps}
-      <dl class="evidence">
-        <div><dt>Test</dt><dd>{test_line}</dd></div>
-        <div><dt>Last run</dt><dd>{last}</dd></div>
-        <div><dt>Platforms</dt><dd>{e(", ".join(app["platforms"]))}</dd></div>
-      </dl>
-      <div class="snip">
-        <div class="snip-head"><span>{e(app["install"]["label"])}</span><button class="copy" type="button" data-copy="{snippet_id}">Copy</button></div>
-        <pre id="{snippet_id}">{e(app["install"]["snippet"])}</pre>
-      </div>
+{gaps}
+      <p class="validation-summary">{summary}<span>{e(", ".join(app["platforms"]))}</span></p>
+      <details class="evidence-fold">
+        <summary>Install</summary>
+        <div class="snip">
+          <div class="snip-head"><span>{e(app["install"]["label"])}</span><button class="copy" type="button" data-copy="{snippet_id}">Copy</button></div>
+          <pre id="{snippet_id}">{e(app["install"]["snippet"])}</pre>
+        </div>
+      </details>
+      <details class="evidence-fold">
+        <summary>Verified workflow</summary>
+        <ol class="steps">{steps}</ol>
+      </details>
+      <details class="evidence-fold">
+        <summary>Validation details</summary>
+        <dl class="evidence">
+          <div><dt>Test</dt><dd>{test_line}</dd></div>
+          <div><dt>Last run</dt><dd>{last}</dd></div>
+        </dl>
+{shot_link}
+      </details>
+      <details class="evidence-fold">
+        <summary>Package source</summary>
+        {distribution}
+      </details>
     </div>
   </details>
 </article>'''
