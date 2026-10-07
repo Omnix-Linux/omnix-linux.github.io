@@ -234,16 +234,11 @@ def shot_html(app):
     shot = app.get("screenshot")
     if not shot:
         return ""
-    ver = app.get("verification") or {}
-    status = STATUS_LABELS[status_of(app)]
-    test_url = (app.get("test") or {}).get("url", "")
-    return (f'<button class="validation-preview" type="button" aria-controls="validation-window" '
-            f'aria-expanded="false" aria-label="Automated test run for {e(app["name"])}" '
-            f'data-app-name="{e(app["name"])}" data-result="{e(status)}" '
-            f'data-run-date="{e(ver.get("verified_at", ""))}" data-shot="../{e(shot)}" '
-            f'data-test-url="{e(test_url)}">'
-            f'<img src="../{e(shot)}" alt="" width="40" height="28" loading="lazy" decoding="async">'
-            f'<span>Test run</span></button>')
+    return (f'<a class="validation-shot" href="../{e(shot)}" '
+            f'aria-label="View automated test run screenshot for {e(app["name"])}">'
+            f'<img src="../{e(shot)}" alt="{e(app["name"])} running during its automated Omnix test" '
+            f'width="88" height="56" loading="lazy" decoding="async">'
+            f'<span>Test run ↗</span></a>')
 
 
 def render_app(app):
@@ -280,15 +275,15 @@ def render_app(app):
   <header class="app-head">
     {icon_html(app["icon"], app["name"])}
     <div class="app-title"><h3>{e(app["name"])}</h3><p class="app-cat">{e(app["category"])}</p></div>
-    {badge_html(status)}
-{shot_html(app)}
   </header>
   <details class="more">
-    <summary aria-label="Details for {e(app['name'])}"><span>Details</span></summary>
+    <summary class="badge badge-{STATUS_CLASS[status]}" aria-label="{e(STATUS_LABELS[status])} — Details for {e(app['name'])}"><span>{e(STATUS_LABELS[status])}</span></summary>
     <div class="more-body">
+      <div class="details-overview"><div>
       <p class="app-desc">{e(app["description"])}</p>
 {gaps}
       <p class="validation-summary">{summary}<span>{e(", ".join(app["platforms"]))}</span></p>
+      </div>{shot_html(app)}</div>
       <details class="evidence-fold" open>
         <summary>Package source</summary>
         {distribution}
