@@ -24,25 +24,44 @@
     const naturalWidth = source.naturalWidth || image.naturalWidth;
     const naturalHeight = source.naturalHeight || image.naturalHeight;
     if (!naturalWidth || !naturalHeight) return;
-    const scale = Math.min(1, (width - 42) / naturalWidth, (height - 86) / naturalHeight);
+    const trigger = active.getBoundingClientRect();
+    const appTrigger = document.querySelector('.app > .more > summary[aria-expanded="true"]');
+    const card = appTrigger ? appTrigger.closest(".app").getBoundingClientRect() : trigger;
+    const panel = details.getBoundingClientRect();
+    const bounds = { left: leftEdge + 12, top: topEdge + 12, right: leftEdge + width - 12, bottom: topEdge + height - 12 };
+    function freeRegion(rect) {
+      const fullWidth = bounds.right - bounds.left, fullHeight = bounds.bottom - bounds.top;
+      const sides = [
+        { side: "right", left: rect.right + 8, top: bounds.top, width: bounds.right - rect.right - 8, height: fullHeight },
+        { side: "left", left: bounds.left, top: bounds.top, width: rect.left - bounds.left - 8, height: fullHeight }
+      ];
+      const vertical = [
+        { side: "below", left: bounds.left, top: rect.bottom + 8, width: fullWidth, height: bounds.bottom - rect.bottom - 8 },
+        { side: "above", left: bounds.left, top: bounds.top, width: fullWidth, height: rect.top - bounds.top - 8 }
+      ];
+      const usable = regions => regions.filter(region => region.width >= 240 && region.height >= 160).sort((a, b) => b.width * b.height - a.width * a.height);
+      return usable(sides)[0] || usable(vertical)[0];
+    }
+    // Protect the whole focused card and Details first, then their controls on tight screens.
+    const region = freeRegion({ left: Math.min(card.left, panel.left), right: Math.max(card.right, panel.right), top: Math.min(card.top, panel.top), bottom: Math.max(card.bottom, panel.bottom) })
+      || freeRegion({ left: Math.min(card.left, trigger.left), right: Math.max(card.right, trigger.right), top: Math.min(card.top, trigger.top), bottom: Math.max(card.bottom, trigger.bottom) })
+      || { side: "screen", left: bounds.left, top: bounds.top, width: bounds.right - bounds.left, height: bounds.bottom - bounds.top };
+    const scale = Math.min(1, (region.width - 18) / naturalWidth, (region.height - 62) / naturalHeight);
     const ratio = actualSize ? 1 : scale;
     image.style.width = naturalWidth * ratio + "px";
     image.style.height = naturalHeight * ratio + "px";
-    preview.style.width = Math.min(width - 24, naturalWidth * ratio + 18) + "px";
-    viewport.style.maxHeight = Math.max(44, height - 86) + "px";
+    preview.style.width = Math.min(region.width, naturalWidth * ratio + 18) + "px";
+    viewport.style.maxHeight = Math.max(44, region.height - 62) + "px";
     preview.querySelector(".shot-caption").textContent = `Test run · ${naturalWidth} × ${naturalHeight}`;
     sizeButton.hidden = scale === 1;
     sizeButton.textContent = actualSize ? "Fit" : "1:1";
     sizeButton.setAttribute("aria-label", actualSize ? "Fit screenshot to screen" : "Show actual size");
     sizeButton.setAttribute("aria-pressed", String(actualSize));
-    const trigger = active.getBoundingClientRect();
     const box = preview.getBoundingClientRect();
-    // Prefer a clear side of the thumbnail; large images use the available screen.
-    let left = trigger.right + 8;
-    if (left + box.width > leftEdge + width - 12) left = trigger.left - box.width - 8;
-    if (left < leftEdge + 12) left = leftEdge + (width - box.width) / 2;
-    preview.style.left = Math.max(leftEdge + 12, Math.min(left, leftEdge + width - box.width - 12)) + "px";
-    preview.style.top = Math.max(topEdge + 12, Math.min(trigger.top, topEdge + height - box.height - 12)) + "px";
+    const left = region.side === "left" ? region.left + region.width - box.width : region.left;
+    preview.style.left = left + "px";
+    preview.style.top = Math.max(region.top, Math.min(trigger.top, region.top + region.height - box.height)) + "px";
+    preview.dataset.placement = region.side;
   }
 
   function close(restoreFocus = false, suppress = false) {
@@ -60,12 +79,15 @@
       previous.focus({ preventScroll: true });
       restoringFocus = false;
     }
+    restoringFocus = true;
     if (supportsPopover && preview.matches(":popover-open")) preview.hidePopover();
+    restoringFocus = false;
     preview.hidden = true;
     document.dispatchEvent(new Event("test-preview-dismiss"));
   }
 
   function open(link, pin = false) {
+    if (details.hidden) return;
     clearTimeout(closeTimer);
     if (!pin && suppressed === link) return;
     if (active !== link) {
@@ -132,7 +154,7 @@
     viewport.scrollTop = viewport.scrollLeft = 0;
   });
   closeButton.addEventListener("click", () => close(true, true));
-  document.addEventListener("details-dismiss", () => close());
+  document.addEventListener("details-dismiss", () => { close(false, true); suppressed = null; });
   document.addEventListener("keydown", event => {
     if (event.key === "Escape" && active) {
       event.preventDefault();

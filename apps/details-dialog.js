@@ -10,15 +10,15 @@
   const content = panel.querySelector(".details-content");
   const title = panel.querySelector("h3");
   const closeButton = panel.querySelector(".details-close");
-  let scrollHeld = false, pointerX = null, pointerY = null;
+  let scrollHeld = false, pointerX = null, pointerY = null, openedX = 0, openedY = 0;
   let active = null, pinned = false, closeTimer = 0, suppressed = null, restoringFocus = false;
 
   function close(restoreFocus = false, suppress = true) {
     clearTimeout(closeTimer);
     if (!active) return;
-    document.dispatchEvent(new Event("details-dismiss"));
     const { disclosure, trigger, body } = active;
     active = null;
+    document.dispatchEvent(new Event("details-dismiss"));
     pinned = false;
     scrollHeld = false;
     if (suppress) suppressed = trigger;
@@ -75,9 +75,20 @@
     else scheduleClose();
   }, { passive: true });
   panel.addEventListener("pointerdown", () => { if (active) pinned = true; });
-  document.addEventListener("wheel", () => {
-    if (active) holdForScroll();
-  }, { passive: true });
+  document.addEventListener("wheel", event => {
+    if (!active) return;
+    const unit = event.deltaMode === 1 ? 16 : event.deltaMode === 2 ? innerHeight : 1;
+    const dx = event.deltaX * unit, dy = event.deltaY * unit;
+    const target = event.target instanceof Element ? event.target : null;
+    const scroller = target && target.closest(".shot-viewport, #app-details");
+    // Passive wheel events may arrive after the internal scroll has already moved.
+    // Let the page scroll listener detect chaining at an overlay's boundaries.
+    if (!scroller && Math.max(Math.abs(dx), Math.abs(dy)) >= 80) {
+      close(document.activeElement === active.trigger || panel.contains(document.activeElement) || inShotPreview(document.activeElement));
+      return;
+    }
+    holdForScroll();
+  }, { passive: true, capture: true });
   closeButton.addEventListener("click", () => close(true));
   document.addEventListener("pointerdown", event => {
     if (active && !panel.contains(event.target) && !active.trigger.contains(event.target) && !inShotPreview(event.target)) close();
@@ -93,6 +104,10 @@
     // Page scrolling can move the anchor away from a stationary pointer.
     // Keep it open rather than treating that movement as an intentional mouse-out.
     if (event.target === document || (event.target instanceof Element && event.target.contains(active.disclosure))) {
+      if (Math.max(Math.abs(scrollX - openedX), Math.abs(scrollY - openedY)) >= 80) {
+        close(document.activeElement === active.trigger || panel.contains(document.activeElement) || inShotPreview(document.activeElement));
+        return;
+      }
       holdForScroll();
       position();
     }
@@ -141,6 +156,8 @@
     scrollHeld = false;
     content.append(body);
     const pageX = scrollX, pageY = scrollY;
+    openedX = pageX;
+    openedY = pageY;
     panel.hidden = false;
     trigger.setAttribute("aria-expanded", "true");
     if (supportsPopover) panel.showPopover({ source: trigger });

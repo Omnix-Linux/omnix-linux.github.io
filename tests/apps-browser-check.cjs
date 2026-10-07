@@ -193,6 +193,10 @@ const base = process.env.APPS_BASE_URL || 'http://127.0.0.1:4187';
       assert(Math.abs(imageSize.width / imageSize.height - imageSize.naturalWidth / imageSize.naturalHeight) < .01, 'preview distorts the screenshot');
       const previewBox = await imagePreview.boundingBox();
       assert(previewBox.x >= 0 && previewBox.x + previewBox.width <= width + 1 && previewBox.y >= 0 && previewBox.y + previewBox.height <= 901, 'image preview leaves viewport');
+      const overlaps = (a, b) => a.x < b.x + b.width - 1 && a.x + a.width > b.x + 1 && a.y < b.y + b.height - 1 && a.y + a.height > b.y + 1;
+      assert(!overlaps(previewBox, await shot.boundingBox()), 'image preview obscures its thumbnail');
+      assert(!overlaps(previewBox, await detailsTrigger.boundingBox()), 'image preview obscures its app control');
+      if (width >= 900) assert(!overlaps(previewBox, await details.boundingBox()), 'desktop image preview obscures Details despite available side space');
       await imagePreview.hover();
       await page.waitForTimeout(260);
       assert(await details.isVisible() && await imagePreview.isVisible(), 'hovering full image dismisses its parent Details');
@@ -210,6 +214,13 @@ const base = process.env.APPS_BASE_URL || 'http://127.0.0.1:4187';
         assert(Math.abs(actual.width - imageSize.naturalWidth) < 1 && Math.abs(actual.height - imageSize.naturalHeight) < 1, '1:1 must display natural resolution');
         const imageViewport = imagePreview.locator('.shot-viewport');
         assert(await imageViewport.evaluate(el => el.scrollWidth > el.clientWidth || el.scrollHeight > el.clientHeight), 'actual-size image must scroll within preview');
+        const pageBeforeImageScroll = await page.evaluate(() => scrollY);
+        await imageViewport.hover();
+        await page.mouse.wheel(80, 0);
+        await page.waitForTimeout(200);
+        assert(await imagePreview.isVisible() && await details.isVisible(), 'internal image scrolling dismisses overlays');
+        assert(await imageViewport.evaluate(el => el.scrollLeft) > 0, '1:1 image does not scroll horizontally');
+        assert.equal(await page.evaluate(() => scrollY), pageBeforeImageScroll, 'image scrolling moves the page');
         await imagePreview.locator('.shot-size').click();
       }
       await imagePreview.locator('.shot-close').click();
@@ -225,10 +236,32 @@ const base = process.env.APPS_BASE_URL || 'http://127.0.0.1:4187';
       await page.keyboard.press('Escape');
       assert.equal(await details.isVisible(), false);
 
+      const beforeMajorScroll = await page.evaluate(() => scrollY);
+      for (const delta of [120, -120]) {
+        await detailsTrigger.click();
+        await details.locator('.validation-shot').hover();
+        await imagePreview.waitFor({ state: 'visible' });
+        await details.locator('.validation-shot').click();
+        assert(await imagePreview.isVisible(), 'pinned image does not open before major scroll');
+        await page.mouse.move(1, 880);
+        await page.mouse.wheel(0, delta);
+        await page.waitForTimeout(300);
+        assert.equal(await imagePreview.isVisible(), false, 'major page wheel keeps image preview open');
+        assert.equal(await details.isVisible(), false, 'major page wheel keeps pinned Details open');
+        await page.evaluate(y => window.scrollTo({ top: y, behavior: 'instant' }), beforeMajorScroll);
+        await detailsTrigger.evaluate(el => el.blur());
+      }
+      await detailsTrigger.click();
+      await details.locator('.validation-shot').click();
+      await page.evaluate(() => window.scrollBy(0, 100));
+      await page.waitForTimeout(260);
+      assert.equal(await details.isVisible(), false, 'major page displacement keeps Details open');
+      assert.equal(await imagePreview.isVisible(), false, 'major page displacement keeps image open');
+      await page.evaluate(y => window.scrollTo({ top: y, behavior: 'instant' }), beforeMajorScroll);
       assert.deepEqual(await layout(), positions, 'closing Details moves app cards');
       assert.equal(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth), false);
       assert.deepEqual(errors, []);
-      console.log(JSON.stringify({ width, closedHeight: closed.height, anchoredDetailsWithoutReflow: true, detailsHoverTransfer: true, fullDetailsOnHover: true, singleClickPin: true, hoverSurvivesScrolling: true, hover: true, keyboard: true, copy: true, overflow: false }));
+      console.log(JSON.stringify({ width, closedHeight: closed.height, anchoredDetailsWithoutReflow: true, detailsHoverTransfer: true, fullDetailsOnHover: true, singleClickPin: true, minorScrollRetainsHover: true, majorScrollDismissesAll: true, imageAvoidsFocusedControls: true, hover: true, keyboard: true, copy: true, overflow: false }));
       await page.close();
     }
     const touch = await browser.newPage({ viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true });
