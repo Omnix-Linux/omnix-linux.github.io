@@ -289,7 +289,7 @@ def render_app(app):
       <p class="app-desc">{e(app["description"])}</p>
 {gaps}
       <p class="validation-summary">{summary}<span>{e(", ".join(app["platforms"]))}</span></p>
-      <details class="evidence-fold">
+      <details class="evidence-fold" open>
         <summary>Package source</summary>
         {distribution}
       </details>

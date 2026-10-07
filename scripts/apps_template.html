@@ -148,7 +148,7 @@
   .details-dialog .gap { font-size: .78rem; margin: 0 0 8px; }
   .details-dialog .evidence-fold { border: 0; border-top: 1px solid rgba(126, 186, 228, .12); border-radius: 0; padding: 0; }
   .details-dialog .evidence-fold > summary { min-height: 44px; font: 600 .84rem var(--font-body); padding: 0 2px; justify-content: space-between; }
-  .details-dialog .evidence-fold > summary::before { content: none; }
+  .details-dialog .evidence-fold > summary::before, .details-dialog .evidence-fold[open] > summary::before { content: none; }
   .details-dialog .evidence-fold > summary::after { content: ""; width: 6px; height: 6px; margin-right: 4px; border-right: 1.5px solid var(--muted); border-bottom: 1.5px solid var(--muted); transform: rotate(45deg); }
   .details-dialog .evidence-fold[open] > summary::after { transform: rotate(225deg); }
   .details-dialog .evidence-fold > summary:hover { color: var(--ice); }
@@ -160,17 +160,6 @@
 
   .details-dialog a { color: var(--ice); }
   .details-dialog .details-close { position: sticky; top: 0; float: right; width: 44px; height: 44px; margin: -10px -10px 0 0; border: 0; border-radius: 8px; background: transparent; color: var(--muted); font-size: 1.1rem; cursor: pointer; }
-  /* Apps policy: content uses the width; expansion belongs on a thin bottom edge. */
-  .details-peek { display: block; }
-  .details-excerpt { margin: 0; font-size: .82rem; line-height: 1.5; color: #becbdd; display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; overflow: hidden; }
-  .details-more { position: absolute; bottom: 0; left: 0; width: 100%; height: 22px; padding: 0; border: 0; border-top: 1px solid rgba(126, 186, 228, .12); background: rgba(126, 186, 228, .035); color: var(--ice); cursor: pointer; display: grid; place-items: center; }
-  .details-more svg { width: 16px; height: 16px; }
-  .details-more:hover { background: rgba(126, 186, 228, .14); }
-  .details-more:focus-visible { outline: 2px solid var(--ice); outline-offset: -2px; }
-  .details-dialog:not(.is-expanded) { padding: 10px 48px 26px 12px; overflow: hidden; }
-  .details-dialog:not(.is-expanded) .details-close { position: absolute; top: 0; right: 2px; float: none; margin: 0; }
-  .details-dialog:not(.is-expanded) h3, .details-dialog:not(.is-expanded) .details-content { display: none; }
-  .details-dialog.is-expanded .details-peek { display: none; }
   .details-close:focus-visible { outline: 2px solid var(--ice); }
   .validation-summary { display: flex; flex-wrap: wrap; gap: 4px 12px; margin: 0; color: var(--ice); font: .72rem/1.6 var(--font-mono); }
   .validation-summary span { color: var(--muted); }
@@ -201,7 +190,6 @@
   .preview-close:hover { background: rgba(126, 186, 228, .1); }
   .preview-close:focus-visible { outline: 2px solid var(--ice); outline-offset: -2px; }
   @media (max-width: 640px) {
-    .details-excerpt { -webkit-line-clamp: 3; }
     .app > .app-head { grid-template-columns: 32px 26px minmax(0, 1fr) 48px; gap: 6px; padding-right: 0; min-height: 82px; }
     .app-head .app-icon { width: 32px; height: 32px; grid-column: 1; grid-row: 1; }
     .app > .app-head h3 { font-size: .88rem; }
@@ -356,11 +344,11 @@
 </footer>
 <aside id="app-details" class="details-dialog" popover="manual" role="dialog" aria-labelledby="app-details-title" hidden>
   <button type="button" class="details-close" aria-label="Close app details">×</button>
-  <div class="details-peek"><p class="details-excerpt"></p><button type="button" class="details-more" aria-expanded="false" aria-controls="details-content" aria-label="Expand full app details"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="m4 3 4 4 4-4M4 8l4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg></button></div>
+
   <h3 id="app-details-title">App details</h3>
   <div id="details-content" class="details-content"></div>
 </aside>
-<script src="details-dialog.js?v=polish-1" defer></script>
+<script src="details-dialog.js?v=full-hover-1" defer></script>
 <aside id="validation-window" class="validation-window" popover="manual" role="region" aria-labelledby="validation-title" hidden>
   <button type="button" class="preview-close" aria-label="Close validation preview">×</button>
   <h3 id="validation-title">Automated test run</h3>
