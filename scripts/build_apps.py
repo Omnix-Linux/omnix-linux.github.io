@@ -290,6 +290,10 @@ def render_app(app):
 {gaps}
       <p class="validation-summary">{summary}<span>{e(", ".join(app["platforms"]))}</span></p>
       <details class="evidence-fold">
+        <summary>Package source</summary>
+        {distribution}
+      </details>
+      <details class="evidence-fold">
         <summary>Install</summary>
         <div class="snip">
           <div class="snip-head"><span>{e(app["install"]["label"])}</span><button class="copy" type="button" data-copy="{snippet_id}">Copy</button></div>
@@ -307,10 +311,6 @@ def render_app(app):
           <div><dt>Last run</dt><dd>{last}</dd></div>
         </dl>
 {shot_link}
-      </details>
-      <details class="evidence-fold">
-        <summary>Package source</summary>
-        {distribution}
       </details>
     </div>
   </details>
