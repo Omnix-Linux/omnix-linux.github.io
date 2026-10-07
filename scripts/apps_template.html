@@ -130,8 +130,9 @@
   .more > summary:hover { background: rgba(126, 186, 228, .1); }
   .more > summary:focus-visible, .validation-preview:focus-visible { outline: 2px solid var(--ice); outline-offset: 2px; }
   .more-body { display: flex; flex-direction: column; gap: 12px; border-top: 1px solid var(--line); margin-top: 12px; padding-top: 14px; }
-  .details-dialog { box-sizing: border-box; width: min(640px, calc(100vw - 24px)); max-height: calc(100dvh - 32px); overflow: auto; padding: 20px; border: 1px solid var(--ice); border-radius: 12px; background: #0b1020; color: var(--ink); box-shadow: 0 20px 60px rgba(0, 0, 0, .65); }
-  .details-dialog::backdrop { background: rgba(4, 5, 12, .55); }
+  .details-dialog { position: fixed; inset: auto; margin: 0; z-index: 20; box-sizing: border-box; width: min(640px, calc(100vw - 24px)); max-height: calc(100dvh - 32px); overflow: auto; padding: 20px; border: 1px solid var(--ice); border-radius: 12px; background: #0b1020; color: var(--ink); box-shadow: 0 20px 60px rgba(0, 0, 0, .65); }
+  .details-dialog[hidden] { display: none; }
+  .details-dialog::backdrop { background: transparent; pointer-events: none; }
   .details-dialog h3 { margin: 0 44px 0 0; font: 700 1rem/1.4 var(--font-mono); }
   .details-dialog .more-body { min-width: 0; }
   .details-dialog a { color: var(--ice); }
@@ -318,11 +319,11 @@
     </div>
   </div>
 </footer>
-<dialog id="app-details" class="details-dialog" aria-labelledby="app-details-title">
-  <button type="button" class="details-close" aria-label="Close app details" autofocus>×</button>
+<aside id="app-details" class="details-dialog" popover="manual" role="dialog" aria-labelledby="app-details-title" hidden>
+  <button type="button" class="details-close" aria-label="Close app details">×</button>
   <h3 id="app-details-title">App details</h3>
   <div class="details-content"></div>
-</dialog>
+</aside>
 <script src="details-dialog.js" defer></script>
 <aside id="validation-window" class="validation-window" popover="manual" role="region" aria-labelledby="validation-title" hidden>
   <button type="button" class="preview-close" aria-label="Close validation preview">×</button>
